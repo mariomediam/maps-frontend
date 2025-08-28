@@ -1,0 +1,9 @@
+my-app/node_modules
+my-app/.git
+my-app/.gitignore
+my-app/README.md
+my-app/dist
+my-app/.env.local
+my-app/.env.development.local
+my-app/.env.test.local
+my-app/.env.production.local
