@@ -3,6 +3,8 @@
 @theme {
 	--color-secondary: #f0f9ff;
 	--color-primary: #07314a;
+	--color-primary-900: #0a4d70;
+	--color-primary-800: #055d87;
 	--color-header: #0095da;
 	--color-success: #218838;
 	--color-danger: #c82333;
@@ -42,10 +44,6 @@
 	font-display: swap;
 }
 
-* {
-	margin: 0;
-	padding: 0;
-}
 *,
 *::before,
 *::after {

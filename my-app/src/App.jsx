@@ -1,15 +1,17 @@
+import Map2Icon from "./assets/icons/Map2Icon";
+
 function App() {
 	return (
 		<>
-			<h1 className="text-3xl font-bold underline text-warning">
-				Hello Cami!{" "}
-			</h1>
-			<p>
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi maxime
-				tempora quis. Asperiores animi necessitatibus praesentium perspiciatis
-				dolor doloribus explicabo corrupti ut ducimus quisquam, commodi, error
-				dolor quis iste dolorem?
-			</p>
+			<div className="flex justify-center items-center h-screen">
+				<button
+					type="button"
+					className="text-secondary bg-primary hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-900 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 cursor-pointer"
+				>
+					<Map2Icon className="me-1" />
+					Ver mapa interactivo
+				</button>
+			</div>
 		</>
 	);
 }
