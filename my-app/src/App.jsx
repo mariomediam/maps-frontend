@@ -1,4 +1,4 @@
-import Map2Icon from "./assets/icons/Map2Icon";
+import { Map2Icon } from "@shared";
 
 function App() {
 	return (

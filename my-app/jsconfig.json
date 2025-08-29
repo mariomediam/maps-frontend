@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@features/*": ["src/features/*"],
+      "@auth/*": ["src/features/auth/*"],
+      "@maps/*": ["src/features/maps/*"],
+      "@dashboard/*": ["src/features/dashboard/*"],
+      "@shared/*": ["src/shared/*"],
+      "@components/*": ["src/shared/components/*"],
+      "@hooks/*": ["src/shared/hooks/*"],
+      "@assets/*": ["src/shared/assets/*"],
+      "@utils/*": ["src/shared/utils/*"],
+      "@ui/*": ["src/shared/ui/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
