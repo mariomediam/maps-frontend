@@ -11,6 +11,7 @@ const Map2Icon = ({ className, width = 24, height = 24, ...props }) => (
 		className={`icon icon-tabler icons-tabler-outline icon-tabler-map-2 ${className}`}
 		{...props}
 	>
+		<title>Icono de mapa</title>
 		<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 		<path d="M12 18.5l-3 -1.5l-6 3v-13l6 -3l6 3l6 -3v7.5" />
 		<path d="M9 4v13" />
