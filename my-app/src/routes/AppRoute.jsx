@@ -6,8 +6,9 @@ import ErrorPage from "./error-page";
 
 const router = createBrowserRouter([
 	{
-		path: "/",
+		path: "/admin",
 		element: <PrivateRoutes />,
+		errorElement: <ErrorPage />,
 		children: [
 			{
 				path: "main",
@@ -15,16 +16,21 @@ const router = createBrowserRouter([
 			},
 		],
 	},
-
+	
+	{
+		path: "/",
+		element: <App />,
+		errorElement: <ErrorPage />,
+	},
 	{
 		path: "maps",
 		element: <MapList />,
 		errorElement: <ErrorPage />,
 	},
+	// Ruta catch-all para manejar 404s
 	{
-		path: "test",
-		element: <App />,
-		errorElement: <ErrorPage />,
+		path: "*",
+		element: <ErrorPage />,
 	},
 ]);
 

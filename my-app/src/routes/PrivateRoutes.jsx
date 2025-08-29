@@ -10,6 +10,6 @@ export const PrivateRoutes = () => {
 	return tokenEsValido() ? (
 		<Outlet />
 	) : (
-		<Navigate to="/login" replace state={{ from: location }} />
+		<Navigate to="/" replace state={{ from: location }} />
 	);
 };
