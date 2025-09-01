@@ -1,8 +1,8 @@
 import { PrivateRoutes } from "@auth";
-import { MapList } from "@maps";
 import { ErrorPage } from "@shared";
 import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
+import MapExplorerPage from "@features/mapExplorer/pages/MapExplorerPage";
 
 const router = createBrowserRouter([
 	{
@@ -12,7 +12,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: "main",
-				element: <MapList />,
+				element: <MapExplorerPage />,
 			},
 		],
 	},
@@ -23,9 +23,9 @@ const router = createBrowserRouter([
 		errorElement: <ErrorPage />,
 	},
 	{
-		path: "maps",
-		element: <MapList />,
-		errorElement: <ErrorPage />,
+		path: "map-explorer",
+		element: <MapExplorerPage />,
+		errorElement: <MapExplorerPage />,
 	},
 	// Ruta catch-all para manejar 404s
 	{

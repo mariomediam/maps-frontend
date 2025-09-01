@@ -4,9 +4,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@features/*": ["src/features/*"],
-      "@auth/*": ["src/features/auth/*"],
-      "@maps/*": ["src/features/maps/*"],
-      "@dashboard/*": ["src/features/dashboard/*"],
+      "@auth/*": ["src/features/auth/*"],           
       "@shared/*": ["src/shared/*"],
       "@components/*": ["src/shared/components/*"],
       "@hooks/*": ["src/shared/hooks/*"],

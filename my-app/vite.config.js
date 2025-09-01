@@ -14,8 +14,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
       '@features': path.resolve(__dirname, './src/features'),
       '@auth': path.resolve(__dirname, './src/features/auth'),
-      '@maps': path.resolve(__dirname, './src/features/maps'),
-      '@dashboard': path.resolve(__dirname, './src/features/dashboard'),
       '@shared': path.resolve(__dirname, './src/shared'),
       '@components': path.resolve(__dirname, './src/shared/components'),
       '@hooks': path.resolve(__dirname, './src/shared/hooks'),
