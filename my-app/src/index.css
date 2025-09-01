@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
 
 @theme {
 	--color-secondary: #f0f9ff;
@@ -44,41 +47,14 @@
 	font-display: swap;
 }
 
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-}
-
 body {
-	min-height: 100dvh;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
 	background-color: var(--color-secondary);
 }
 
-input,
-button,
-textarea,
-select {
-	font: inherit;
-}
-
-p {
-	text-wrap: pretty;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	text-wrap: balance;
-}
-
-:root {
-	font-family: Roboto, sans-serif, system-ui;
-}
-
-@media (prefers-reduced-motion: reduce) {
+/* @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,
 	*::after {
@@ -87,4 +63,4 @@ h6 {
 		transition-duration: 0.01ms !important;
 		scroll-behavior: auto !important;
 	}
-}
+} */
