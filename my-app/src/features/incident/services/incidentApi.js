@@ -4,31 +4,37 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const URL = `${API_BASE_URL}/incidents`;
 
 const getIncidents = async (filters = {}) => {
-	const { idCategory, idState, showOnMap } = filters;
+  const { idCategory, idState, showOnMap } = filters;
 
-	try {
-		const api = useAxios();
+  try {
+    const api = useAxios();
 
-		let URLIncidents = `${URL}`;
+    // Construir parámetros de consulta correctamente
+    const queryParams = new URLSearchParams();
 
-		if (idCategory) {
-			URLIncidents += `?id_category=${idCategory}`;
-		}
-		if (idState) {
-			URLIncidents += `?id_state=${idState}`;
-		}
-		if (showOnMap) {
-			URLIncidents += `?show_on_map=${showOnMap}`;
-		}
+    if (idCategory) {
+      queryParams.append("id_category", idCategory);
+    }
+    if (idState) {
+      queryParams.append("id_state", idState);
+    }
+    if (showOnMap) {
+      queryParams.append("show_on_map", showOnMap);
+    }
 
-		const {
-			data: { content },
-		} = await api.get(URLIncidents);
+    const queryString = queryParams.toString();
+    const URLIncidents = queryString ? `${URL}?${queryString}` : URL;
 
-		return content;
-	} catch (error) {
-		throw error;
-	}
+    console.log("Fetching incidents from:", URLIncidents); // Para debug
+
+    const {
+      data: { content },
+    } = await api.get(URLIncidents);
+
+    return content;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export { getIncidents };

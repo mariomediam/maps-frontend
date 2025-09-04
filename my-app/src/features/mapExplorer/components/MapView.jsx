@@ -48,22 +48,31 @@ const MapView = ({ className, onToggleFilters }) => {
 	const [tempMarker, setTempMarker] = useState(null);
 
 	const [incidents, setIncidents] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	// Obtener filtros de la URL
 	const idCategory = searchParams.get("idCategory");
 	const idState = searchParams.get("idState");
 
 	const getIncidentsApi = async () => {
-		const filters = {};
+		setLoading(true); // Mostrar loading
 		
-		// Agregar filtros si existen en la URL
-		if (idCategory) filters.idCategory = idCategory;
-		if (idState) filters.idState = idState;
-		
-		console.log("Filtros aplicados:", filters); // Para debug
-		
-		const incidents = await getIncidents(filters);
-		setIncidents(incidents);
+		try {
+			const filters = {};
+			
+			// Agregar filtros si existen en la URL
+			if (idCategory) filters.idCategory = idCategory;
+			if (idState) filters.idState = idState;
+			
+			console.log("Filtros aplicados:", filters); // Para debug
+			
+			const incidents = await getIncidents(filters);
+			setIncidents(incidents);
+		} catch (error) {
+			console.error("Error cargando incidentes:", error);
+		} finally {
+			setLoading(false); // Ocultar loading
+		}
 	};
 
 	// Recargar incidentes cuando cambien los parámetros de URL
@@ -79,7 +88,17 @@ const MapView = ({ className, onToggleFilters }) => {
 	}, [actionType]);
 
 	return (
-		<div className={`w-full h-full ${className}`}>
+		<div className={`w-full h-full relative ${className}`}>
+			{/* Overlay de loading */}
+			{loading && (
+				<div className="absolute inset-0 bg-secondary  flex items-center justify-center z-1000">
+					<div className="bg-white rounded-lg p-6 shadow-lg flex flex-col items-center">
+						<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mb-3"></div>
+						<p className="text-sm text-gray-600">Cargando incidentes...</p>
+					</div>
+				</div>
+			)}
+
 			{/* Botón "Mostrar filtros" - Solo visible en móvil */}
 			<div className="bg-header-500 p-2 flex items-center justify-center md:hidden">
 				<button
@@ -94,10 +113,11 @@ const MapView = ({ className, onToggleFilters }) => {
 			</div>
 			<MapContainer
 				center={[-5.1955724, -80.6301423]}
-				zoom={15}
+				zoom={14}
 				scrollWheelZoom={true}
 				style={{ height: "100%", width: "100%" }}
 				doubleClickZoom={false}
+				className={loading ? "opacity-50 pointer-events-none" : ""}
 			>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 				<AddMarkerOnDblClick
