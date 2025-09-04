@@ -1,12 +1,12 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
-	"files": {
-		"ignoreUnknown": false
-	},
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
 		"useIgnoreFile": false
+	},
+	"files": {
+		"ignoreUnknown": false
 	},
 	"formatter": {
 		"enabled": true,
@@ -16,32 +16,24 @@
 		"enabled": true,
 		"rules": {
 			"recommended": true,
-			"suspicious": {
-				"noUnknownAtRules": "off"
-			},
-			"style": {
-				"noUnusedTemplateLiteral": "error"
-			},
 			"correctness": {
-				"noUnusedVariables": {
-					"level": "error",
-					"fix": "none"
-				}
+				"noUndeclaredVariables": "error",
+				"noUnusedVariables": "warn"
+			},
+			"suspicious": {
+				"noGlobalAssign": "error"
 			}
 		}
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double",
-			"jsxQuoteStyle": "double",
-			"semicolons": "always"
+			"quoteStyle": "double"
 		},
-		"globals": ["console", "window", "document", "navigator", "localStorage", "sessionStorage"]
-	},
-	"json": {
-		"formatter": {
-			"enabled": true
-		}
+		"globals": [
+			"console",
+			"document",
+			"window"
+		]
 	},
 	"assist": {
 		"enabled": true,
