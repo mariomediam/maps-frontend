@@ -1,8 +1,8 @@
 import { PrivateRoutes } from "@auth";
+import MapExplorerPage from "@features/mapExplorer/pages/MapExplorerPage";
 import { ErrorPage } from "@shared";
 import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
-import MapExplorerPage from "@features/mapExplorer/pages/MapExplorerPage";
 
 const router = createBrowserRouter([
 	{

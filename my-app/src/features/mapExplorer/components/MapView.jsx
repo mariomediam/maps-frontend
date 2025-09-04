@@ -1,9 +1,82 @@
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import L from "leaflet";
+import { useEffect, useState } from "react";
+import {
+	MapContainer,
+	Marker,
+	Popup,
+	TileLayer,
+	useMapEvents,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { useSearchParams } from "react-router-dom";
+import { getIncidents } from "@/features/incident/services/incidentApi";
 import FilterIcon from "@/shared/assets/icons/FilterIcon";
+import { MAP_ACTION_TYPES } from "@/shared/constants/mapConstants";
+
+// Función para crear un ícono SVG de marcador de posición personalizado
+const getColoredIcon = (color) => {
+	return L.divIcon({
+		className: "",
+		html: `
+		<svg width="32" height="32" viewBox="0 0 32 32">
+		  <path d="M16 2C10.477 2 6 6.477 6 12c0 7.732 8.003 17.292 8.343 17.677a1 1 0 0 0 1.314 0C17.997 29.292 26 19.732 26 12c0-5.523-4.477-10-10-10zm0 13.5A3.5 3.5 0 1 1 16 8a3.5 3.5 0 0 1 0 7.5z" fill="${color}" stroke="#333" stroke-width="2"/>
+		</svg>
+	  `,
+		iconSize: [32, 32],
+		iconAnchor: [16, 32],
+		popupAnchor: [0, -32],
+	});
+};
+
+const AddMarkerOnDblClick = ({ action, setTempMarker }) => {
+	useMapEvents({
+		dblclick(e) {
+			if (action === MAP_ACTION_TYPES.adding) {
+				setTempMarker({ lat: e.latlng.lat, lng: e.latlng.lng });
+			}
+		},
+	});
+	return null;
+};
 
 const MapView = ({ className, onToggleFilters }) => {
+	const [searchParams] = useSearchParams();
 	const position = [51.505, -0.09];
+
+	const [actionType, setActionType] = useState(MAP_ACTION_TYPES.listing);
+	const [idProblemSelected, setIdProblemSelected] = useState(null);
+	const [tempMarker, setTempMarker] = useState(null);
+
+	const [incidents, setIncidents] = useState([]);
+
+	// Obtener filtros de la URL
+	const idCategory = searchParams.get("idCategory");
+	const idState = searchParams.get("idState");
+
+	const getIncidentsApi = async () => {
+		const filters = {};
+		
+		// Agregar filtros si existen en la URL
+		if (idCategory) filters.idCategory = idCategory;
+		if (idState) filters.idState = idState;
+		
+		console.log("Filtros aplicados:", filters); // Para debug
+		
+		const incidents = await getIncidents(filters);
+		setIncidents(incidents);
+	};
+
+	// Recargar incidentes cuando cambien los parámetros de URL
+	useEffect(() => {
+		getIncidentsApi();
+	}, [idCategory, idState]);
+
+	// Limpiar marcador temporal al salir de modo adding
+	useEffect(() => {
+		if (actionType !== MAP_ACTION_TYPES.adding) {
+			setTempMarker(null);
+		}
+	}, [actionType]);
 
 	return (
 		<div className={`w-full h-full ${className}`}>
@@ -14,24 +87,55 @@ const MapView = ({ className, onToggleFilters }) => {
 					className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
 					onClick={onToggleFilters}
 				>
-					<div className="flex items-center gap-1"><FilterIcon /> Mostrar filtros</div>
+					<div className="flex items-center gap-1">
+						<FilterIcon /> Mostrar filtros
+					</div>
 				</button>
 			</div>
 			<MapContainer
-				center={position}
-				zoom={13}
-				scrollWheelZoom={false}
+				center={[-5.1955724, -80.6301423]}
+				zoom={15}
+				scrollWheelZoom={true}
 				style={{ height: "100%", width: "100%" }}
+				doubleClickZoom={false}
 			>
-				<TileLayer
-					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+				<AddMarkerOnDblClick
+					action={actionType}
+					setTempMarker={setTempMarker}
 				/>
-				<Marker position={position}>
-					<Popup>
-						A pretty CSS3 popup. <br /> Easily customizable.
-					</Popup>
-				</Marker>
+				{/* Marcador temporal al agregar */}
+				{actionType === MAP_ACTION_TYPES.adding && tempMarker && (
+					<Marker
+						position={tempMarker}
+						icon={getColoredIcon("#C82333")}
+						draggable={true}
+						eventHandlers={{
+							dragend: (e) => {
+								setTempMarker(e.target.getLatLng());
+							},
+						}}
+					/>
+				)}
+
+				{/* Marcadores normales */}
+				{actionType !== MAP_ACTION_TYPES.adding && (
+					<>
+						{incidents.map((incident) => (
+							<Marker
+								key={incident.id_incident}
+								position={[incident.latitude, incident.longitude]}
+								icon={getColoredIcon(incident.color_state)}
+								// eventHandlers={{
+								//   click: () => showProblem(incident.id),
+								//   popupclose: () => setAction(typeAction.listing)
+								// }}
+							>
+								<Popup>{incident.summary}</Popup>
+							</Marker>
+						))}
+					</>
+				)}
 			</MapContainer>
 		</div>
 	);

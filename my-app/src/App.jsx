@@ -1,8 +1,7 @@
 import SystemDashboardPage from "@features/dashboards/system/pages/SystemDashboardPage";
 
 function App() {
-  return <SystemDashboardPage />;
-  
+	return <SystemDashboardPage />;
 }
 
 export default App;
