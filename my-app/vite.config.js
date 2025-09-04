@@ -22,6 +22,21 @@ export default defineConfig({
       '@ui': path.resolve(__dirname, './src/shared/ui'),
     },
   },
+  build: {
+    target: 'es2015',
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          leaflet: ['leaflet', 'react-leaflet'],
+        },
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,
