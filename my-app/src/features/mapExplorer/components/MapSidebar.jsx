@@ -1,7 +1,12 @@
 import IncidentCategorySelect from "@/features/incidentCategory/components/IncidentCategorySelect.jsx";
 import IncidentStateSelect from "@/features/incidentState/components/IncidentStateSelect.jsx";
 
+import IncidentCard from "@/features/incident/components/IncidentCard.jsx";
+
 const MapSidebar = ({ className, onClose }) => {
+
+	
+
 	return (
 		<div className={`p-3 bg-white border-r ${className}`}>
 			{/* Header con botón de cerrar - Solo visible en móvil */}
@@ -24,6 +29,10 @@ const MapSidebar = ({ className, onClose }) => {
 			{/* Filtros */}
 			<IncidentStateSelect />
 			<IncidentCategorySelect className="mt-4" />
+			<div>
+				<IncidentCard />
+				</div>
+			
 		</div>
 	);
 };
