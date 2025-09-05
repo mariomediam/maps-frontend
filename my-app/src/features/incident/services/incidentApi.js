@@ -37,4 +37,21 @@ const getIncidents = async (filters = {}) => {
   }
 };
 
-export { getIncidents };
+
+
+// curl --location 'http://127.0.0.1:8000/    photography/32'
+
+const getIncidentPhotographyById = async (idPhotography) => {
+  try {
+    const api = useAxios();
+
+    const { data: { content }, } = await api.get(`${URL}/photography/${idPhotography}`);
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+export { getIncidents, getIncidentPhotographyById };
