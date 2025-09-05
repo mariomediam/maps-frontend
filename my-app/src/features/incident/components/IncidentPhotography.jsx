@@ -43,7 +43,7 @@ const IncidentPhotography = ({ idPhotography }) => {
   //             ],
 
   return (
-    <div className="min-w-20 flex items-top justify-center">
+    <div className="min-w-20 ">
       {isLoading || urlPhotography === "" ? (
         <div className="flex justify-center items-center h-full">
           <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
