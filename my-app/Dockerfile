@@ -5,13 +5,13 @@ FROM node:24-alpine
 WORKDIR /app
 
 # Copia los archivos package.json y package-lock.json primero para aprovechar la caché de Docker
-COPY my-app/package*.json ./
+COPY package*.json ./
 
 # Instala las dependencias
 RUN npm install
 
 # Copia el resto de los archivos de la aplicación (node_modules se excluye via .dockerignore)
-COPY my-app/ .
+COPY . .
 
 # Expone el puerto 5173 (puerto por defecto de Vite)
 EXPOSE 5173

@@ -1,12 +1,71 @@
-# React + Vite
+# Maps Production Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema para el registro de incidencias - Frontend desarrollado con React + Vite.
 
-Currently, two official plugins are available:
+## 🚀 Desarrollo Local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Opción 1: Usando Docker (Recomendado)
 
-## Expanding the ESLint configuration
+```bash
+# Desde la raíz del proyecto
+docker-compose up --build
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# O desde la carpeta my-app
+cd my-app
+docker build -t maps-frontend .
+docker run -p 5173:5173 -v $(pwd):/app -v /app/node_modules maps-frontend
+```
+
+### Opción 2: Desarrollo Nativo
+
+```bash
+cd my-app
+npm install
+npm run dev
+```
+
+## 🔧 Scripts Disponibles
+
+- `npm run dev` - Inicia el servidor de desarrollo
+- `npm run build` - Construye la aplicación para producción
+- `npm run preview` - Preview de la build de producción
+- `npm run check` - Ejecuta Biome linting
+- `npm run format` - Formatea el código con Biome
+
+## 🏗️ Estructura del Proyecto
+
+```
+my-app/
+├── src/
+│   ├── features/           # Funcionalidades por módulos
+│   │   ├── auth/           # Autenticación
+│   │   ├── mapExplorer/    # Explorador de mapas
+│   │   └── incident*/      # Gestión de incidentes
+│   ├── shared/             # Componentes y utilidades compartidas
+│   │   ├── components/     # Componentes reutilizables
+│   │   ├── hooks/          # Custom hooks
+│   │   ├── utils/          # Utilidades (APIs, etc.)
+│   │   └── constants/      # Constantes globales
+│   └── routes/             # Configuración de rutas
+├── public/                 # Assets estáticos
+├── Dockerfile             # Configuración Docker
+└── .dockerignore          # Archivos ignorados por Docker
+```
+
+## 🌐 Variables de Entorno
+
+Crea un archivo `.env.local`:
+
+```bash
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+## 📦 Tecnologías Principales
+
+- **React 19** - Biblioteca de UI
+- **Vite** - Build tool y dev server
+- **React Router** - Enrutamiento
+- **Tailwind CSS** - Framework CSS
+- **Leaflet** - Mapas interactivos
+- **Axios** - Cliente HTTP
+- **Biome** - Linter y formateador
