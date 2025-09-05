@@ -12,7 +12,7 @@ const IncidentCardItem = ({ incident, className }) => {
     <article className={`bg-secondary  ${className}`}>
       <a
         href="#"
-        className="flex flex-col items-center bg-secondary border-t border-gray-300 shadow-sm md:flex-row md:max-w-xl hover:bg-header-500 "
+        className="flex flex-col items-start bg-secondary border-t border-gray-300 pt-1 shadow-sm md:flex-row md:max-w-xl hover:bg-header-500 "
       >
         {/* <img
           className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
