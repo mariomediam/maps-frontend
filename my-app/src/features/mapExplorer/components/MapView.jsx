@@ -12,6 +12,8 @@ import { useSearchParams } from "react-router-dom";
 import { getIncidents } from "@/features/incident/services/incidentApi";
 import FilterIcon from "@/shared/assets/icons/FilterIcon";
 import { MAP_ACTION_TYPES } from "@/shared/constants/mapConstants";
+import useIncidentsStore from "@/features/incident/store/incidentStore.js";
+
 
 // Función para crear un ícono SVG de marcador de posición personalizado
 const getColoredIcon = (color) => {
@@ -47,8 +49,11 @@ const MapView = ({ className, onToggleFilters }) => {
 	const [idProblemSelected, setIdProblemSelected] = useState(null);
 	const [tempMarker, setTempMarker] = useState(null);
 
-	const [incidents, setIncidents] = useState([]);
+	// const [incidents, setIncidents] = useState([]);
 	const [loading, setLoading] = useState(false);
+
+	const incidentsStored = useIncidentsStore((state) => state.incidentsStored)
+	const setIncidentsStored = useIncidentsStore((state) => state.setIncidentsStored)
 
 	// Obtener filtros de la URL
 	const idCategory = searchParams.get("idCategory");
@@ -67,7 +72,7 @@ const MapView = ({ className, onToggleFilters }) => {
 			console.log("Filtros aplicados:", filters); // Para debug
 			
 			const incidents = await getIncidents(filters);
-			setIncidents(incidents);
+			setIncidentsStored(incidents);
 		} catch (error) {
 			console.error("Error cargando incidentes:", error);
 		} finally {
@@ -141,7 +146,7 @@ const MapView = ({ className, onToggleFilters }) => {
 				{/* Marcadores normales */}
 				{actionType !== MAP_ACTION_TYPES.adding && (
 					<>
-						{incidents.map((incident) => (
+						{incidentsStored.map((incident) => (
 							<Marker
 								key={incident.id_incident}
 								position={[incident.latitude, incident.longitude]}
