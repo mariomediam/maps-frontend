@@ -9,7 +9,6 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useSearchParams } from "react-router-dom";
-import { getIncidents } from "@/features/incident/services/incidentApi";
 import FilterIcon from "@/shared/assets/icons/FilterIcon";
 import { MAP_ACTION_TYPES } from "@/shared/constants/mapConstants";
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
@@ -49,19 +48,16 @@ const MapView = ({ className, onToggleFilters }) => {
 	const [idProblemSelected, setIdProblemSelected] = useState(null);
 	const [tempMarker, setTempMarker] = useState(null);
 
-	// const [incidents, setIncidents] = useState([]);
-	const [loading, setLoading] = useState(false);
-
 	const incidentsStored = useIncidentsStore((state) => state.incidentsStored)
-	const setIncidentsStored = useIncidentsStore((state) => state.setIncidentsStored)
+	const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
+	const incidents = useIncidentsStore((state) => state.incidentsStored)
+	const isLoading = useIncidentsStore((state) => state.isLoading)
 
 	// Obtener filtros de la URL
 	const idCategory = searchParams.get("idCategory");
 	const idState = searchParams.get("idState");
 
 	const getIncidentsApi = async () => {
-		setLoading(true); // Mostrar loading
-		
 		try {
 			const filters = {};
 			
@@ -69,14 +65,14 @@ const MapView = ({ className, onToggleFilters }) => {
 			if (idCategory) filters.idCategory = idCategory;
 			if (idState) filters.idState = idState;
 			
-			console.log("Filtros aplicados:", filters); // Para debug
-			
-			const incidents = await getIncidents(filters);
-			setIncidentsStored(incidents);
+			// console.log("Filtros aplicados:", filters); // Para debug
+
+
+			await searchIncidentsStored(filters);
+
 		} catch (error) {
 			console.error("Error cargando incidentes:", error);
 		} finally {
-			setLoading(false); // Ocultar loading
 		}
 	};
 
@@ -95,7 +91,7 @@ const MapView = ({ className, onToggleFilters }) => {
 	return (
 		<div className={`w-full h-full relative ${className}`}>
 			{/* Overlay de loading */}
-			{loading && (
+			{isLoading && (
 				<div className="absolute inset-0 bg-secondary  flex items-center justify-center z-1000">
 					<div className="bg-white rounded-lg p-6 shadow-lg flex flex-col items-center">
 						<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mb-3"></div>
@@ -122,7 +118,7 @@ const MapView = ({ className, onToggleFilters }) => {
 				scrollWheelZoom={true}
 				style={{ height: "100%", width: "100%" }}
 				doubleClickZoom={false}
-				className={loading ? "opacity-50 pointer-events-none" : ""}
+				className={isLoading ? "opacity-50 pointer-events-none" : ""}
 			>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 				<AddMarkerOnDblClick

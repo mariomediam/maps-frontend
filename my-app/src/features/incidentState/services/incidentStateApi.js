@@ -7,8 +7,6 @@ const getIncidentStates = async () => {
 	try {
 		const api = useAxios();
 
-		console.log("Fetching states from:", URL); // Para debug
-
 		const {
 			data: { content },
 		} = await api.get(URL);

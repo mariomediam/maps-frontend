@@ -25,8 +25,6 @@ const getIncidents = async (filters = {}) => {
     const queryString = queryParams.toString();
     const URLIncidents = queryString ? `${URL}?${queryString}` : URL;
 
-    console.log("Fetching incidents from:", URLIncidents); // Para debug
-
     const {
       data: { content },
     } = await api.get(URLIncidents);

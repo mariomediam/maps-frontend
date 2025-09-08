@@ -18,9 +18,11 @@ const IncidentPhotography = ({ idPhotography }) => {
         } finally {
             setIsLoading(false);
         }
-      setUrlPhotography(url);
+      // setUrlPhotography(url);
     }
-    fetchIncidentPhotography();
+    if (idPhotography) {
+      fetchIncidentPhotography();
+    }
   }, [idPhotography]);
 
   // "photographs": [

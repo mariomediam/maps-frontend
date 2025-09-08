@@ -7,8 +7,6 @@ const getIncidentCategories = async () => {
 	try {
 		const api = useAxios();
 
-		console.log("Fetching categories from:", URL); // Para debug
-
 		const {
 			data: { content },
 		} = await api.get(URL);
