@@ -40,7 +40,7 @@ const AddMarkerOnDblClick = ({ action, setTempMarker }) => {
 	return null;
 };
 
-const MapView = ({ className, onToggleFilters }) => {
+const MapView = ({ className, onToggleFilters, hideReportButton = false }) => {
 	const [searchParams] = useSearchParams();
 	const position = [51.505, -0.09];
 
@@ -52,6 +52,7 @@ const MapView = ({ className, onToggleFilters }) => {
 	const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
 	const incidents = useIncidentsStore((state) => state.incidentsStored)
 	const isLoading = useIncidentsStore((state) => state.isLoading)
+	const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident)
 
 	// Obtener filtros de la URL
 	const idCategory = searchParams.get("idCategory");
@@ -100,29 +101,33 @@ const MapView = ({ className, onToggleFilters }) => {
 				</div>
 			)}
 
-			{/* Botón "Mostrar filtros" - Solo visible en móvil */}
-			<div className="bg-header-500 p-2 flex items-center justify-center md:hidden">
-				<button
-					type="button"
-					className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
-					onClick={onToggleFilters}
-				>
-					<div className="flex items-center gap-1">
-						<FilterIcon /> Mostrar filtros
-					</div>
-				</button>
-			</div>
+			{/* Botón "Mostrar filtros" - Solo visible en móvil y cuando no hay incidente seleccionado */}
+			{!hideReportButton && (
+				<div className="bg-header-500 p-2 flex items-center justify-center md:hidden">
+					<button
+						type="button"
+						className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
+						onClick={onToggleFilters}
+					>
+						<div className="flex items-center gap-1">
+							<FilterIcon /> Mostrar filtros
+						</div>
+					</button>
+				</div>
+			)}
 
 			{/* Botón "Reportar una incidencia" - Flotante sobre el mapa */}
-			<div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-1000">
-				<button
-					type="button"
-					className="bg-primary text-white px-6 py-3 rounded-lg shadow-lg hover:bg-primary/90 transition-colors font-medium text-sm"
-					onClick={() => setActionType(MAP_ACTION_TYPES.adding)}
-				>
-					Reportar una incidencia
-				</button>
-			</div>
+			{!hideReportButton && (
+				<div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-1000">
+					<button
+						type="button"
+						className="bg-primary text-white px-6 py-3 rounded-lg shadow-lg hover:bg-primary/90 transition-colors font-medium text-sm"
+						onClick={() => setActionType(MAP_ACTION_TYPES.adding)}
+					>
+						Reportar una incidencia
+					</button>
+				</div>
+			)}
 			<MapContainer
 				center={[-5.1955724, -80.6301423]}
 				zoom={14}
@@ -158,10 +163,11 @@ const MapView = ({ className, onToggleFilters }) => {
 								key={incident.id_incident}
 								position={[incident.latitude, incident.longitude]}
 								icon={getColoredIcon(incident.color_state)}
-								// eventHandlers={{
-								//   click: () => showProblem(incident.id),
-								//   popupclose: () => setAction(typeAction.listing)
-								// }}
+								eventHandlers={{
+								  mousedown: (e) => {
+									setSelectedIncident(incident);
+								  }
+								}}
 							>
 								<Popup>{incident.summary}</Popup>
 							</Marker>

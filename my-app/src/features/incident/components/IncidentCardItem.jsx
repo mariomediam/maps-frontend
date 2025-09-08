@@ -1,7 +1,9 @@
 import IncidentPhotography from "@/features/incident/components/IncidentPhotography";
 import { format } from "@formkit/tempo"
+import useIncidentsStore from "@/features/incident/store/incidentStore.js";
 
 const IncidentCardItem = ({ incident, className }) => {
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
 
   const { summary, id_incident, registration_date, category_name, photographs } = incident;
 
@@ -9,11 +11,17 @@ const IncidentCardItem = ({ incident, className }) => {
 
   const idPhotography = firstPhotography?.id_photography;
 
+  const handleSelectIncident = (e) => {
+    e.preventDefault();
+    setSelectedIncident(incident);
+  };
+
   return (
     <article className={`bg-secondary  ${className}`}>
       <a
         href="#"
-        className="flex flex-col items-start bg-secondary border-t border-gray-300 pt-1 shadow-sm md:flex-row md:max-w-xl hover:bg-header-500 "
+        onClick={handleSelectIncident}
+        className="flex flex-col items-start bg-secondary border-t border-gray-300 pt-1 shadow-sm md:flex-row md:max-w-xl hover:bg-header-500 cursor-pointer"
       >
         {/* <img
           className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"

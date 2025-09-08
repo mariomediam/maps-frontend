@@ -9,6 +9,8 @@ const getIncidents = async (filters = {}) => {
   try {
     const api = useAxios();
 
+
+
     // Construir parámetros de consulta correctamente
     const queryParams = new URLSearchParams();
 
@@ -28,6 +30,8 @@ const getIncidents = async (filters = {}) => {
     const {
       data: { content },
     } = await api.get(URLIncidents);
+
+    console.log(`Se encontraron ${content.length} incidentes fecha ${new Date().toISOString()}`);
 
     return content;
   } catch (error) {
