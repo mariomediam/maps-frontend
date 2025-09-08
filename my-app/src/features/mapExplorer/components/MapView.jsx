@@ -112,6 +112,17 @@ const MapView = ({ className, onToggleFilters }) => {
 					</div>
 				</button>
 			</div>
+
+			{/* Botón "Reportar una incidencia" - Flotante sobre el mapa */}
+			<div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-1000">
+				<button
+					type="button"
+					className="bg-primary text-white px-6 py-3 rounded-lg shadow-lg hover:bg-primary/90 transition-colors font-medium text-sm"
+					onClick={() => setActionType(MAP_ACTION_TYPES.adding)}
+				>
+					Reportar una incidencia
+				</button>
+			</div>
 			<MapContainer
 				center={[-5.1955724, -80.6301423]}
 				zoom={14}
