@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
 	MapContainer,
 	Marker,
@@ -43,16 +43,19 @@ const AddMarkerOnDblClick = ({ action, setTempMarker }) => {
 const MapView = ({ className, onToggleFilters, hideReportButton = false }) => {
 	const [searchParams] = useSearchParams();
 	const position = [51.505, -0.09];
+	const mapRef = useRef(null);
 
 	const [actionType, setActionType] = useState(MAP_ACTION_TYPES.listing);
 	const [idProblemSelected, setIdProblemSelected] = useState(null);
 	const [tempMarker, setTempMarker] = useState(null);
+	const [mapReady, setMapReady] = useState(false);
 
 	const incidentsStored = useIncidentsStore((state) => state.incidentsStored)
 	const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
 	const incidents = useIncidentsStore((state) => state.incidentsStored)
 	const isLoading = useIncidentsStore((state) => state.isLoading)
 	const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident)
+	const selectedIncident = useIncidentsStore((state) => state.selectedIncident)
 
 	// Obtener filtros de la URL
 	const idCategory = searchParams.get("idCategory");
@@ -129,12 +132,16 @@ const MapView = ({ className, onToggleFilters, hideReportButton = false }) => {
 				</div>
 			)}
 			<MapContainer
+				ref={mapRef}
 				center={[-5.1955724, -80.6301423]}
 				zoom={14}
 				scrollWheelZoom={true}
 				style={{ height: "100%", width: "100%" }}
 				doubleClickZoom={false}
 				className={isLoading ? "opacity-50 pointer-events-none" : ""}
+				tap={true}
+				touchZoom={true}
+				whenReady={() => setMapReady(true)}
 			>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 				<AddMarkerOnDblClick
@@ -165,6 +172,17 @@ const MapView = ({ className, onToggleFilters, hideReportButton = false }) => {
 								icon={getColoredIcon(incident.color_state)}
 								eventHandlers={{
 								  mousedown: (e) => {
+									setSelectedIncident(incident);
+									
+									// Forzar apertura del popup en móvil
+									setTimeout(() => {
+									  const marker = e.target;
+									  if (marker && marker.openPopup) {
+										marker.openPopup();
+									  }
+									}, 50);
+								  },
+								  click: (e) => {
 									setSelectedIncident(incident);
 								  }
 								}}
