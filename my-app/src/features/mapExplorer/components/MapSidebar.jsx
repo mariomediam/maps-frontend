@@ -5,7 +5,7 @@ import IncidentCard from "@/features/incident/components/IncidentCard.jsx";
 
 const MapSidebar = ({ className, onClose }) => {
   return (
-    <div className={`p-3 bg-white border-r ${className}`}>
+    <div className={`p-3 bg-white border-r ${className} overflow-y-auto`}>
       {/* Header con botón de cerrar - Solo visible en móvil */}
       <div className="flex items-center justify-between mb-4 md:hidden">
         <h2 className="text-lg font-semibold text-gray-800">Filtros</h2>
