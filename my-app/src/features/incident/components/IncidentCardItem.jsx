@@ -20,6 +20,7 @@ const IncidentCardItem = ({ incident, className }) => {
           alt={summary}
         /> */}
         
+        <div className="flex justify-between  w-full gap-1">
         <div className="flex flex-col justify-between leading-normal">
           <p className="mb-2 tracking-tight text-primary text-sm">
             {summary}
@@ -29,7 +30,12 @@ const IncidentCardItem = ({ incident, className }) => {
           </p>
         </div>
         
+        <div className="flex justify-end ">
         <IncidentPhotography idPhotography={idPhotography} />
+        </div>
+        
+
+        </div>
         
       </a>
     </article>

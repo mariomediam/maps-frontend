@@ -40,7 +40,7 @@ const IncidentCategorySelect = ({ className = "" }) => {
 
 	return (
 		<div className={className}>
-			<form className="max-w-sm mx-auto">
+			<form className="">
 				<label
 					htmlFor="incident_category_select"
 					className="text-[12px] text-gray-500 pb-0 mb-0"

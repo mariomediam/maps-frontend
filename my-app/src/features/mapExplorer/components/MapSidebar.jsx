@@ -19,20 +19,18 @@ const MapSidebar = ({ className, onClose }) => {
       </div>
 
       {/* Título para desktop */}
-      <h2 className="hidden md:block text-lg font-semibold text-gray-800 mb-4">
-        Filtros
-      </h2>
+      <div className="px-4">
+        <h2 className="hidden md:block text-lg font-semibold text-gray-800 mb-4">
+          Filtros
+        </h2>
 
-      {/* Filtros */}
-      <IncidentStateSelect />
+        {/* Filtros */}
+        <IncidentStateSelect />
+        <IncidentCategorySelect className="mt-4" />
 
-
-
-      <IncidentCategorySelect className="mt-4" />
-
-
-      <div className="mt-3">
-        <IncidentCard />
+        <div className="mt-3 flex justify-center">
+          <IncidentCard />
+        </div>
       </div>
     </div>
   );

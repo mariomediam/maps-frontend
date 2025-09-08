@@ -43,14 +43,14 @@ const IncidentPhotography = ({ idPhotography }) => {
   //             ],
 
   return (
-    <div className="min-w-20 mt-1 bg-amber-300">
+    <div className="w-16 h-16 flex-shrink-0">
       {isLoading || urlPhotography === "" ? (
         <div className="flex justify-center items-center h-full">
           <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
         </div>
       ) : (
         <img
-          className="h-auto max-w-full w-20 aspect-4/3 object-cover"
+          className="h-16 w-16 object-cover "
           src={urlPhotography}
           alt="image description"
         />
