@@ -1,4 +1,5 @@
 import IncidentPhotography from "@/features/incident/components/IncidentPhotography";
+import { format } from "@formkit/tempo"
 
 const IncidentCardItem = ({ incident, className }) => {
 
@@ -22,11 +23,11 @@ const IncidentCardItem = ({ incident, className }) => {
         
         <div className="flex justify-between  w-full gap-1">
         <div className="flex flex-col justify-between leading-normal">
-          <p className="mb-2 tracking-tight text-primary text-sm">
+          <p className="mb-2tracking-tight text-primary text-sm">
             {summary}
           </p>
-          <p className="mb-3 text-xs text-gray-500 ">
-            {registration_date}
+          <p className="mb-3  text-xs text-gray-500 ">
+            {format(registration_date, "DD/MM/YYYY HH:mm")}
           </p>
         </div>
         
