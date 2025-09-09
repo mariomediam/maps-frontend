@@ -1,35 +1,35 @@
-import { PrivateRoutes } from "@auth";
-import MapExplorerPage from "@features/mapExplorer/pages/MapExplorerPage";
-import { ErrorPage } from "@shared";
-import { createBrowserRouter } from "react-router-dom";
-import App from "@/App";
+import { PrivateRoutes } from '@auth';
+import MapExplorerPage from '@features/mapExplorer/pages/MapExplorerPage';
+import { ErrorPage } from '@shared';
+import { createBrowserRouter } from 'react-router-dom';
+import App from '@/App';
 
 const router = createBrowserRouter([
 	{
-		path: "/admin",
+		path: '/admin',
 		element: <PrivateRoutes />,
 		errorElement: <ErrorPage />,
 		children: [
 			{
-				path: "main",
+				path: 'main',
 				element: <MapExplorerPage />,
 			},
 		],
 	},
 
 	{
-		path: "/",
+		path: '/',
 		element: <App />,
 		errorElement: <ErrorPage />,
 	},
 	{
-		path: "map-explorer",
+		path: 'map-explorer',
 		element: <MapExplorerPage />,
 		errorElement: <MapExplorerPage />,
 	},
 	// Ruta catch-all para manejar 404s
 	{
-		path: "*",
+		path: '*',
 		element: <ErrorPage />,
 	},
 ]);

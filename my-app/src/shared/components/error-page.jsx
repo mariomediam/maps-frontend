@@ -1,4 +1,4 @@
-import { Link, useRouteError } from "react-router-dom";
+import { Link, useRouteError } from 'react-router-dom';
 
 export default function ErrorPage() {
 	const error = useRouteError();
@@ -10,19 +10,19 @@ export default function ErrorPage() {
 		<div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
 			<div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
 				<div className="mb-6">
-					<div className="text-6xl mb-4">{is404 ? "🗺️" : "⚠️"}</div>
+					<div className="text-6xl mb-4">{is404 ? '🗺️' : '⚠️'}</div>
 					<h1 className="text-3xl font-bold text-gray-800 mb-2">
-						{is404 ? "Página no encontrada" : "¡Oops! Algo salió mal"}
+						{is404 ? 'Página no encontrada' : '¡Oops! Algo salió mal'}
 					</h1>
 					<p className="text-gray-600 mb-4">
 						{is404
-							? "La página que buscas no existe o ha sido movida."
-							: "Ha ocurrido un error inesperado."}
+							? 'La página que buscas no existe o ha sido movida.'
+							: 'Ha ocurrido un error inesperado.'}
 					</p>
 					{error && (
 						<div className="bg-red-50 border border-red-200 rounded-md p-3 mb-4">
 							<p className="text-sm text-red-600">
-								<strong>Error:</strong> {error.status} -{" "}
+								<strong>Error:</strong> {error.status} -{' '}
 								{error.statusText || error.message}
 							</p>
 						</div>

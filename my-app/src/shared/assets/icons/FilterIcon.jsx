@@ -1,8 +1,8 @@
 const FilterIcon = ({
-	className = "",
+	className = '',
 	width = 24,
 	height = 24,
-	fill = "currentColor",
+	fill = 'currentColor',
 	...props
 }) => {
 	return (

@@ -1,17 +1,17 @@
-import { diffMilliseconds } from "@formkit/tempo";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import { diffMilliseconds } from '@formkit/tempo';
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 if (!API_BASE_URL) {
 	console.error(
-		"VITE_API_BASE_URL no está definida en las variables de entorno",
+		'VITE_API_BASE_URL no está definida en las variables de entorno',
 	);
-	throw new Error("VITE_API_BASE_URL no está definida");
+	throw new Error('VITE_API_BASE_URL no está definida');
 }
 
-const TOKEN_KEY = "mapsTokens";
+const TOKEN_KEY = 'mapsTokens';
 
 const useAxios = () => {
 	// Obtener tokens del localStorage
@@ -21,7 +21,7 @@ const useAxios = () => {
 	const axiosInstance = axios.create({
 		baseURL: API_BASE_URL,
 		headers: {
-			"Content-Type": "application/json",
+			'Content-Type': 'application/json',
 		},
 	});
 
@@ -66,8 +66,8 @@ const useAxios = () => {
 			);
 
 			// Actualizar tokens
-			response.data["refresh"] = authTokens.refresh;
-			response.data["diffTime"] = authTokens.diffTime;
+			response.data['refresh'] = authTokens.refresh;
+			response.data['diffTime'] = authTokens.diffTime;
 
 			localStorage.setItem(TOKEN_KEY, JSON.stringify(response.data));
 			authTokens = response.data;
@@ -79,7 +79,7 @@ const useAxios = () => {
 		} catch (error) {
 			// Si falla el refresh, limpiar tokens
 			localStorage.removeItem(TOKEN_KEY);
-			console.error("Error al refrescar token:", error);
+			console.error('Error al refrescar token:', error);
 
 			// Remover header de autorización para esta request
 			delete req.headers.Authorization;
@@ -95,7 +95,7 @@ const useAxios = () => {
 			if (error.response?.status === 401) {
 				// Token inválido, limpiar storage
 				localStorage.removeItem(TOKEN_KEY);
-				console.error("Error de autenticación:", error);
+				console.error('Error de autenticación:', error);
 			}
 			return Promise.reject(error);
 		},

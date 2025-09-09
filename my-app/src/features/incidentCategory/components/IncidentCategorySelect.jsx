@@ -1,20 +1,20 @@
-import { getIncidentCategories } from "@features/incidentCategory/services/incidentCategoryApi";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { getIncidentCategories } from '@features/incidentCategory/services/incidentCategoryApi';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
-const IncidentCategorySelect = ({ className = "" }) => {
+const IncidentCategorySelect = ({ className = '' }) => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [incidentCategories, setIncidentCategories] = useState([
-		{ id_category: 0, description: "Cargando..." },
+		{ id_category: 0, description: 'Cargando...' },
 	]);
 
 	// Obtener el valor actual del parámetro de URL
-	const currentCategoryId = searchParams.get("idCategory") || "0";
+	const currentCategoryId = searchParams.get('idCategory') || '0';
 
 	useEffect(() => {
 		const fetchIncidentCategories = async () => {
 			const categories = await getIncidentCategories();
-			categories.unshift({ id_category: 0, description: "Todos" });
+			categories.unshift({ id_category: 0, description: 'Todos' });
 			setIncidentCategories(categories);
 		};
 		fetchIncidentCategories();
@@ -27,12 +27,12 @@ const IncidentCategorySelect = ({ className = "" }) => {
 		// Actualizar los parámetros de URL
 		const newSearchParams = new URLSearchParams(searchParams);
 		
-		if (selectedCategoryId === "0") {
+		if (selectedCategoryId === '0') {
 			// Si es "Todos", eliminar el parámetro
-			newSearchParams.delete("idCategory");
+			newSearchParams.delete('idCategory');
 		} else {
 			// Establecer el nuevo valor
-			newSearchParams.set("idCategory", selectedCategoryId);
+			newSearchParams.set('idCategory', selectedCategoryId);
 		}
 		
 		setSearchParams(newSearchParams);

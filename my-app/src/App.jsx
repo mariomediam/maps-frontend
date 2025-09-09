@@ -1,5 +1,5 @@
-import SystemDashboardPage from "@features/dashboards/system/pages/SystemDashboardPage";
 
+import SystemDashboardPage from '@features/dashboards/system/pages/SystemDashboardPage';
 function App() {
 	return <SystemDashboardPage />;
 }

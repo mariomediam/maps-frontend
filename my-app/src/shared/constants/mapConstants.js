@@ -2,18 +2,18 @@
  * Tipos de acciones para el mapa
  */
 export const MAP_ACTION_TYPES = {
-	adding: "adding",
-	seeing: "seeing",
-	listing: "listing",
+	adding: 'adding',
+	seeing: 'seeing',
+	listing: 'listing',
 };
 
 /**
  * Estados del mapa
  */
 export const MAP_STATES = {
-	idle: "idle",
-	loading: "loading",
-	error: "error",
+	idle: 'idle',
+	loading: 'loading',
+	error: 'error',
 };
 
 /**

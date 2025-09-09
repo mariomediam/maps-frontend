@@ -1,20 +1,20 @@
-import { getIncidentStates } from "@features/incidentState/services/incidentStateApi";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { getIncidentStates } from '@features/incidentState/services/incidentStateApi';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const IncidentStateSelect = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [incidentStates, setIncidentStates] = useState([
-		{ id_state: 0, description: "Cargando..." },
+		{ id_state: 0, description: 'Cargando...' },
 	]);
 
 	// Obtener el valor actual del parámetro de URL
-	const currentStateId = searchParams.get("idState") || "0";
+	const currentStateId = searchParams.get('idState') || '0';
 
 	useEffect(() => {
 		const fetchIncidentStates = async () => {
 			const states = await getIncidentStates();
-			states.unshift({ id_state: 0, description: "Todos" });
+			states.unshift({ id_state: 0, description: 'Todos' });
 			setIncidentStates(states);
 		};
 		fetchIncidentStates();
@@ -27,12 +27,12 @@ const IncidentStateSelect = () => {
 		// Actualizar los parámetros de URL
 		const newSearchParams = new URLSearchParams(searchParams);
 		
-		if (selectedStateId === "0") {
+		if (selectedStateId === '0') {
 			// Si es "Todos", eliminar el parámetro
-			newSearchParams.delete("idState");
+			newSearchParams.delete('idState');
 		} else {
 			// Establecer el nuevo valor
-			newSearchParams.set("idState", selectedStateId);
+			newSearchParams.set('idState', selectedStateId);
 		}
 		
 		setSearchParams(newSearchParams);

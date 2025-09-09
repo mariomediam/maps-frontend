@@ -1,11 +1,11 @@
-import { diffMilliseconds } from "@formkit/tempo";
-import { jwtDecode } from "jwt-decode";
-import { createContext, useCallback, useMemo, useState } from "react";
+import { diffMilliseconds } from '@formkit/tempo';
+import { jwtDecode } from 'jwt-decode';
+import { createContext, useCallback, useMemo, useState } from 'react';
 
 const AuthContext = createContext();
 
 // Constantes
-const TOKEN_KEY = "mapsTokens";
+const TOKEN_KEY = 'mapsTokens';
 
 // Funciones auxiliares
 const getStoredTokens = () => {
@@ -13,7 +13,7 @@ const getStoredTokens = () => {
 		const tokens = localStorage.getItem(TOKEN_KEY);
 		return tokens ? JSON.parse(tokens) : null;
 	} catch (error) {
-		console.error("Error al parsear tokens del localStorage:", error);
+		console.error('Error al parsear tokens del localStorage:', error);
 		return null;
 	}
 };
@@ -22,7 +22,7 @@ const decodeToken = (token) => {
 	try {
 		return jwtDecode(token);
 	} catch (error) {
-		console.error("Error al decodificar token:", error);
+		console.error('Error al decodificar token:', error);
 		return null;
 	}
 };
@@ -40,16 +40,16 @@ export const AuthProvider = ({ children }) => {
 		const tokens = getStoredTokens();
 		if (tokens) {
 			const decoded = decodeToken(tokens.access);
-			return decoded?.user_id?.trim() || "";
+			return decoded?.user_id?.trim() || '';
 		}
-		return "";
+		return '';
 	});
 
 	const [loading, setLoading] = useState(false);
 
 	// Función de login optimizada
 	const setAuthContextLogin = useCallback((pUserName, pAuthTokens, pUser) => {
-		const trimmedUserName = pUserName?.trim() || "";
+		const trimmedUserName = pUserName?.trim() || '';
 		setUserName(trimmedUserName);
 		setAuthTokens(pAuthTokens);
 		setUser(pUser);
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 	const logoutUser = useCallback(() => {
 		setAuthTokens(null);
 		setUser(null);
-		setUserName("");
+		setUserName('');
 		localStorage.removeItem(TOKEN_KEY);
 	}, []);
 

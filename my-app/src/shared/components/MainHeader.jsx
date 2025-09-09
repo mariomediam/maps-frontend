@@ -1,6 +1,6 @@
-import ButtonSecondary from "@shared/components/ButtonSecondary";
-import { useNavigate } from "react-router-dom";
-import escudo from "@/shared/assets/images/escudo-mpp.png";
+import ButtonSecondary from '@shared/components/ButtonSecondary';
+import { useNavigate } from 'react-router-dom';
+import escudo from '@/shared/assets/images/escudo-mpp.png';
 
 const MainHeader = () => {
 	const navigate = useNavigate();

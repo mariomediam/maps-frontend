@@ -1,27 +1,27 @@
-import React from "react";
+import React from 'react';
 
 const ButtonSecondary = ({
 	texto,
 	onClick,
 	disabled = false,
-	type = "button",
-	className = "",
+	type = 'button',
+	className = '',
 	...props
 }) => {
 	const baseClasses = [
-		"border",
-		"focus:outline-none",
-		"text-center",
-		"cursor-pointer",
-		"transition-colors",
-		"duration-200",
-		"ease-in-out",
-		"disabled:opacity-50",
-		"disabled:cursor-not-allowed",
+		'border',
+		'focus:outline-none',
+		'text-center',
+		'cursor-pointer',
+		'transition-colors',
+		'duration-200',
+		'ease-in-out',
+		'disabled:opacity-50',
+		'disabled:cursor-not-allowed',
 		className,
 	]
 		.filter(Boolean)
-		.join(" ");
+		.join(' ');
 
 	return (
 		<button

@@ -1,23 +1,24 @@
-import L from "leaflet";
-import { useEffect, useState } from "react";
+import L from 'leaflet';
+import { useEffect, useState } from 'react';
 import {
 	MapContainer,
 	Marker,
 	Popup,
 	TileLayer,
 	useMapEvents,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { useSearchParams } from "react-router-dom";
-import FilterIcon from "@/shared/assets/icons/FilterIcon";
-import { MAP_ACTION_TYPES } from "@/shared/constants/mapConstants";
-import useIncidentsStore from "@/features/incident/store/incidentStore.js";
+} from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { useSearchParams } from 'react-router-dom';
+import FilterIcon from '@/shared/assets/icons/FilterIcon';
+import { MAP_ACTION_TYPES } from '@/shared/constants/mapConstants';
+import useIncidentsStore from '@/features/incident/store/incidentStore.js';
+
 
 
 // Función para crear un ícono SVG de marcador de posición personalizado
 const getColoredIcon = (color) => {
 	return L.divIcon({
-		className: "",
+		className: '',
 		html: `
 		<svg width="32" height="32" viewBox="0 0 32 32">
 		  <path d="M16 2C10.477 2 6 6.477 6 12c0 7.732 8.003 17.292 8.343 17.677a1 1 0 0 0 1.314 0C17.997 29.292 26 19.732 26 12c0-5.523-4.477-10-10-10zm0 13.5A3.5 3.5 0 1 1 16 8a3.5 3.5 0 0 1 0 7.5z" fill="${color}" stroke="#333" stroke-width="2"/>
@@ -40,6 +41,10 @@ const AddMarkerOnDblClick = ({ action, setTempMarker }) => {
 	return null;
 };
 
+
+
+
+
 const MapView = ({ className, onToggleFilters }) => {
 	const [searchParams] = useSearchParams();
 	const position = [51.505, -0.09];
@@ -48,14 +53,15 @@ const MapView = ({ className, onToggleFilters }) => {
 	const [idProblemSelected, setIdProblemSelected] = useState(null);
 	const [tempMarker, setTempMarker] = useState(null);
 
-	const incidentsStored = useIncidentsStore((state) => state.incidentsStored)
-	const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
-	const incidents = useIncidentsStore((state) => state.incidentsStored)
-	const isLoading = useIncidentsStore((state) => state.isLoading)
+	const incidentsStored = useIncidentsStore((state) => state.incidentsStored);
+	const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored);
+	const incidents = useIncidentsStore((state) => state.incidentsStored);
+	const isLoading = useIncidentsStore((state) => state.isLoading);
+	const setIncidentSelectedFromStore = useIncidentsStore((state) => state.setIncidentSelectedFromStore);
 
 	// Obtener filtros de la URL
-	const idCategory = searchParams.get("idCategory");
-	const idState = searchParams.get("idState");
+	const idCategory = searchParams.get('idCategory');
+	const idState = searchParams.get('idState');
 
 	const getIncidentsApi = async () => {
 		try {
@@ -71,7 +77,7 @@ const MapView = ({ className, onToggleFilters }) => {
 			await searchIncidentsStored(filters);
 
 		} catch (error) {
-			console.error("Error cargando incidentes:", error);
+			console.error('Error cargando incidentes:', error);
 		} finally {
 		}
 	};
@@ -87,6 +93,21 @@ const MapView = ({ className, onToggleFilters }) => {
 			setTempMarker(null);
 		}
 	}, [actionType]);
+
+	const MarkerOnClick = (id_incident ) => {
+		setIncidentSelectedFromStore(id_incident);
+	};
+
+	const MapContainerOnClick = ({ opcion = "null" }) => {
+		useMapEvents({
+			click(e) {
+				setIncidentSelectedFromStore(opcion);
+			},
+		});
+		return null;
+	};
+	
+	
 
 	return (
 		<div className={`w-full h-full relative ${className}`}>
@@ -127,20 +148,22 @@ const MapView = ({ className, onToggleFilters }) => {
 				center={[-5.1955724, -80.6301423]}
 				zoom={14}
 				scrollWheelZoom={true}
-				style={{ height: "100%", width: "100%" }}
+				style={{ height: '100%', width: '100%' }}
 				doubleClickZoom={false}
-				className={isLoading ? "opacity-50 pointer-events-none" : ""}
+				className={isLoading ? 'opacity-50 pointer-events-none' : ''}
+				
 			>
 				<TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 				<AddMarkerOnDblClick
 					action={actionType}
 					setTempMarker={setTempMarker}
 				/>
+				<MapContainerOnClick opcion="null" />
 				{/* Marcador temporal al agregar */}
 				{actionType === MAP_ACTION_TYPES.adding && tempMarker && (
 					<Marker
 						position={tempMarker}
-						icon={getColoredIcon("#C82333")}
+						icon={getColoredIcon('#C82333')}
 						draggable={true}
 						eventHandlers={{
 							dragend: (e) => {
@@ -158,10 +181,10 @@ const MapView = ({ className, onToggleFilters }) => {
 								key={incident.id_incident}
 								position={[incident.latitude, incident.longitude]}
 								icon={getColoredIcon(incident.color_state)}
-								// eventHandlers={{
-								//   click: () => showProblem(incident.id),
+								eventHandlers={{
+								  click: () => MarkerOnClick(incident.id_incident),
 								//   popupclose: () => setAction(typeAction.listing)
-								// }}
+								}}
 							>
 								<Popup>{incident.summary}</Popup>
 							</Marker>
