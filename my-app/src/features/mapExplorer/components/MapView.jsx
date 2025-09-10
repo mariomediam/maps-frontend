@@ -48,8 +48,6 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
 
 	useEffect(() => {
 		if (incidentSelected && isMobile) {
-			console.log('MapCenterController: Centrando mapa en:', incidentSelected.id_incident);
-			
 			// Usar setTimeout para asegurar que el layout se haya actualizado
 			setTimeout(() => {
 				const markerPosition = [incidentSelected.latitude, incidentSelected.longitude];
@@ -57,8 +55,6 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
 				// Invalidar el tamaño del mapa y luego centrar
 				map.invalidateSize();
 				map.setView(markerPosition, 16, { animate: true, duration: 1 });
-				
-				console.log('Mapa centrado en:', markerPosition);
 			}, 150);
 		}
 	}, [incidentSelected, isMobile, map]);
@@ -66,11 +62,8 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
 	// Efecto para manejar la expansión/contracción del mapa
 	useEffect(() => {
 		if (isMobile && incidentSelected) {
-			console.log('MapCenterController: Redimensionando mapa, expandido:', isMapExpanded);
-			
 			// Usar setTimeout para asegurar que el cambio de layout se haya aplicado
 			setTimeout(() => {
-				console.log('Invalidando tamaño del mapa...');
 				map.invalidateSize();
 				
 				// Si está expandido, mantener el centro actual
@@ -118,7 +111,6 @@ const MapView = ({ className, onToggleFilters }) => {
 	// Función para abrir popup del marcador seleccionado y centrar mapa
 	useEffect(() => {
 		if (incidentSelected && markersRef.current[incidentSelected.id_incident]) {
-			console.log('Abriendo popup para incidente:', incidentSelected.id_incident);
 			markersRef.current[incidentSelected.id_incident].openPopup();
 		}
 	}, [incidentSelected]);
@@ -128,27 +120,17 @@ const MapView = ({ className, onToggleFilters }) => {
 	const MapContainerOnClick = ({ opcion = "null" }) => {
 		useMapEvents({
 			click(e) {
-				console.log('MapContainerOnClick - Estado:', {
-					isMobile,
-					isMapExpanded,
-					incidentSelected: !!incidentSelected,
-					opcion
-				});
-				
 				// No limpiar selección si el mapa está expandido en móvil
 				if (isMobile && isMapExpanded) {
-					console.log('🚫 Clic en mapa expandido - NO limpiar selección');
 					return;
 				}
 				
 				// No limpiar si hay un incidente seleccionado en móvil (pero no expandido)
 				if (isMobile && incidentSelected && !isMapExpanded) {
-					console.log('🚫 Clic en móvil con incidente - NO limpiar selección');
 					return;
 				}
 				
 				// Solo limpiar selección en casos específicos
-				console.log('✅ Limpiando selección de incidente');
 				setIncidentSelectedFromStore(opcion);
 			},
 		});
@@ -157,14 +139,6 @@ const MapView = ({ className, onToggleFilters }) => {
 	
 	
 
-	// Debug: log del estado que controla la visibilidad del botón
-	console.log('🎯 MapView render state:', {
-		isMobile,
-		incidentSelected: !!incidentSelected,
-		incidentSelectedId: incidentSelected?.id_incident,
-		isMapExpanded,
-		showButton: isMobile && incidentSelected
-	});
 
 	return (
 		<div className={`w-full relative ${className}`}>
@@ -268,17 +242,14 @@ const MapView = ({ className, onToggleFilters }) => {
 										}
 									}}
 									eventHandlers={{
-									  click: () => {
-										console.log('Marker clicked directly:', incident.id_incident);
-										console.log('About to call setIncidentSelectedFromStore directly');
-										// Llamar directamente a la función del store
-										setIncidentSelectedFromStore(incident.id_incident);
-									  },
-									  mousedown: () => {
-										console.log('Marker mousedown:', incident.id_incident);
-										// Backup: también intentar con mousedown
-										setIncidentSelectedFromStore(incident.id_incident);
-									  }
+								  click: () => {
+									// Llamar directamente a la función del store
+									setIncidentSelectedFromStore(incident.id_incident);
+								  },
+								  mousedown: () => {
+									// Backup: también intentar con mousedown
+									setIncidentSelectedFromStore(incident.id_incident);
+								  }
 									}}
 									draggable={false}
 								>

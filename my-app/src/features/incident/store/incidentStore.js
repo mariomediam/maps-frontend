@@ -38,16 +38,9 @@ const useIncidentsStore = create((set, get) => ({
 
   toggleShowMapFilters: () => set({ showMapFilters: !get().showMapFilters }),
   toggleShowMapDetail: () => set({ showMapDetail: !get().showMapDetail }),
-  toggleMapExpanded: () => {
-    const currentExpanded = get().isMapExpanded;
-    console.log('🔄 toggleMapExpanded:', currentExpanded, '->', !currentExpanded);
-    set({ isMapExpanded: !currentExpanded });
-  },
+  toggleMapExpanded: () => set({ isMapExpanded: !get().isMapExpanded }),
 
   setIncidentSelectedFromStore: (idIncident) => {
-    console.log('🔥 setIncidentSelectedFromStore llamado con:', idIncident);
-    console.trace('Stack trace para ver de dónde viene la llamada');
-    
     if (idIncident) {
       const incident = get().incidentsStored.find(
         (incident) => incident.id_incident === idIncident
@@ -62,14 +55,6 @@ const useIncidentsStore = create((set, get) => ({
         const newId = idIncident?.toString();
         const shouldResetExpanded = !currentIncident || currentId !== newId;
         
-        console.log('🔍 Debug comparación:', {
-          currentIncidentId: currentIncident?.id_incident,
-          newIncidentId: idIncident,
-          sameIncident: currentIncident?.id_incident === idIncident,
-          shouldResetExpanded
-        });
-        
-        console.log('✅ Seleccionando incidente:', incident.id_incident, 'resetear expanded:', shouldResetExpanded);
         set({ 
           incidentSelected: incident,
           showMapDetail: true,
@@ -78,7 +63,6 @@ const useIncidentsStore = create((set, get) => ({
         });
       }
     } else {
-      console.log('🚫 Limpiando selección de incidente');
       set({ 
         incidentSelected: null,
         showMapDetail: false,

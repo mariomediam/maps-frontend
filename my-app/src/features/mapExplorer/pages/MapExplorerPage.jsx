@@ -57,18 +57,6 @@ const MapExplorerPage = () => {
 
 	  
 
-	// Debug: log del estado de renderizado en MapExplorerPage
-	console.log('🏠 MapExplorerPage render state:', {
-		isMobile,
-		showMapFilters,
-		showMapDetail,
-		incidentSelected: !!incidentSelected,
-		incidentSelectedId: incidentSelected?.id_incident,
-		isMapExpanded,
-		renderCondition1: showMapFilters && !showMapDetail,
-		renderCondition2: showMapDetail && incidentSelected,
-		renderCondition3: !showMapFilters && !showMapDetail
-	});
 
 	return (
 		<div className="h-screen flex flex-col">
@@ -89,16 +77,13 @@ const MapExplorerPage = () => {
 							// Incidente seleccionado: mapa + detalle
 							<div className="w-full h-full flex flex-col relative">
 								{/* Botón Expandir/Contraer - Fijo en la parte superior */}
-								<div className="bg-red-500 p-2 flex items-center justify-center border-4 border-yellow-400 z-50 shrink-0">
+								<div className="bg-header-500 p-2 flex items-center justify-center shrink-0">
 									<button
 										type="button"
-										className="bg-blue-500 text-white text-lg font-bold px-6 py-3 border-2 border-black cursor-pointer"
-										onClick={() => {
-											console.log('🔘 Botón clickeado desde MapExplorerPage! Estado:', { isMapExpanded });
-											toggleMapExpanded();
-										}}
+										className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
+										onClick={toggleMapExpanded}
 									>
-										{isMapExpanded ? '🔽 CONTRAER MAPA 🔽' : '🔼 EXPANDIR MAPA 🔼'}
+										{isMapExpanded ? 'Contraer mapa' : 'Expandir mapa'}
 									</button>
 								</div>
 								
