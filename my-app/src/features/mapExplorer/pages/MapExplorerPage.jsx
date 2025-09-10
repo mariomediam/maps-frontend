@@ -26,27 +26,21 @@ const MapExplorerPage = () => {
 			<MainHeader />
 			<div>
 				<p>
-				{isMobile ? 'Mobile' : 'Desktop'}
+				{isMobile ? 'Mobile' : 'Desktop'} - {incidentSelected ? "Incidente seleccionado" : "Incidente no seleccionado"}
 					</p>
-					{JSON.stringify(incidentSelected)}
+					
 
 			</div>
-			<div className="flex flex-1">
-				{/* Sidebar - Desktop: siempre visible | Móvil: solo cuando showMobileFilters es true */}
+			<div className={`flex flex-1 ${isMobile && incidentSelected ? "flex-col flex-col-reverse" : ""}`}>
+				
 				<MapSidebar
-					className={`
-						w-full md:w-1/3
-						${showMapFilters ? 'block' : 'hidden md:block'}
-					`}
+					className=""
 					onClose={() => setShowMapFilters(false)}
 				/>
 
-				{/* MapView - Desktop: siempre visible | Móvil: solo cuando showMobileFilters es false */}
+				
 				<MapView
-					className={`
-						w-full md:w-2/3
-						${showMapFilters ? 'hidden md:block' : 'block'}
-					`}
+					className=""
 					onToggleFilters={toggleShowMapFilters}
 				/>
 			</div>

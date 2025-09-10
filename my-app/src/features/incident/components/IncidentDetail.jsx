@@ -1,5 +1,9 @@
-export const IncidentDetail = () => {
+export const IncidentDetail = ({ incident, className }) => {
+  // const { showMapFilters, toggleShowMapFilters, setShowMapFilters, incidentSelected } = useIncidentsStore();
+
   return (
-    <div>IncidentDetail</div>
-  )
-}
+    <div className={className}>
+      <p>Incidente id: {incident?.id_incident}</p>
+    </div>
+  );
+};
