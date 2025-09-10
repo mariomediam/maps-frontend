@@ -1,41 +1,60 @@
+import { useEffect, useState } from 'react';
 import IncidentFilter from "@/features/incident/components/IncidentFilter.jsx";
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
 import { IncidentDetail } from "@/features/incident/components/IncidentDetail.jsx";
 import useWindowStore from "@/shared/store/windowStore";
-import { useState, useEffect } from "react";
 
 const MapSidebar = ({ className, onClose }) => {
   const incidentSelected = useIncidentsStore((state) => state.incidentSelected);
-  const isMobile = useWindowStore((state) => state.isMobile);
-  const [classNameSideBar, setClassNameSideBar] = useState("");
   const showMapFilters = useIncidentsStore((state) => state.showMapFilters);
+  const showMapDetail = useIncidentsStore((state) => state.showMapDetail);
+  const isMobile = useWindowStore((state) => state.isMobile);
+  const [classNameFilter, setClassNameFilter] = useState("");
+  const [classNameDetail, setClassNameDetail] = useState("");
 
-
-  const getClassNameSideBar = () => {
-    let className = "";
-    if (isMobile && !showMapFilters && !incidentSelected) {
-      return "hidden";
-    }
-    if (isMobile && (showMapFilters || incidentSelected)) {
-      return "w-full";
-    }
+  const getClassNameFilter = () => {
+    // En desktop: mostrar cuando showMapFilters es true y no hay detalle
     if (!isMobile) {
-      return "w-1/3";
+      return showMapFilters && !showMapDetail ? "h-full" : "hidden";
     }
-    return className;
-  }
+    
+    // En móvil: mostrar cuando showMapFilters es true
+    if (isMobile && showMapFilters) {
+      return "h-full";
+    }
+    
+    return "hidden";
+  };
+
+  const getClassNameDetail = () => {
+    // En desktop: mostrar cuando showMapDetail es true
+    if (!isMobile) {
+      return showMapDetail && incidentSelected ? "h-full" : "hidden";
+    }
+    
+    // En móvil: mostrar cuando hay incidente seleccionado y showMapDetail es true
+    if (isMobile && showMapDetail && incidentSelected) {
+      return "h-full";
+    }
+    
+    return "hidden";
+  };
 
   useEffect(() => {
-    setClassNameSideBar(getClassNameSideBar());
-  }, [incidentSelected, isMobile, showMapFilters]);
-  
+    setClassNameFilter(getClassNameFilter());
+  }, [incidentSelected, isMobile, showMapFilters, showMapDetail]);
 
+  useEffect(() => {
+    setClassNameDetail(getClassNameDetail());
+  }, [incidentSelected, isMobile, showMapFilters, showMapDetail]);
+
+  
   return (
-    <div className={classNameSideBar}>
-      <IncidentFilter className="" onClose={onClose} />
+    <div className={`${className} flex flex-col`}>
+      <IncidentFilter className={classNameFilter} onClose={onClose} />
       <IncidentDetail
         incident={incidentSelected}
-        className=""
+        className={classNameDetail}
         onClose={onClose}
       />
     </div>
