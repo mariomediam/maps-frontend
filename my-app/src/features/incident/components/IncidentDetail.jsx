@@ -1,7 +1,8 @@
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { getIncidentPhotographyById } from "@/features/incident/services/incidentApi.js";
 import IncidentPthotographyCarousel from "@/features/incident/components/IncidentPthotographyCarousel.jsx";
+import { format } from "@formkit/tempo";
 
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
@@ -56,7 +57,7 @@ const FONT_STATE_COLOR = {
 //   "color_state": "#C82333"
 // }
 
-export const IncidentDetail = ({ incident, className, onClose }) => {
+export const IncidentDetail = memo(({ incident, className, onClose }) => {
   const closeIncidentDetail = useIncidentsStore(
     (state) => state.closeIncidentDetail
   );
@@ -75,6 +76,8 @@ export const IncidentDetail = ({ incident, className, onClose }) => {
     color_state,
     photographs = [],
     id_incident = 0,
+    inspector_username = "",
+    registration_date = "",
   } = incident;
 
   const [photographsWithUrl, setPhotographsWithUrl] = useState(photographs);
@@ -84,7 +87,6 @@ export const IncidentDetail = ({ incident, className, onClose }) => {
   //   try {
   //     setIsLoadingPhotographs(true);
   //     const fetchPhotographsWithUrl = async () => {
-      
 
   //       const photographsWithUrl = [];
   //       for (const photograph of photographs) {
@@ -106,33 +108,61 @@ export const IncidentDetail = ({ incident, className, onClose }) => {
   //     console.log("******** 4 **************");
   //   }
 
-    
   // }, [photographs]);
 
   useEffect(() => {
     let cancelled = false;
-  
+
+    // Solo ejecutar si hay fotografías y el incidente tiene un ID válido
+    if (!incident?.id_incident || !photographs?.length) {
+      return;
+    }
+
     (async () => {
       try {
         setIsLoadingPhotographs(true);
-  
+
         // Descarga en paralelo (más rápido y un solo setState después)
-        const ids = (photographs ?? []).map(p => p.id_photography);
-        const results = await Promise.all(ids.map(id => getIncidentPhotographyById(id)));
-  
+        const ids = photographs.map((p) => p.id_photography);
+        const results = await Promise.all(
+          ids.map((id) => getIncidentPhotographyById(id))
+        );
+
+        // Construir URLs para las fotografías si no las tienen
+        const photographsWithUrls = results.map((photo) => {
+          if (photo.url) {
+            return photo; // Ya tiene URL
+          }
+
+          // Construir URL usando r2_key si no tiene URL
+          if (photo.r2_key) {
+            const baseUrl =
+              import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+            return {
+              ...photo,
+              url: `${baseUrl}/images/${photo.r2_key}`,
+            };
+          }
+
+          return photo;
+        });
+
         if (!cancelled) {
-          setPhotographsWithUrl(results);
+          setPhotographsWithUrl(photographsWithUrls);
         }
       } catch (err) {
-        if (!cancelled) console.error("Error fetching photographs with url:", err);
+        if (!cancelled)
+          console.error("Error fetching photographs with url:", err);
       } finally {
         if (!cancelled) setIsLoadingPhotographs(false);
       }
     })();
-  
-    return () => { cancelled = true; };
-    // Dependencia estable para no re-ejecutar por referencias nuevas:
-  }, [id_incident]);
+
+    return () => {
+      cancelled = true;
+    };
+    // Dependencias más específicas para evitar re-ejecuciones innecesarias
+  }, [incident?.id_incident, photographs?.length]);
 
   const classPillState = `bg-[${color_state}] ${FONT_STATE_COLOR[color_state]} text-xs font-medium me-2 px-2.5 py-0.5 rounded-full ms-2`;
 
@@ -183,45 +213,30 @@ export const IncidentDetail = ({ incident, className, onClose }) => {
         </>
       )}
 
-      {!isLoadingPhotographs && photographsWithUrl.length > 0 && photographsWithUrl[0].hasOwnProperty('url') ? (
-        <IncidentPthotographyCarousel photographs={photographsWithUrl} />
-        
+      {!isLoadingPhotographs &&
+      photographsWithUrl.length > 0 &&
+      photographsWithUrl[0].hasOwnProperty("url") ? (
+        <>
+          {photographsWithUrl.length > 0 && (
+            <>
+              <p className="text-sm mt-3 text-gray-500">Fotografías</p>
+              <IncidentPthotographyCarousel photographs={photographsWithUrl} />
+            </>
+          )}
+        </>
       ) : (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center mt-3">
+          <p className="text-gray-500 me-2">Cargando fotografías...</p>
           <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
         </div>
       )}
 
-      {/* Contenido del incidente */}
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-medium text-gray-700 mb-1">ID del Incidente</h3>
-          <p className="text-gray-600">{incident.id_incident}</p>
-        </div>
-
-        {incident.summary && (
-          <div>
-            <h3 className="font-medium text-gray-700 mb-1">Resumen</h3>
-            <p className="text-gray-600">{incident.summary}</p>
-          </div>
-        )}
-
-        {incident.description && (
-          <div>
-            <h3 className="font-medium text-gray-700 mb-1">Descripción</h3>
-            <p className="text-gray-600">{incident.description}</p>
-          </div>
-        )}
-
-        {incident.latitude && incident.longitude && (
-          <div>
-            <h3 className="font-medium text-gray-700 mb-1">Ubicación</h3>
-            <p className="text-gray-600">
-              Lat: {incident.latitude}, Lng: {incident.longitude}
-            </p>
-          </div>
-        )}
-      </div>
+      <p className="text-sm text-gray-500 mt-3 text-end">
+        Registrado por {inspector_username} el{" "}
+        {format(registration_date, "DD/MM/YYYY HH:mm")}
+      </p>
     </div>
   );
-};
+});
+
+IncidentDetail.displayName = "IncidentDetail";

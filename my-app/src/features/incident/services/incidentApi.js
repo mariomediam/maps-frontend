@@ -44,6 +44,7 @@ const getIncidentPhotographyById = async (idPhotography) => {
 		const { data: { content }, } = await api.get(`${URL}/photography/${idPhotography}`);
 		return content;
 	} catch (error) {
+		console.error(`Error fetching photography ${idPhotography}:`, error);
 		throw error;
 	}
 };
