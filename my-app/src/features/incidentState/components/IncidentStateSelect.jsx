@@ -1,24 +1,18 @@
-import { getIncidentStates } from '@features/incidentState/services/incidentStateApi';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import useIncidentStateStore from '../store/incidentStateStore';
 
 const IncidentStateSelect = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [incidentStates, setIncidentStates] = useState([
-		{ id_state: 0, description: 'Cargando...' },
-	]);
+	const { incidentStates, isLoading, loadIncidentStates } = useIncidentStateStore();
 
 	// Obtener el valor actual del parámetro de URL
 	const currentStateId = searchParams.get('idState') || '0';
 
 	useEffect(() => {
-		const fetchIncidentStates = async () => {
-			const states = await getIncidentStates();
-			states.unshift({ id_state: 0, description: 'Todos' });
-			setIncidentStates(states);
-		};
-		fetchIncidentStates();
-	}, []);
+		// Cargar estados solo si no están cargados
+		loadIncidentStates();
+	}, [loadIncidentStates]);
 
 	// Función para manejar el cambio del select
 	const handleStateChange = (event) => {
@@ -53,11 +47,15 @@ const IncidentStateSelect = () => {
 					onChange={handleStateChange}
 					className="block py-1 px-0 w-full text-sm text-primary bg-transparent border-0 border-b-2 border-primary appearance-none  focus:outline-none focus:ring-0 focus:border-gray-200 peer mt-0"
 				>
-					{incidentStates.map(({ id_state, description }) => (
-						<option key={id_state} value={id_state}>
-							{description}
-						</option>
-					))}
+					{isLoading ? (
+						<option value="0">Cargando...</option>
+					) : (
+						incidentStates.map(({ id_state, description }) => (
+							<option key={id_state} value={id_state}>
+								{description}
+							</option>
+						))
+					)}
 				</select>
 			</form>
 		</div>

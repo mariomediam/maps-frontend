@@ -1,24 +1,18 @@
-import { getIncidentCategories } from '@features/incidentCategory/services/incidentCategoryApi';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import useIncidentCategoryStore from '../store/incidentCategoryStore';
 
 const IncidentCategorySelect = ({ className = '' }) => {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [incidentCategories, setIncidentCategories] = useState([
-		{ id_category: 0, description: 'Cargando...' },
-	]);
+	const { incidentCategories, isLoading, loadIncidentCategories } = useIncidentCategoryStore();
 
 	// Obtener el valor actual del parámetro de URL
 	const currentCategoryId = searchParams.get('idCategory') || '0';
 
 	useEffect(() => {
-		const fetchIncidentCategories = async () => {
-			const categories = await getIncidentCategories();
-			categories.unshift({ id_category: 0, description: 'Todos' });
-			setIncidentCategories(categories);
-		};
-		fetchIncidentCategories();
-	}, []);
+		// Cargar categorías solo si no están cargadas
+		loadIncidentCategories();
+	}, [loadIncidentCategories]);
 
 	// Función para manejar el cambio del select
 	const handleCategoryChange = (event) => {
@@ -53,11 +47,15 @@ const IncidentCategorySelect = ({ className = '' }) => {
 					onChange={handleCategoryChange}
 					className="block py-1 px-0 w-full text-sm text-primary bg-transparent border-0 border-b-2 border-primary appearance-none  focus:outline-none focus:ring-0 focus:border-gray-200 peer mt-0"
 				>
-					{incidentCategories.map(({ id_category, description }) => (
-						<option key={id_category} value={id_category}>
-							{description}
-						</option>
-					))}
+					{isLoading ? (
+						<option value="0">Cargando...</option>
+					) : (
+						incidentCategories.map(({ id_category, description }) => (
+							<option key={id_category} value={id_category}>
+								{description}
+							</option>
+						))
+					)}
 				</select>
 			</form>
 		</div>

@@ -56,6 +56,13 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
 				map.invalidateSize();
 				map.setView(markerPosition, 16, { animate: true, duration: 1 });
 			}, 150);
+		} else if (!incidentSelected && isMobile) {
+			// Cuando no hay incidente seleccionado, invalidar tamaño y ajustar vista
+			setTimeout(() => {
+				map.invalidateSize();
+				// Opcional: volver a la vista inicial
+				map.setView([-5.1955724, -80.6301423], 14, { animate: true, duration: 1 });
+			}, 150);
 		}
 	}, [incidentSelected, isMobile, map]);
 
@@ -88,6 +95,7 @@ const MapView = ({ className, onToggleFilters }) => {
 	const [actionType, setActionType] = useState(MAP_ACTION_TYPES.listing);
 	const [idProblemSelected, setIdProblemSelected] = useState(null);
 	const [tempMarker, setTempMarker] = useState(null);
+	const [forceRender, setForceRender] = useState(0); // Para forzar re-render
 	const markersRef = useRef({});
 	const mapRef = useRef(null);
 
@@ -112,6 +120,13 @@ const MapView = ({ className, onToggleFilters }) => {
 	useEffect(() => {
 		if (incidentSelected && markersRef.current[incidentSelected.id_incident]) {
 			markersRef.current[incidentSelected.id_incident].openPopup();
+		}
+	}, [incidentSelected]);
+
+	// Efecto para forzar re-render cuando incidentSelected cambie a null
+	useEffect(() => {
+		if (incidentSelected === null) {
+			setForceRender(prev => prev + 1);
 		}
 	}, [incidentSelected]);
 
@@ -153,20 +168,7 @@ const MapView = ({ className, onToggleFilters }) => {
 			)}
 			
 
-			{/* Botón "Mostrar filtros" - Solo visible en móvil cuando no hay incidente seleccionado */}
-			{isMobile && !incidentSelected && (
-				<div className="bg-header-500 p-2 flex items-center justify-center">
-					<button
-						type="button"
-						className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
-						onClick={onToggleFilters}
-					>
-						<div className="flex items-center gap-1">
-							<FilterIcon /> Mostrar filtros
-						</div>
-					</button>
-				</div>
-			)}
+			{/* Botón "Mostrar filtros" movido a MapExplorerPage para mayor estabilidad */}
 
 			{/* Botón movido a MapExplorerPage para mejor control de posición */}
 
@@ -223,9 +225,11 @@ const MapView = ({ className, onToggleFilters }) => {
 					<>
 						{incidentsStored.map((incident) => {
 							// En móvil: mostrar solo el marcador seleccionado si hay uno seleccionado
+							// Si no hay incidente seleccionado (incidentSelected === null), mostrar todos
 							const shouldShowMarker = !isMobile || 
-								!incidentSelected || 
-								incident.id_incident === incidentSelected.id_incident;
+								incidentSelected === null || 
+								incident.id_incident === incidentSelected?.id_incident;
+							
 								
 							if (!shouldShowMarker) {
 								return null;
@@ -233,7 +237,7 @@ const MapView = ({ className, onToggleFilters }) => {
 							
 							return (
 								<Marker
-									key={incident.id_incident}
+									key={`${incident.id_incident}-${forceRender}`}
 									position={[incident.latitude, incident.longitude]}
 									icon={getColoredIcon(incident.color_state)}
 									ref={(ref) => {

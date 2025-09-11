@@ -6,6 +6,7 @@ import useWindowStore from '@/shared/store/windowStore';
 import { initBreakpointListeners } from '@/shared/store/windowStore';
 import useIncidentsStore from '@/features/incident/store/incidentStore';
 import { useSearchParams } from 'react-router-dom';
+import FilterIcon from '@/shared/assets/icons/FilterIcon';
 
 
 const MapExplorerPage = () => {
@@ -55,6 +56,30 @@ const MapExplorerPage = () => {
 		loadIncidents();
 	}, []); // Solo se ejecuta una vez al montar
 
+	// Escuchar cambios en searchParams para actualizar filtros
+	useEffect(() => {
+		const updateIncidentsWithFilters = async () => {
+			try {
+				const filters = {};
+				const idCategory = searchParams.get('idCategory');
+				const idState = searchParams.get('idState');
+				
+				if (idCategory && idCategory !== '0') filters.idCategory = idCategory;
+				if (idState && idState !== '0') filters.idState = idState;
+				
+				console.log('🔍 Actualizando incidentes con filtros:', filters);
+				await searchIncidentsStored(filters);
+			} catch (error) {
+				console.error('Error actualizando incidentes con filtros:', error);
+			}
+		};
+
+		// Solo ejecutar si ya se han cargado los incidentes inicialmente
+		if (incidentsStored.length > 0 || searchParams.has('idCategory') || searchParams.has('idState')) {
+			updateIncidentsWithFilters();
+		}
+	}, [searchParams]); // Se ejecuta cada vez que cambien los searchParams
+
 	  
 
 
@@ -100,10 +125,25 @@ const MapExplorerPage = () => {
 							</div>
 						) : (
 							// Estado por defecto: solo mapa (incluye casos donde showMapDetail es true pero no hay incidentSelected)
-							<MapView
-								className="w-full h-full"
-								onToggleFilters={toggleShowMapFilters}
-							/>
+							<div className="w-full h-full flex flex-col relative">
+								{/* Botón "Mostrar filtros" - Fijo en la parte superior */}
+								<div className="bg-header-500 p-2 flex items-center justify-center shrink-0">
+									<button
+										type="button"
+										className="text-primary text-sm font-medium cursor-pointer hover:text-primary transition-colors"
+										onClick={toggleShowMapFilters}
+									>
+										<div className="flex items-center gap-1">
+											<FilterIcon /> Mostrar filtros
+										</div>
+									</button>
+								</div>
+								
+								<MapView
+									className="w-full flex-1"
+									onToggleFilters={toggleShowMapFilters}
+								/>
+							</div>
 						)}
 					</>
 				) : (
