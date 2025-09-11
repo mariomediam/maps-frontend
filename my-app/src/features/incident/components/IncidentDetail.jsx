@@ -199,11 +199,15 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
         <span className="text-gray-500">id:</span> {incident.id_incident}
       </p>
 
+      {/* Registrado por */}
+      <p className="text-sm text-gray-500 mt-3">Regsitrado por</p>
+      <p className="">{inspector_username.toUpperCase()} el {format(registration_date, 'DD/MM/YYYY HH:mm')}</p>
+
       {/* Resumen del problema */}
       <p className="text-sm text-gray-500 mt-3">Resumen del problema</p>
       <p className="">{summary}</p>
 
-      {/* {JSON.stringify(photographsWithUrl)} */}
+      
 
       {/* Referencia del incidente */}
       {incident.reference && (
@@ -231,10 +235,10 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
         </div>
       )}
 
-      <p className="text-sm text-gray-500 mt-3 text-end">
+      {/* <p className="text-sm text-gray-500 mt-3 text-end">
         Registrado por {inspector_username} el{" "}
         {format(registration_date, "DD/MM/YYYY HH:mm")}
-      </p>
+      </p> */}
     </div>
   );
 });
