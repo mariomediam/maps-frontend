@@ -13,9 +13,9 @@ const MapSidebar = ({ className, onClose }) => {
   const [classNameDetail, setClassNameDetail] = useState("");
 
   const getClassNameFilter = () => {
-    // En desktop: mostrar cuando showMapFilters es true y no hay detalle
+    // En desktop: mostrar filtros cuando no hay detalle activo
     if (!isMobile) {
-      return showMapFilters && !showMapDetail ? "h-full" : "hidden";
+      return !showMapDetail ? "h-full" : "hidden";
     }
     
     // En móvil: mostrar cuando showMapFilters es true
@@ -27,7 +27,7 @@ const MapSidebar = ({ className, onClose }) => {
   };
 
   const getClassNameDetail = () => {
-    // En desktop: mostrar cuando showMapDetail es true y hay incidente seleccionado
+    // En desktop: mostrar detalle cuando showMapDetail es true y hay incidente seleccionado
     if (!isMobile) {
       return showMapDetail && incidentSelected ? "h-full" : "hidden";
     }
