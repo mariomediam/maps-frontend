@@ -67,7 +67,6 @@ const MapExplorerPage = () => {
 				if (idCategory && idCategory !== '0') filters.idCategory = idCategory;
 				if (idState && idState !== '0') filters.idState = idState;
 				
-				console.log('🔍 Actualizando incidentes con filtros:', filters);
 				await searchIncidentsStored(filters);
 			} catch (error) {
 				console.error('Error actualizando incidentes con filtros:', error);
@@ -75,10 +74,15 @@ const MapExplorerPage = () => {
 		};
 
 		// Solo ejecutar si ya se han cargado los incidentes inicialmente
-		if (incidentsStored.length > 0 || searchParams.has('idCategory') || searchParams.has('idState')) {
+		// Y no hay un incidente seleccionado (para evitar refrescar cuando se selecciona un marcador)
+		// También verificar que realmente hay cambios en los filtros
+		const hasFilterChanges = searchParams.has('idCategory') || searchParams.has('idState');
+		const shouldUpdate = (incidentsStored.length > 0 || hasFilterChanges) && !incidentSelected;
+		
+		if (shouldUpdate) {
 			updateIncidentsWithFilters();
 		}
-	}, [searchParams]); // Se ejecuta cada vez que cambien los searchParams
+	}, [searchParams]); // Remover incidentSelected de las dependencias para evitar ejecuciones innecesarias
 
 	  
 

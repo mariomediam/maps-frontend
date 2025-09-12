@@ -62,26 +62,23 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
     (state) => state.closeIncidentDetail
   );
 
-  if (!incident) {
-    return <></>;
-  }
+  const [photographsWithUrl, setPhotographsWithUrl] = useState([]);
+  const [isLoadingPhotographs, setIsLoadingPhotographs] = useState(false);
 
+  // Extraer datos del incidente de forma segura
   const {
     category_name = "",
-    summary,
-    description,
-    latitude,
-    longitude,
-    description_state,
-    color_state,
+    summary = "",
+    description = "",
+    latitude = "",
+    longitude = "",
+    description_state = "",
+    color_state = "",
     photographs = [],
     id_incident = 0,
     inspector_username = "",
     registration_date = "",
-  } = incident;
-
-  const [photographsWithUrl, setPhotographsWithUrl] = useState(photographs);
-  const [isLoadingPhotographs, setIsLoadingPhotographs] = useState(false);
+  } = incident || {};
 
   // useEffect(() => {
   //   try {
@@ -113,12 +110,14 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
   useEffect(() => {
     let cancelled = false;
 
-    // Solo ejecutar si hay fotografías y el incidente tiene un ID válido
-    if (!incident?.id_incident || !photographs?.length) {
-      return;
-    }
+    const fetchPhotographs = async () => {
+      // Si no hay incidente o fotografías, limpiar estado
+      if (!incident?.id_incident || !photographs?.length) {
+        setPhotographsWithUrl([]);
+        setIsLoadingPhotographs(false);
+        return;
+      }
 
-    (async () => {
       try {
         setIsLoadingPhotographs(true);
 
@@ -156,7 +155,9 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
       } finally {
         if (!cancelled) setIsLoadingPhotographs(false);
       }
-    })();
+    };
+
+    fetchPhotographs();
 
     return () => {
       cancelled = true;
@@ -172,6 +173,11 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
       onClose();
     }
   };
+
+  // Return temprano después de todos los hooks
+  if (!incident) {
+    return <></>;
+  }
 
   return (
     <div

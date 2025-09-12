@@ -58,7 +58,7 @@ const useIncidentsStore = create((set, get) => ({
         set({ 
           incidentSelected: incident,
           showMapDetail: true,
-          showMapFilters: false,
+          showMapFilters: false, // En móvil se oculta, en desktop se mantiene visible el detalle
           isMapExpanded: shouldResetExpanded ? false : currentState.isMapExpanded
         });
       }
@@ -76,7 +76,7 @@ const useIncidentsStore = create((set, get) => ({
     set({ 
       incidentSelected: null,
       showMapDetail: false,
-      showMapFilters: true,
+      showMapFilters: true, // En desktop volver a mostrar filtros
       isMapExpanded: false
     });
   },

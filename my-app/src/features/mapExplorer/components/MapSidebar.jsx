@@ -27,7 +27,7 @@ const MapSidebar = ({ className, onClose }) => {
   };
 
   const getClassNameDetail = () => {
-    // En desktop: mostrar cuando showMapDetail es true
+    // En desktop: mostrar cuando showMapDetail es true y hay incidente seleccionado
     if (!isMobile) {
       return showMapDetail && incidentSelected ? "h-full" : "hidden";
     }
