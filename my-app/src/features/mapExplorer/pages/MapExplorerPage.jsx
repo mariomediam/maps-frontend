@@ -1,6 +1,6 @@
 import MapSidebar from "@features/mapExplorer/components/MapSidebar";
 import MapView from "@features/mapExplorer/components/MapView";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import MainHeader from "@/shared/components/MainHeader";
 import useWindowStore from "@/shared/store/windowStore";
 import { initBreakpointListeners } from "@/shared/store/windowStore";
@@ -25,6 +25,9 @@ const MapExplorerPage = () => {
     searchIncidentsStored,
     incidentsStored,
   } = useIncidentsStore();
+  
+  // Ref para rastrear si ya se cargaron los incidentes inicialmente
+  const hasInitiallyLoaded = useRef(false);
   useEffect(() => {
     const cleanup = initBreakpointListeners();
     return cleanup;
@@ -38,7 +41,7 @@ const MapExplorerPage = () => {
   // Cargar incidentes solo una vez al montar la página
   useEffect(() => {
     const loadIncidents = async () => {
-      if (incidentsStored.length === 0) {
+      if (!hasInitiallyLoaded.current) {
         try {
           const filters = {};
           const idCategory = searchParams.get("idCategory");
@@ -48,6 +51,7 @@ const MapExplorerPage = () => {
           if (idState) filters.idState = idState;
 
           await searchIncidentsStored(filters);
+          hasInitiallyLoaded.current = true;
         } catch (error) {
           console.error("Error cargando incidentes:", error);
         }
@@ -76,16 +80,12 @@ const MapExplorerPage = () => {
 
     // Solo ejecutar si ya se han cargado los incidentes inicialmente
     // Y no hay un incidente seleccionado (para evitar refrescar cuando se selecciona un marcador)
-    // También verificar que realmente hay cambios en los filtros
-    const hasFilterChanges =
-      searchParams.has("idCategory") || searchParams.has("idState");
-    const shouldUpdate =
-      (incidentsStored.length > 0 || hasFilterChanges) && !incidentSelected;
+    const shouldUpdate = hasInitiallyLoaded.current && !incidentSelected;
 
     if (shouldUpdate) {
       updateIncidentsWithFilters();
     }
-  }, [searchParams]); // Remover incidentSelected de las dependencias para evitar ejecuciones innecesarias
+  }, [searchParams]); // Solo searchParams como dependencia para evitar el bucle
 
   return (
     <div className="h-screen flex flex-col">
