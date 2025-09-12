@@ -80,34 +80,7 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
     registration_date = "",
   } = incident || {};
 
-  // useEffect(() => {
-  //   try {
-  //     setIsLoadingPhotographs(true);
-  //     const fetchPhotographsWithUrl = async () => {
-
-  //       const photographsWithUrl = [];
-  //       for (const photograph of photographs) {
-  //         const photographWithUrl = await getIncidentPhotographyById(
-  //           photograph.id_photography
-  //         );
-  //         photographsWithUrl.push(photographWithUrl);
-  //       }
-  //       console.log("******** 2 **************");
-  //       setPhotographsWithUrl(photographsWithUrl);
-  //     };
-  //     console.log("******** 1 **************");
-  //     fetchPhotographsWithUrl();
-  //     console.log("******** 3 **************");
-  //   } catch (error) {
-  //     console.error("Error fetching photographs with url:", error);
-  //   } finally {
-  //     setIsLoadingPhotographs(false);
-  //     console.log("******** 4 **************");
-  //   }
-
-  // }, [photographs]);
-
-  useEffect(() => {
+    useEffect(() => {
     let cancelled = false;
 
     const fetchPhotographs = async () => {
@@ -165,7 +138,7 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
     // Dependencias más específicas para evitar re-ejecuciones innecesarias
   }, [incident?.id_incident, photographs?.length]);
 
-  const classPillState = `bg-[${color_state}] ${FONT_STATE_COLOR[color_state]} text-xs font-medium me-2 px-2.5 py-0.5 rounded-full ms-2`;
+  const classPillState = `${FONT_STATE_COLOR[color_state]} text-xs font-medium me-2 px-2.5 py-0.5 rounded-full ms-2`;
 
   const handleClose = () => {
     closeIncidentDetail();
@@ -180,11 +153,8 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
   }
 
   return (
-    <div
-      className={`${className} bg-white border-r pt-0 pb-4 px-4 overflow-y-auto`}
-    >
-      {/* Header con botón X */}
-      <div className="flex items-center justify-end my-0">
+    <>
+    <div className="flex items-center justify-end me-1 my-0">
         <button
           type="button"
           className="text-gray-500 hover:text-gray-700 text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0"
@@ -194,11 +164,21 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
           ✕
         </button>
       </div>
+    <div
+      className={`${className} bg-secondary border-r pt-0 pb-4 px-4 overflow-y-auto`}
+    >
+      {/* Header con botón X */}
+      
 
-      {/* Title */}
+      {/* Title */}      
       <h4 className="text-base/5 font-semibold text-primary">
-        {category_name}
-        <span className={classPillState}>{description_state}</span>
+        {category_name}        
+        <span 
+          className={classPillState}
+          style={{ backgroundColor: color_state }}
+        >
+          {description_state}
+        </span>
       </h4>
       <p className="text-sm">
         {" "}
@@ -235,8 +215,8 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
           )}
         </>
       ) : (
-        <div className="flex justify-center items-center mt-3">
-          <p className="text-gray-500 me-2">Cargando fotografías...</p>
+        <div className="flex justify-start items-center mt-3">
+          <p className="text-gray-500 me-2 text-sm">Fotografías</p>
           <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
         </div>
       )}
@@ -246,6 +226,7 @@ export const IncidentDetail = memo(({ incident, className, onClose }) => {
         {format(registration_date, "DD/MM/YYYY HH:mm")}
       </p> */}
     </div>
+    </>
   );
 });
 

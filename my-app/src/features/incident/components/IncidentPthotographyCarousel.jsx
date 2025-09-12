@@ -61,7 +61,7 @@ const IncidentPthotographyCarousel = memo(({ photographs = [] }) => {
         data-carousel="static"
       >
         {/* <!-- Carousel wrapper --> */}
-        <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+        <div className="relative w-full h-64 overflow-hidden rounded-lg bg-gray-100 flex items-center justify-center">
           {/* <!-- Item 1 -->
         <div className="hidden duration-700 ease-in-out" data-carousel-item="active">
             <img src="/docs/images/carousel/carousel-1.svg" className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
@@ -85,12 +85,12 @@ const IncidentPthotographyCarousel = memo(({ photographs = [] }) => {
           {validPhotographs.map((photograph, index) => (
             <div
               key={photograph.id_photography}
-              className={`duration-700 ease-in-out ${index === currentIndex ? 'block' : 'hidden'}`}
+              className={`duration-700 ease-in-out flex items-center justify-center ${index === currentIndex ? 'block' : 'hidden'}`}
               data-carousel-item={index === currentIndex ? "active" : ""}
             >
               <img
                 src={photograph.url}
-                className="w-full h-full object-cover"
+                className="max-w-full max-h-full object-contain"
                 alt={`Fotografía ${index + 1} del incidente`}
                 onError={(e) => {
                   console.error(`Error cargando imagen: ${photograph.url}`);

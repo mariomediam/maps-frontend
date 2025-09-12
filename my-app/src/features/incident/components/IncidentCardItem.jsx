@@ -13,7 +13,7 @@ const IncidentCardItem = ({ incident, className }) => {
 	const setIncidentSelectedFromStore = useIncidentsStore((state) => state.setIncidentSelectedFromStore);
 
 	return (
-		<article className={`bg-secondary  ${className}`} onClick={() => setIncidentSelectedFromStore(id_incident)}>
+		<article className={`bg-gray-500  ${className}`} onClick={() => setIncidentSelectedFromStore(id_incident)}>
 			<a
 				href="#"
 				className="flex flex-col items-start bg-secondary border-t border-gray-300 pt-1 shadow-sm md:flex-row md:max-w-xl hover:bg-header-500 "
@@ -24,7 +24,7 @@ const IncidentCardItem = ({ incident, className }) => {
           alt={summary}
         /> */}
         
-				<div className="flex justify-between  w-full gap-1">
+				<div className="flex justify-between  w-full gap-1 p-1">
 					<div className="flex flex-col justify-between leading-normal">
 						<p className="mb-2tracking-tight text-primary text-sm">
 							{summary}
