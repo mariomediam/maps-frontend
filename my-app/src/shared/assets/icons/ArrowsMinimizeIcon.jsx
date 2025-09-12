@@ -16,7 +16,7 @@ const ArrowsMinimizeIcon = ({
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      class={`icon icon-tabler icons-tabler-outline icon-tabler-arrows-minimize ${className}`}
+      className={`icon icon-tabler icons-tabler-outline icon-tabler-arrows-minimize ${className}`}
       {...props}
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
