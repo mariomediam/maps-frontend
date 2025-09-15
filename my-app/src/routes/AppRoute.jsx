@@ -3,6 +3,7 @@ import MapExplorerPage from '@features/mapExplorer/pages/MapExplorerPage';
 import { ErrorPage } from '@shared';
 import { createBrowserRouter } from 'react-router-dom';
 import App from '@/App';
+import Login from '@auth/pages/Login';
 
 const router = createBrowserRouter([
 	{
@@ -20,6 +21,11 @@ const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <App />,
+		errorElement: <ErrorPage />,
+	},
+	{
+		path: '/login',
+		element: <Login />,
 		errorElement: <ErrorPage />,
 	},
 	{
