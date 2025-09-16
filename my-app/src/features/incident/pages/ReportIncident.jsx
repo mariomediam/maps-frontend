@@ -7,3 +7,5 @@ export const ReportIncident = () => {
     </div>
   );
 };
+
+export default ReportIncident;

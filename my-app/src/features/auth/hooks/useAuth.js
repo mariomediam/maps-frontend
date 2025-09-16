@@ -12,17 +12,17 @@ export const useAuth = () => {
 
 // Hook simple para verificar autenticación sin contexto
 export const useAuthStatus = () => {
-	const isLoggedIn = isAuthenticated();
+	const { tokenEsValido, logoutUser } = useAuth();
 	const tokens = getStoredTokens();
 	
 	const handleLogout = () => {
-		logout();
+		logoutUser();
 		// Opcional: redirigir al login
 		window.location.href = '/login';
 	};
 	
 	return {
-		isLoggedIn,
+		isLoggedIn: tokenEsValido(),
 		tokens,
 		logout: handleLogout
 	};

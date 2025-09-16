@@ -1,12 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { isAuthenticated } from '@auth/services/authApi';
+import { useAuth } from '@auth/hooks/useAuth';
 
 export const PublicRoutes = () => {
-	// Si ya está autenticado, redirigir al map-explorer
-	// if (isAuthenticated()) {
-	// 	return <Navigate to="/map-explorer" replace />;
-	// }
+	const { tokenEsValido } = useAuth();
 	
-	// Si no está autenticado, mostrar la ruta pública
+	// Si el token es válido y trata de entrar a login, redirigir al map-explorer
+	if (tokenEsValido() && window.location.pathname === "/login") {
+		return <Navigate to="/map-explorer" replace />;
+	}
+	
+	// Si el token no es válido, mostrar la ruta pública
 	return <Outlet />;
 };

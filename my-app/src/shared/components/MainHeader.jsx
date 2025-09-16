@@ -1,8 +1,11 @@
 import escudo from "@/shared/assets/images/escudo-mpp.png";
+import { useAuth } from "@features/auth/hooks/useAuth";
 
 import "flowbite";
 
 const MainHeader = () => {
+  const { userName, tokenEsValido } = useAuth();
+
   return (
     <header className="bg-header">
       <nav>
@@ -22,6 +25,8 @@ const MainHeader = () => {
               <p className="text-secondary text-sm text-[12px]  lg:text-sm leading-tight">
                 Municipalidad Provincial de Piura
               </p>
+              <p>tokenEsValido: {tokenEsValido() ? "true" : "false"}</p>
+              <p>userName: {userName}</p>
             </div>
           </div>
 
@@ -49,18 +54,34 @@ const MainHeader = () => {
               />
             </svg>
           </button>
-          <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-            <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border-secondary rounded-lg :flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 border  ">
-              <li>
-                <a
-                  href="/login"
-                  className="block py-2 px-3 text-secondary hover:bg-primary rounded-lg md:border-0 cursor-pointer transition-colors duration-200"
-                >
-                  Iniciar sesión
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* TODO: Si el usuario está autenticado, mostrar el nombre del usuario, caso contrario mostrar el botón de iniciar sesión */}
+          {/*  */}
+
+          {tokenEsValido() ? (
+            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-primary rounded-full ">
+              <span className="font-medium text-secondary">
+                {userName.substring(0, 2).toUpperCase()}
+              </span>
+            </div>
+          ) : (
+            <div
+              className="hidden w-full md:block md:w-auto"
+              id="navbar-default"
+            >
+              <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border-secondary rounded-lg :flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 border  ">
+                <li>
+                  <a
+                    href="/login"
+                    className="block py-2 px-3 text-secondary hover:bg-primary rounded-lg md:border-0 cursor-pointer transition-colors duration-200"
+                  >
+                    Iniciar sesión
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
+
+          {/*  */}
         </div>
       </nav>
     </header>

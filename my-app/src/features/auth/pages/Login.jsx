@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode';
 import { login } from "@auth/services/authApi";
+import { useAuth } from "@auth/hooks/useAuth";
 import escudo from "@/shared/assets/images/escudo-mpp.webp";
 import ExclamationCircle from "@/shared/assets/icons/ExclamationCircle";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setAuthContextLogin } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +24,17 @@ const Login = () => {
       
       // El login ya guarda los tokens automáticamente en authApi.js
       const tokens = await login(username, password);
+      
+      // Decodificar el token para obtener la información del usuario
+      const decodedToken = jwtDecode(tokens.access);
+      const userInfo = {
+        user_id: decodedToken.user_id,
+        exp: decodedToken.exp,
+        iat: decodedToken.iat
+      };
+      
+      // Actualizar el contexto de autenticación
+      setAuthContextLogin(username, tokens, userInfo);
       
       // Redirigir a la página original o al map-explorer por defecto
       const from = location.state?.from?.pathname || '/map-explorer';
