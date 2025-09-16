@@ -89,6 +89,29 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
   return null;
 };
 
+// Componente para forzar la inicialización del mapa
+const MapInitializer = ({ isMobile }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    // Inicializar en ambos modos
+    setTimeout(() => {
+      map.invalidateSize();
+      map.getContainer().style.pointerEvents = 'auto';
+      
+      // Habilitar todas las interacciones
+      map.dragging.enable();
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.scrollWheelZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+    }, 300);
+  }, [map, isMobile]);
+
+  return null;
+};
+
 const MapView = ({ className, onToggleFilters }) => {
   const position = [51.505, -0.09];
 
@@ -134,7 +157,29 @@ const MapView = ({ className, onToggleFilters }) => {
     }
   }, [incidentSelected]);
 
+  // Efecto para forzar re-render cuando isMobile cambie
+  useEffect(() => {
+    setForceRender((prev) => prev + 1);
+  }, [isMobile]);
+
   // El centrado del mapa ahora se maneja en MapCenterController
+
+  // Efecto simple para inicializar el mapa
+  useEffect(() => {
+    const initializeMap = () => {
+      if (mapRef.current) {
+        setTimeout(() => {
+          const map = mapRef.current;
+          if (map) {
+            map.invalidateSize();
+            map.getContainer().style.pointerEvents = 'auto';
+          }
+        }, 100);
+      }
+    };
+
+    initializeMap();
+  }, []);
 
   const MapContainerOnClick = ({ opcion = "null" }) => {
     useMapEvents({
@@ -183,6 +228,7 @@ const MapView = ({ className, onToggleFilters }) => {
       )}
 
       <MapContainer
+        ref={mapRef}
         center={[-5.1955724, -80.6301423]}
         zoom={14}
         scrollWheelZoom={true}
@@ -196,6 +242,7 @@ const MapView = ({ className, onToggleFilters }) => {
         bounceAtZoomLimits={false}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <MapInitializer isMobile={isMobile} />
         <MapCenterController
           incidentSelected={incidentSelected}
           isMobile={isMobile}

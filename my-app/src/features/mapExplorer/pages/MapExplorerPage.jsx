@@ -28,15 +28,26 @@ const MapExplorerPage = () => {
   
   // Ref para rastrear si ya se cargaron los incidentes inicialmente
   const hasInitiallyLoaded = useRef(false);
+  
+  // Estado para rastrear si el store de ventana se ha inicializado
+  const [isWindowStoreInitialized, setIsWindowStoreInitialized] = useState(false);
   useEffect(() => {
     const cleanup = initBreakpointListeners();
+    
+    // Marcar que el store se ha inicializado después de un pequeño delay
+    setTimeout(() => {
+      setIsWindowStoreInitialized(true);
+    }, 100);
+    
     return cleanup;
   }, []);
 
   // Inicializar el estado cuando cambia el modo móvil/desktop
   useEffect(() => {
-    initializeMapState(isMobile);
-  }, [isMobile, initializeMapState]);
+    if (isWindowStoreInitialized) {
+      initializeMapState(isMobile);
+    }
+  }, [isMobile, initializeMapState, isWindowStoreInitialized]);
 
   // Cargar incidentes solo una vez al montar la página
   useEffect(() => {
@@ -86,6 +97,15 @@ const MapExplorerPage = () => {
       updateIncidentsWithFilters();
     }
   }, [searchParams]); // Solo searchParams como dependencia para evitar el bucle
+
+  // No renderizar hasta que el store de ventana esté inicializado
+  if (!isWindowStoreInitialized) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen flex flex-col">
