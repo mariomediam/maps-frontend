@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { login } from "@auth/services/authApi";
 import escudo from "@/shared/assets/images/escudo-mpp.webp";
 import ExclamationCircle from "@/shared/assets/icons/ExclamationCircle";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -15,7 +17,13 @@ const Login = () => {
     try {
       setIsLoading(true);
       setError(false);
-      const response = await login(username, password);
+      
+      // El login ya guarda los tokens automáticamente en authApi.js
+      const tokens = await login(username, password);
+      
+      // Redirigir al dashboard después del login exitoso
+      navigate('/map-explorer');
+      
     } catch (error) {      
       setError(true);
     } finally {
