@@ -18,7 +18,7 @@ export const useAuthStatus = () => {
 	const handleLogout = () => {
 		logoutUser();
 		// Opcional: redirigir al login
-		window.location.href = '/login';
+		// window.location.href = '/login';
 	};
 	
 	return {

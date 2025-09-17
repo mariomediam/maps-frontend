@@ -201,6 +201,10 @@ const MapView = ({ className, onToggleFilters }) => {
     return null;
   };
 
+  const handleReportIncident = () => {
+    window.location.href = '/add-incident';
+  };
+
   return (
     <div className={`w-full relative ${className}`}>
       {/* Overlay de loading */}
@@ -219,8 +223,8 @@ const MapView = ({ className, onToggleFilters }) => {
         <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-1000">
           <button
             type="button"
-            className="bg-primary text-white px-6 py-3 rounded-lg shadow-lg hover:bg-primary/90 transition-colors font-medium text-sm"
-            onClick={() => setActionType(MAP_ACTION_TYPES.adding)}
+            className="bg-primary text-secondary px-6 py-3 rounded-lg shadow-lg hover:bg-black hover:font-bold transition-colors font-medium text-sm"
+            onClick={handleReportIncident}
           >
             Reportar una incidencia
           </button>

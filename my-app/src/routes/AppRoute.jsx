@@ -18,13 +18,14 @@ const router = createBrowserRouter([
         element: <App />,
       },
       {
-        path: "login",
-        element: <Login />,
-      },
-      {
         path: "map-explorer",
         element: <MapExplorerPage />,
       },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      
     ],
   },
 
@@ -38,15 +39,15 @@ const router = createBrowserRouter([
         path: "add-incident",
         element: <ReportIncident />,
       },
-      {
-        path: "admin",
-        children: [
-          {
-            path: "main",
-            element: <MapExplorerPage />,
-          },
-        ],
-      },
+      // {
+      //   path: "admin",
+      //   children: [
+      //     {
+      //       path: "main",
+      //       element: <MapExplorerPage />,
+      //     },
+      //   ],
+      // },
     ],
   },
 

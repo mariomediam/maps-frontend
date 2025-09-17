@@ -2,10 +2,12 @@ import escudo from "@/shared/assets/images/escudo-mpp.png";
 import { useAuth } from "@features/auth/hooks/useAuth";
 import { useEffect } from "react";
 import { initFlowbite, Popover } from "flowbite";
+import { useNavigate } from "react-router-dom";
 
 
 const MainHeader = () => {
   const { userName, tokenEsValido, logoutUser } = useAuth();
+  const navigate = useNavigate();
 
   // Inicializar Flowbite después de que el componente se monte
   useEffect(() => {
@@ -50,8 +52,8 @@ const MainHeader = () => {
 
 
   const handleLogout = () => {
-    logoutUser();    
-    window.location.reload();
+    logoutUser();        
+    window.location.href = '/map-explorer';
   };
 
   return (

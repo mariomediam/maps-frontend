@@ -9,6 +9,6 @@ export const PublicRoutes = () => {
 		return <Navigate to="/map-explorer" replace />;
 	}
 	
-	// Si el token no es válido, mostrar la ruta pública
+	// Permitir acceso a todas las rutas públicas (incluyendo map-explorer sin autenticación)
 	return <Outlet />;
 };
