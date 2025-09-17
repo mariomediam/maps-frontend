@@ -3,8 +3,9 @@ import { useAuth } from "@features/auth/hooks/useAuth";
 import { useEffect } from "react";
 import { initFlowbite, Popover } from "flowbite";
 
+
 const MainHeader = () => {
-  const { userName, tokenEsValido } = useAuth();
+  const { userName, tokenEsValido, logoutUser } = useAuth();
 
   // Inicializar Flowbite después de que el componente se monte
   useEffect(() => {
@@ -46,6 +47,12 @@ const MainHeader = () => {
     
     return () => clearTimeout(timer);
   }, [tokenEsValido()]);
+
+
+  const handleLogout = () => {
+    logoutUser();    
+    window.location.reload();
+  };
 
   return (
     <header className="bg-header">
@@ -116,23 +123,15 @@ const MainHeader = () => {
                 data-popover 
                 id="popover-user" 
                 role="tooltip" 
-                className="invisible absolute z-[9999] inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
+                className="invisible absolute z-[9999] inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-secondary border border-gray-200 rounded-lg shadow-sm opacity-0 "
               >
-                <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
-                  <h3 className="font-semibold text-gray-900 dark:text-white">Perfil de Usuario</h3>
+                <div className="px-3 py-2 bg-secondary border-b border-gray-200 rounded-t-lg ">
+                  <h3 className="font-semibold text-primary">Perfil de Usuario</h3>
                 </div>
-                <div className="px-3 py-2">
-                  <p className="text-gray-700 dark:text-gray-300">Usuario: {userName}</p>
-                  <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-600">
-                    <button 
-                      onClick={() => {
-                        // Aquí puedes agregar la lógica de logout
-                        console.log('Logout clicked');
-                      }}
-                      className="text-red-600 hover:text-red-800 text-sm font-medium"
-                    >
-                      Cerrar sesión
-                    </button>
+                <div className="px-3 py-2 w-full">
+                  <p className="text-gray-700">Usuario: {userName.toUpperCase()}</p>
+                  <div className="mt-2 p-0  border-gray-200 w-full ">                    
+                    <button type="button" className="text-white bg-primary hover:bg-black focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 m-0 focus:outline-none w-full rounded-lg cursor-pointer hover:font-bold" onClick={handleLogout}>Cerrar sesión</button>
                   </div>
                 </div>
                 <div data-popper-arrow></div>
