@@ -1,9 +1,68 @@
 import MainHeader from "@/shared/components/MainHeader";
+import { Stepper } from "@shared";
+import SelectCategory from "../components/ReportIncident/SelectCategory";
+import SelectUbication from "../components/ReportIncident/SelectUbication";
+import AddPhotography from "../components/ReportIncident/AddPhotography";
+import AddAdditionalInformation from "../components/ReportIncident/AddAdditionalInformation";
+import CategoryIcon from "@shared/assets/icons/CategoryIcon";
+import MapPinIcon from "@shared/assets/icons/MapPinIcon";
+import PhotoIcon from "@shared/assets/icons/PhotoIcon";
+import MessageExclamationIcon from "@shared/assets/icons/MessageExclamationIcon";
+
+const steps = [
+  {
+    label: "Seleccionar categoría",
+    component: <SelectCategory />,
+    icon: <CategoryIcon />,
+  },
+  {
+    label: "Seleccionar ubicación",
+    component: <SelectUbication />,
+    icon: <MapPinIcon />,
+  },
+  {
+    label: "Agregar fotografías",
+    component: <AddPhotography />,
+    icon: <PhotoIcon />,
+  },
+  {
+    label: "Agregar información adicional",
+    component: <AddAdditionalInformation />,
+    icon: <MessageExclamationIcon />,
+  },
+];
 
 export const ReportIncident = () => {
+  const handleComplete = () => {
+    console.log("Formulario completado - Enviando datos...");
+    // Aquí puedes agregar la lógica para enviar los datos del formulario
+    alert("¡Incidencia reportada exitosamente!");
+  };
+
+  const handleStepChange = (stepIndex, stepData) => {
+    console.log(`Cambió al paso ${stepIndex + 1}:`, stepData.label);
+    // Aquí puedes agregar lógica para validar o guardar datos del paso anterior
+  };
+
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <MainHeader />
+      
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl text-primary mt-3 mb-8 text-center font-semibold">
+          Reportar una incidencia
+        </h1>
+
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6">
+          <Stepper 
+            steps={steps}
+            onComplete={handleComplete}
+            onStepChange={handleStepChange}
+            showStepLabels={true}
+            className="w-full"
+          />
+        </div>
+      </div>
     </div>
   );
 };
