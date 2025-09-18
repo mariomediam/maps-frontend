@@ -8,6 +8,7 @@ import CategoryIcon from "@shared/assets/icons/CategoryIcon";
 import MapPinIcon from "@shared/assets/icons/MapPinIcon";
 import PhotoIcon from "@shared/assets/icons/PhotoIcon";
 import MessageExclamationIcon from "@shared/assets/icons/MessageExclamationIcon";
+import useIncidentsStore from "@features/incident/store/incidentStore";
 
 const steps = [
   {
@@ -33,6 +34,8 @@ const steps = [
 ];
 
 export const ReportIncident = () => {
+  const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
+
   const handleComplete = () => {
     console.log("Formulario completado - Enviando datos...");
     // Aquí puedes agregar la lógica para enviar los datos del formulario
@@ -47,14 +50,26 @@ export const ReportIncident = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <MainHeader />
-      
+      {JSON.stringify(incidentAdded)}
+
       <div className="container mx-auto px-4 py-6">
+      <div className="max-w-6xl w-full flex items-center justify-end me-1 my-0">
+            <button
+              type="button"
+              className="text-gray-500 hover:text-gray-700 text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0"
+              // onClick={handleClose}
+              aria-label="Cerrar detalle"
+            >
+              ✕
+            </button>
+          </div>
         <h1 className="text-2xl text-primary mt-3 mb-8 text-center font-semibold">
           Reportar una incidencia
         </h1>
 
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6">
-          <Stepper 
+          
+          <Stepper
             steps={steps}
             onComplete={handleComplete}
             onStepChange={handleStepChange}

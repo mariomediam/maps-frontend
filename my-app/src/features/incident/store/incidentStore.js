@@ -1,6 +1,15 @@
 import { create } from "zustand";
 import { getIncidents } from "@/features/incident/services/incidentApi";
 
+const INCIDENT_ADDED_DEFAULT = {
+  category_id: 4,
+  latitude: null,
+  longitude: null,
+  summary: null,
+  reference: null,
+  files: [],
+};
+
 const useIncidentsStore = create((set, get) => ({
   incidentsStored: [],
   isLoading: false,
@@ -9,6 +18,11 @@ const useIncidentsStore = create((set, get) => ({
   showMapDetail: false,
   incidentSelected: null,
   isMapExpanded: false,
+  incidentAdded: INCIDENT_ADDED_DEFAULT,
+  
+  
+  setIncidentAdded: (params = {}) => set({ incidentAdded: { ...get().incidentAdded, ...params } }),
+  resetIncidentAdded: () => set({ incidentAdded: INCIDENT_ADDED_DEFAULT }),
 
   setIncidentsStored: (incidents) => set({ incidentsStored: incidents }),
 

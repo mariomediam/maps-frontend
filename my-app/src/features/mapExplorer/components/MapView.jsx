@@ -133,6 +133,7 @@ const MapView = ({ className, onToggleFilters }) => {
     (state) => state.toggleMapExpanded
   );
   const isMobile = useWindowStore((state) => state.isMobile);
+  const resetIncidentAdded = useIncidentsStore((state) => state.resetIncidentAdded);
 
   // Los incidentes ahora se cargan desde MapExplorerPage, no aquí
 
@@ -202,6 +203,7 @@ const MapView = ({ className, onToggleFilters }) => {
   };
 
   const handleReportIncident = () => {
+    resetIncidentAdded();
     window.location.href = '/add-incident';
   };
 
