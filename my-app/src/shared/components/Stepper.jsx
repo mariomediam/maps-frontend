@@ -114,13 +114,13 @@ const Stepper = ({
         </ol>
         
         {/* Etiquetas de pasos en móvil */}
-        {showStepLabels && (
+        {/* {showStepLabels && (
           <div className="mt-4 text-center sm:hidden">
             <p className="text-sm text-gray-600">
               Paso {currentStep + 1} de {steps.length}: {steps[currentStep].label}
             </p>
           </div>
-        )}
+        )} */}
       </div>
 
       {/* Contenido del paso actual */}
