@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import useIncidentsStore from "@features/incident/store/incidentStore";
 
 import LocationPinIcon from "@/shared/assets/icons/LocationPinIcon";
 
@@ -32,6 +33,10 @@ function AddMarkerOnDblClick({ setTempMarker }) {
 
 
 const SelectUbication = () => {
+
+  const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
+  const setIncidentAdded = useIncidentsStore((state) => state.setIncidentAdded);
+
   const [tempMarker, setTempMarker] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -44,8 +49,7 @@ const SelectUbication = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         // Éxito → guardamos [lat, lng] en el estado
-        // setPosition([coords.latitude, coords.longitude]);
-        setTempMarker([coords.latitude, coords.longitude]);
+        setTempMarker({lat: coords.latitude, lng: coords.longitude});
         
       },
       (err) => {
@@ -74,6 +78,24 @@ const SelectUbication = () => {
 
     // Cleanup
     return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  useEffect(() => {
+    // setIncidentAdded({ category_id: selectedCategoryId });
+
+    if (tempMarker) {
+    setIncidentAdded({ latitude: tempMarker?.lat, longitude: tempMarker?.lng });
+    } else {
+      setIncidentAdded({ latitude: null, longitude: null });
+    }
+
+    console.log("tempMarker", tempMarker);
+  }, [tempMarker]);
+
+  useEffect(() => {
+    if (incidentAdded?.latitude && incidentAdded?.longitude) {
+      setTempMarker({lat: incidentAdded?.latitude, lng: incidentAdded?.longitude});
+    }
   }, []);
 
   return (
@@ -124,7 +146,7 @@ const SelectUbication = () => {
             draggable={true}
             eventHandlers={{
               dragend: (e) => {
-                setTempMarker(e.target.getLatLng());
+                setTempMarker({lat: e.target.getLatLng().lat, lng: e.target.getLatLng().lng});
               },
             }}
           />
