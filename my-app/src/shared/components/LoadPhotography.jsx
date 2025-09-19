@@ -1,133 +1,247 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 export default function LoadPhotography() {
-  const [fileInfo, setFileInfo] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
+  const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const anySourceInputRef = useRef(null);
-  const cameraOnlyInputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const MAX_MB = 10;                // cambia el límite si necesitas
   const ACCEPTED = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 
-  function openAnySource() {
-    anySourceInputRef.current?.click();
+  // Detectar si es móvil
+  useEffect(() => {
+    const checkIsMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const mobileKeywords = ['android', 'iphone', 'ipad', 'ipod', 'blackberry', 'windows phone'];
+      return mobileKeywords.some(keyword => userAgent.includes(keyword)) || 
+             window.innerWidth <= 768;
+    };
+    
+    setIsMobile(checkIsMobile());
+    
+    const handleResize = () => setIsMobile(checkIsMobile());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  function openFileDialog() {
+    fileInputRef.current?.click();
   }
-  function openCamera() {
-    cameraOnlyInputRef.current?.click();
+
+  function removeFile(indexToRemove) {
+    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   }
 
   function reset() {
-    setFileInfo(null);
-    setPreviewUrl(null);
+    setFiles([]);
     setError(null);
+  }
+
+  function handleFiles(fileList) {
+    setError(null);
+    const newFiles = [];
+    
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      
+      // Validaciones básicas
+      if (!ACCEPTED.includes(file.type) && !file.type.startsWith("image/")) {
+        setError(`Archivo "${file.name}" no soportado. Sube una imagen (JPG, PNG, WEBP, HEIC).`);
+        continue;
+      }
+      
+      const sizeMB = file.size / (1024 * 1024);
+      if (sizeMB > MAX_MB) {
+        setError(`La imagen "${file.name}" supera ${MAX_MB} MB (${sizeMB.toFixed(1)} MB).`);
+        continue;
+      }
+
+      const fileData = {
+        id: Date.now() + i, // ID único simple
+        name: file.name || `photo-${i}`,
+        type: file.type || "image/*",
+        sizeMB: sizeMB.toFixed(2),
+        lastModified: file.lastModified,
+        previewUrl: URL.createObjectURL(file),
+        file: file
+      };
+      
+      newFiles.push(fileData);
+    }
+    
+    setFiles(prevFiles => [...prevFiles, ...newFiles]);
   }
 
   function handleChange(e) {
-    setError(null);
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validaciones básicas
-    if (!ACCEPTED.includes(file.type) && !file.type.startsWith("image/")) {
-      setError("Archivo no soportado. Sube una imagen (JPG, PNG, WEBP, HEIC).");
-      return;
+    const fileList = e.target.files;
+    if (fileList && fileList.length > 0) {
+      handleFiles(fileList);
     }
-    const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > MAX_MB) {
-      setError(`La imagen supera ${MAX_MB} MB (${sizeMB.toFixed(1)} MB).`);
-      return;
+  }
+
+  // Drag and drop handlers para desktop
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const fileList = e.dataTransfer.files;
+    if (fileList && fileList.length > 0) {
+      handleFiles(fileList);
     }
-
-    setFileInfo({
-      name: file.name || "photo",
-      type: file.type || "image/*",
-      sizeMB: sizeMB.toFixed(2),
-      lastModified: file.lastModified,
-    });
-
-    // Preview
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-
-    // Aquí puedes subir el file al backend / S3 / Cloudflare R2, etc.
-    // const form = new FormData();
-    // form.append("photo", file);
-    // await fetch("/upload", { method: "POST", body: form });
   }
 
   return (
-    <div style={{ maxWidth: 520, margin: "2rem auto", padding: 16, border: "1px solid #e5e7eb", borderRadius: 12 }}>
-      <h2 style={{ marginBottom: 12 }}>Cargar fotografía</h2>
-      <p style={{ marginBottom: 16, color: "#374151" }}>
-        Elige una opción: cámara, archivos o fotos/galería. (Depende del sistema del teléfono)
-      </p>
+    <div className="max-w-4xl mx-auto my-8 p-4 border border-gray-200 rounded-xl">
+      <h2 className="mb-3 text-xl font-semibold">Fotos (opcional)</h2>
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
-        <button onClick={openAnySource} style={btnStyle}>
-          Elegir foto (cámara / archivos / galería)
-        </button>
-        <button onClick={openCamera} style={{ ...btnStyle, background: "#111827" }}>
-          Tomar foto ahora (forzar cámara)
-        </button>
-        {previewUrl && (
-          <button onClick={reset} style={{ ...btnStyle, background: "#6b7280" }}>
-            Quitar / Reintentar
+      {/* Interfaz adaptativa según dispositivo */}
+      {isMobile ? (
+        // Vista móvil
+        <div className="mb-4">
+          <button 
+            onClick={openFileDialog} 
+            className="w-full px-4 py-3 bg-blue-600 text-white border-none rounded-lg cursor-pointer font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Tomar foto o seleccionar una existente
           </button>
-        )}
+        </div>
+      ) : (
+        // Vista desktop con drag and drop
+        <div 
+          className="mb-4 border-2 border-dashed border-yellow-400 bg-yellow-50 rounded-lg p-8 cursor-pointer hover:bg-yellow-100 transition-colors"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={openFileDialog}
+        >
+          {/* Área de carga inicial o botón para agregar más fotos */}
+          <div className="text-center mb-4">
+            <p className="text-gray-700 mb-4">
+              {files.length === 0 ? 'Arrastra tus fotos aquí o ' : 'Arrastra más fotos aquí o '}
+              <span className="inline-block px-4 py-2 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition-colors">
+                {files.length === 0 ? 'Explora en tu equipo' : 'Agregar más fotos'}
+              </span>
+            </p>
+          </div>
+
+          {/* Previsualización de fotos dentro del área de drag and drop */}
+          {files.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-left">Fotos seleccionadas ({files.length})</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {files.map((fileData, index) => (
+                  <div key={fileData.id} className="relative group">
+                    <img
+                      src={fileData.previewUrl}
+                      alt={`Vista previa ${index + 1}`}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      loading="lazy"
+                    />
+                    {/* Botón para eliminar foto individual */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(index);
+                      }}
+                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Eliminar foto"
+                    >
+                      ×
+                    </button>
+                    {/* Información del archivo */}
+                    <div className="mt-1 text-xs text-gray-600 truncate">
+                      <div className="font-medium">{fileData.name}</div>
+                      <div>{fileData.sizeMB} MB</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Input de archivos oculto */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleChange}
+        className="hidden"
+      />
+
+      {/* Botón para resetear si hay fotos */}
+      {files.length > 0 && (
+        <div className="mb-4">
+          <button 
+            onClick={reset} 
+            className="px-4 py-2 bg-red-600 text-white border-none rounded-lg cursor-pointer font-semibold hover:bg-red-700 transition-colors"
+          >
+            Quitar todas las fotos
+          </button>
+        </div>
+      )}
+
+      {error && <p className="text-red-700 mt-2 mb-4">{error}</p>}
+
+      {/* Para móvil, mostrar previsualización por separado */}
+      {isMobile && files.length > 0 && (
+        <div className="mt-4">
+          <h3 className="text-lg font-semibold mb-3">Fotos seleccionadas ({files.length})</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {files.map((fileData, index) => (
+              <div key={fileData.id} className="relative group">
+                <img
+                  src={fileData.previewUrl}
+                  alt={`Vista previa ${index + 1}`}
+                  className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                  loading="lazy"
+                />
+                {/* Botón para eliminar foto individual */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(index);
+                  }}
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
+                  title="Eliminar foto"
+                >
+                  ×
+                </button>
+                {/* Información del archivo */}
+                <div className="mt-1 text-xs text-gray-600 truncate">
+                  <div className="font-medium">{fileData.name}</div>
+                  <div>{fileData.sizeMB} MB</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Consejos */}
+      <div className="mt-4 text-sm text-gray-600">
+        <div className="flex items-start gap-2 mb-2">
+          <span className="text-green-600 font-bold">✓</span>
+          <span>Los reportes con fotos tienden a resolverse más rápidamente</span>
+        </div>
+        <div className="flex items-start gap-2 mb-2">
+          <span className="text-green-600 font-bold">✓</span>
+          <span>Para mejores resultados incluye una toma cercana y una amplia</span>
+        </div>
+        <div className="flex items-start gap-2">
+          <span className="text-red-600 font-bold">×</span>
+          <span>Evita información personal y placas de vehículos</span>
+        </div>
       </div>
-
-      {/* Input que muestra la hoja del sistema con opciones (recomendado) */}
-      <input
-        ref={anySourceInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleChange}
-        style={{ display: "none" }}
-      />
-
-      {/* Input que intenta abrir directamente la cámara */}
-      {/* iOS suele respetar `capture`, Android también; si no, vuelve a la hoja estándar */}
-      <input
-        ref={cameraOnlyInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"              // para cámara trasera; usa "user" para frontal
-        onChange={handleChange}
-        style={{ display: "none" }}
-      />
-
-      {error && <p style={{ color: "#b91c1c", marginTop: 8 }}>{error}</p>}
-
-      {fileInfo && (
-        <div style={{ marginTop: 16, fontSize: 14, color: "#374151" }}>
-          <div><strong>Archivo:</strong> {fileInfo.name}</div>
-          <div><strong>Tipo:</strong> {fileInfo.type}</div>
-          <div><strong>Tamaño:</strong> {fileInfo.sizeMB} MB</div>
-        </div>
-      )}
-
-      {previewUrl && (
-        <div style={{ marginTop: 16 }}>
-          <img
-            src={previewUrl}
-            alt="Vista previa"
-            style={{ width: "100%", maxHeight: 420, objectFit: "contain", borderRadius: 8, border: "1px solid #e5e7eb" }}
-            loading="lazy"
-          />
-        </div>
-      )}
     </div>
   );
 }
 
-const btnStyle = {
-  padding: "10px 14px",
-  background: "#2563eb",
-  color: "white",
-  border: "none",
-  borderRadius: 8,
-  cursor: "pointer",
-  fontWeight: 600,
-};
