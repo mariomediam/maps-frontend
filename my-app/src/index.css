@@ -9,8 +9,13 @@
 @theme {
 	--color-secondary: #f0f9ff;
 	--color-primary: #07314a;
-	--color-primary-900: #0a4d70;
-	--color-primary-800: #055d87;
+	--color-primary-900: #0b4c6f;
+	--color-primary-800: #065c86;
+	--color-primary-700: #016da3;
+	--color-primary-500: #0cabeb;	
+	--color-primary-400: #36c3fa;
+	--color-primary-300: #7cd6fd;
+	--color-primary-200: #b9e8fe;
 	--color-header: #0095da;
 	--color-header-500: #e0f3fe;
 	--color-success: #218838;

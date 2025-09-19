@@ -99,15 +99,14 @@ export default function LoadPhotography() {
 
   return (
     <div className="max-w-4xl mx-auto my-8 p-4 border border-gray-200 rounded-xl">
-      <h2 className="mb-3 text-xl font-semibold">Fotos (opcional)</h2>
-
+      
       {/* Interfaz adaptativa según dispositivo */}
       {isMobile ? (
         // Vista móvil
         <div className="mb-4">
           <button 
             onClick={openFileDialog} 
-            className="w-full px-4 py-3 bg-blue-600 text-white border-none rounded-lg cursor-pointer font-semibold hover:bg-blue-700 transition-colors"
+            className="w-full px-4 py-3 bg-primary text-secondary border-none rounded-lg cursor-pointer font-semibold hover:bg-black transition-colors hover:font-bold"
           >
             Tomar foto o seleccionar una existente
           </button>
@@ -115,17 +114,17 @@ export default function LoadPhotography() {
       ) : (
         // Vista desktop con drag and drop
         <div 
-          className="mb-4 border-2 border-dashed border-yellow-400 bg-yellow-50 rounded-lg p-8 cursor-pointer hover:bg-yellow-100 transition-colors"
+          className="mb-4 border-2 border-dashed border-primary bg-secondary rounded-lg p-8 cursor-pointer hover:bg-header-500 transition-colors"
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onClick={openFileDialog}
         >
           {/* Área de carga inicial o botón para agregar más fotos */}
           <div className="text-center mb-4">
-            <p className="text-gray-700 mb-4">
+            <p className="text-primary mb-4">
               {files.length === 0 ? 'Arrastra tus fotos aquí o ' : 'Arrastra más fotos aquí o '}
-              <span className="inline-block px-4 py-2 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition-colors">
-                {files.length === 0 ? 'Explora en tu equipo' : 'Agregar más fotos'}
+              <span className="inline-block px-4 py-2 bg-primary text-secondary rounded-lg font-semibold hover:bg-black transition-colors cursor-pointer hover:font-bold hover:px-3.5">
+                explora en tu equipo
               </span>
             </p>
           </div>
@@ -133,7 +132,7 @@ export default function LoadPhotography() {
           {/* Previsualización de fotos dentro del área de drag and drop */}
           {files.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-3 text-left">Fotos seleccionadas ({files.length})</h3>
+              
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {files.map((fileData, index) => (
                   <div key={fileData.id} className="relative group">
@@ -149,16 +148,16 @@ export default function LoadPhotography() {
                         e.stopPropagation();
                         removeFile(index);
                       }}
-                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
+                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors"
                       title="Eliminar foto"
                     >
                       ×
                     </button>
                     {/* Información del archivo */}
-                    <div className="mt-1 text-xs text-gray-600 truncate">
+                    {/* <div className="mt-1 text-xs text-gray-600 truncate">
                       <div className="font-medium">{fileData.name}</div>
                       <div>{fileData.sizeMB} MB</div>
-                    </div>
+                    </div> */}
                   </div>
                 ))}
               </div>
@@ -178,7 +177,7 @@ export default function LoadPhotography() {
       />
 
       {/* Botón para resetear si hay fotos */}
-      {files.length > 0 && (
+      {/* {files.length > 0 && (
         <div className="mb-4">
           <button 
             onClick={reset} 
@@ -187,7 +186,7 @@ export default function LoadPhotography() {
             Quitar todas las fotos
           </button>
         </div>
-      )}
+      )} */}
 
       {error && <p className="text-red-700 mt-2 mb-4">{error}</p>}
 
@@ -210,37 +209,23 @@ export default function LoadPhotography() {
                     e.stopPropagation();
                     removeFile(index);
                   }}
-                  className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors opacity-0 group-hover:opacity-100"
+                  className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors"
                   title="Eliminar foto"
                 >
                   ×
                 </button>
                 {/* Información del archivo */}
-                <div className="mt-1 text-xs text-gray-600 truncate">
+                {/* <div className="mt-1 text-xs text-gray-600 truncate">
                   <div className="font-medium">{fileData.name}</div>
                   <div>{fileData.sizeMB} MB</div>
-                </div>
+                </div> */}
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Consejos */}
-      <div className="mt-4 text-sm text-gray-600">
-        <div className="flex items-start gap-2 mb-2">
-          <span className="text-green-600 font-bold">✓</span>
-          <span>Los reportes con fotos tienden a resolverse más rápidamente</span>
-        </div>
-        <div className="flex items-start gap-2 mb-2">
-          <span className="text-green-600 font-bold">✓</span>
-          <span>Para mejores resultados incluye una toma cercana y una amplia</span>
-        </div>
-        <div className="flex items-start gap-2">
-          <span className="text-red-600 font-bold">×</span>
-          <span>Evita información personal y placas de vehículos</span>
-        </div>
-      </div>
+      {JSON.stringify(files)}
     </div>
   );
 }
