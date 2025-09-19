@@ -9,11 +9,20 @@ import MapPinIcon from "@shared/assets/icons/MapPinIcon";
 import PhotoIcon from "@shared/assets/icons/PhotoIcon";
 import MessageExclamationIcon from "@shared/assets/icons/MessageExclamationIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
+import { useState, useEffect } from "react";
+import { getIncidentCategories } from "@features/incidentCategory/services/incidentCategoryApi";
 
+
+export const ReportIncident = () => {
+  const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  
 const steps = [
   {
     label: "Seleccionar categoría",
-    component: <SelectCategory />,
+    component: <SelectCategory categories={categories} isLoading={isLoading} />,
     icon: <CategoryIcon />,
   },
   {
@@ -33,9 +42,6 @@ const steps = [
   },
 ];
 
-export const ReportIncident = () => {
-  const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
-
   const handleComplete = () => {
     console.log("Formulario completado - Enviando datos...");
     // Aquí puedes agregar la lógica para enviar los datos del formulario
@@ -46,6 +52,25 @@ export const ReportIncident = () => {
     console.log(`Cambió al paso ${stepIndex + 1}:`, stepData.label);
     // Aquí puedes agregar lógica para validar o guardar datos del paso anterior
   };
+
+  useEffect(() => {
+    try {
+      setIsLoading(true);
+      const getCategories = async () => {
+        const categories = await getIncidentCategories({ isActive: true });
+        setCategories(categories);
+        setIsLoading(false);
+        return categories;
+      };
+      getCategories();
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Error fetching categories:", error);
+    } finally {
+      
+    }
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50">

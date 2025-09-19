@@ -1,30 +1,13 @@
-import { useState, useEffect } from "react";
-import useIncidentsStore from "@features/incident/store/incidentStore";
-import { getIncidentCategories } from "@features/incidentCategory/services/incidentCategoryApi";
 
-const SelectCategory = () => {
+import useIncidentsStore from "@features/incident/store/incidentStore";
+
+
+const SelectCategory = ({categories, isLoading}) => {
   const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
   const setIncidentAdded = useIncidentsStore((state) => state.setIncidentAdded);
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  
 
-  useEffect(() => {
-    try {
-      setIsLoading(true);
-      const getCategories = async () => {
-        const categories = await getIncidentCategories({ isActive: true });
-        setCategories(categories);
-        setIsLoading(false);
-        return categories;
-      };
-      getCategories();
-    } catch (error) {
-      setIsLoading(false);
-      console.error("Error fetching categories:", error);
-    } finally {
-      
-    }
-  }, []);
+ 
 
   const handleCategoryChange = (event) => {
     const selectedCategoryId = parseInt(event.target.value);
