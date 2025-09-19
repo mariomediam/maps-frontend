@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import useIncidentsStore from "@/features/incident/store/incidentStore";
 
 export default function LoadPhotography() {
   const [files, setFiles] = useState([]);
@@ -6,6 +7,8 @@ export default function LoadPhotography() {
   const [isMobile, setIsMobile] = useState(false);
 
   const fileInputRef = useRef(null);
+  const setIncidentAdded = useIncidentsStore((state) => state.setIncidentAdded);
+  const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
 
   const MAX_MB = 10;                // cambia el límite si necesitas
   const ACCEPTED = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
@@ -25,6 +28,46 @@ export default function LoadPhotography() {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Restaurar archivos desde el store al montar el componente
+  useEffect(() => {
+    if (incidentAdded.files && incidentAdded.files.length > 0 && files.length === 0) {
+      // Recrear el estado local desde los archivos del store
+      const restoredFiles = incidentAdded.files.map((file, index) => ({
+        id: Date.now() + index,
+        name: file.name || `photo-${index}`,
+        type: file.type || "image/*",
+        sizeMB: (file.size / (1024 * 1024)).toFixed(2),
+        lastModified: file.lastModified || Date.now(),
+        previewUrl: URL.createObjectURL(file),
+        file: file
+      }));
+      setFiles(restoredFiles);
+    }
+  }, [incidentAdded.files, files.length]);
+
+  // Actualizar el store cuando cambien los archivos (solo si hay diferencias)
+  useEffect(() => {
+    const fileObjects = files.map(fileData => fileData.file);
+    const currentStoreFiles = incidentAdded.files || [];
+    
+    // Solo actualizar si hay diferencias
+    if (fileObjects.length !== currentStoreFiles.length || 
+        !fileObjects.every((file, index) => file === currentStoreFiles[index])) {
+      setIncidentAdded({ files: fileObjects });
+    }
+  }, [files, setIncidentAdded, incidentAdded.files]);
+
+  // Limpiar URLs de blob al desmontar el componente
+  useEffect(() => {
+    return () => {
+      files.forEach(fileData => {
+        if (fileData.previewUrl && fileData.previewUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(fileData.previewUrl);
+        }
+      });
+    };
+  }, [files]);
 
   function openFileDialog() {
     fileInputRef.current?.click();
@@ -225,7 +268,6 @@ export default function LoadPhotography() {
         </div>
       )}
 
-      {JSON.stringify(files)}
     </div>
   );
 }

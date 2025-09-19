@@ -61,4 +61,45 @@ const getIncidentById = async (idIncident) => {
 	}
 };
 
-export { getIncidents, getIncidentPhotographyById, getIncidentById };
+// Función para crear un nuevo incidente con archivos
+const createIncident = async (incidentData) => {
+	try {
+		const api = useAxios();
+		
+		// Crear FormData para enviar archivos
+		const formData = new FormData();
+		
+		// Agregar campos de texto
+		formData.append('category_id', incidentData.category_id);
+		formData.append('latitude', incidentData.latitude);
+		formData.append('longitude', incidentData.longitude);
+		
+		if (incidentData.summary) {
+			formData.append('summary', incidentData.summary);
+		}
+		
+		if (incidentData.reference) {
+			formData.append('reference', incidentData.reference);
+		}
+		
+		// Agregar archivos (si existen)
+		if (incidentData.files && incidentData.files.length > 0) {
+			incidentData.files.forEach((file) => {
+				formData.append('files', file);
+			});
+		}
+		
+		const { data: { content } } = await api.post(URL, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			},
+		});
+		
+		return content;
+	} catch (error) {
+		console.error('Error creating incident:', error);
+		throw error;
+	}
+};
+
+export { getIncidents, getIncidentPhotographyById, getIncidentById, createIncident };

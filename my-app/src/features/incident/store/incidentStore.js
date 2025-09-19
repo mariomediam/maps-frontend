@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getIncidents } from "@/features/incident/services/incidentApi";
+import { getIncidents, createIncident } from "@/features/incident/services/incidentApi";
 
 const INCIDENT_ADDED_DEFAULT = {
   category_id: 4,
@@ -111,6 +111,31 @@ const useIncidentsStore = create((set, get) => ({
         incidentSelected: null,
         isMapExpanded: false
       });
+    }
+  },
+
+  // Función para crear un nuevo incidente
+  createIncidentFromStore: async () => {
+    const { incidentAdded } = get();
+    
+    set({ isLoading: true, error: null });
+
+    try {
+      const newIncident = await createIncident(incidentAdded);
+      
+      set({
+        isLoading: false,
+        incidentAdded: INCIDENT_ADDED_DEFAULT, // Reset después de crear
+      });
+      
+      return newIncident;
+    } catch (error) {
+      console.error('Error creating incident:', error);
+      set({
+        error: error.message || "Error al crear el incidente",
+        isLoading: false,
+      });
+      throw error;
     }
   },
 }));

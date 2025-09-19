@@ -42,10 +42,28 @@ const steps = [
   },
 ];
 
-  const handleComplete = () => {
-    console.log("Formulario completado - Enviando datos...");
-    // Aquí puedes agregar la lógica para enviar los datos del formulario
-    alert("¡Incidencia reportada exitosamente!");
+  const createIncidentFromStore = useIncidentsStore((state) => state.createIncidentFromStore);
+  const isCreatingIncident = useIncidentsStore((state) => state.isLoading);
+  const createIncidentError = useIncidentsStore((state) => state.error);
+
+  const handleComplete = async () => {
+    try {
+      console.log("Formulario completado - Enviando datos...", incidentAdded);
+      
+      // Validar datos mínimos requeridos
+      if (!incidentAdded.latitude || !incidentAdded.longitude) {
+        alert("Por favor selecciona una ubicación");
+        return;
+      }
+      
+      const newIncident = await createIncidentFromStore();
+      console.log("Incidente creado exitosamente:", newIncident);
+      alert("¡Incidencia reportada exitosamente!");
+      
+    } catch (error) {
+      console.error("Error al crear incidente:", error);
+      alert(`Error al reportar la incidencia: ${error.message || 'Error desconocido'}`);
+    }
   };
 
   const handleStepChange = (stepIndex, stepData) => {
@@ -75,7 +93,7 @@ const steps = [
   return (
     <div className="min-h-screen bg-gray-50">
       <MainHeader />
-      {JSON.stringify(incidentAdded)}
+      {/* <p>{JSON.stringify(incidentAdded)}</p> */}
 
       <div className="container mx-auto px-4 py-6">
       <div className="max-w-6xl w-full flex items-center justify-end me-1 my-0">
