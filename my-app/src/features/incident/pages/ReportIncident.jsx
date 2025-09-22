@@ -133,18 +133,22 @@ const steps = [
     }
   }, []);
 
+  const handleClose = () => {
+    navigate("/map-explorer", { replace: true });
+  };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
       <MainHeader />
-      <p>{JSON.stringify(incidentAdded)}</p>
+      {/* <p>{JSON.stringify(incidentAdded)}</p> */}
 
       <div className="container mx-auto px-4 py-6">
       <div className="max-w-6xl w-full flex items-center justify-end me-1 my-0">
             <button
               type="button"
               className="text-gray-500 hover:text-gray-700 text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0"
-              // onClick={handleClose}
+              onClick={handleClose}
               aria-label="Cerrar detalle"
             >
               ✕

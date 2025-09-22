@@ -6,10 +6,10 @@ const IncidentCard = () => {
 
 
   return (
-    <div className="text-start">
+    <div className="text-start w-full">
       
       <section className="mt-1">
-        {incidentsStored.map((incident) => (
+        {incidentsStored.slice(0, 5).map((incident) => (
           <IncidentCardItem key={incident.id_incident} incident={incident} />
         ))}
       </section>
