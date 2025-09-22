@@ -82,7 +82,37 @@ const steps = [
 
   const handleStepChange = (stepIndex, stepData) => {
     console.log(`Cambió al paso ${stepIndex + 1}:`, stepData.label);
-    // Aquí puedes agregar lógica para validar o guardar datos del paso anterior
+    // Aquí puedes agregar lógica adicional después del cambio de paso
+  };
+
+  const handleBeforeStepChange = (currentStepIndex, nextStepIndex, currentStepData, nextStepData) => {
+    // Validar cuando intenta pasar del paso 1 (ubicación) al paso 2 (fotografías)
+    if (currentStepIndex === 1 && nextStepIndex === 2) {
+      if (!incidentAdded.latitude || !incidentAdded.longitude) {
+        toast.error("Por favor selecciona una ubicación antes de continuar");
+        return false; // No permitir el cambio
+      }
+    }
+    
+    // Validar antes de completar el formulario
+    if (nextStepIndex === 'complete') {
+      if (!incidentAdded.latitude || !incidentAdded.longitude) {
+        toast.error("Por favor selecciona una ubicación");
+        return false;
+      }
+
+      if (incidentAdded.summary === null || incidentAdded.summary === "") {
+        toast.error("Por favor agrega un resumen");
+        return false;
+      }
+
+      if (incidentAdded.reference === null || incidentAdded.reference === "") {
+        toast.error("Por favor agrega una referencia");
+        return false;
+      }
+    }
+    
+    return true; // Permitir el cambio
   };
 
   useEffect(() => {
@@ -130,6 +160,7 @@ const steps = [
             steps={steps}
             onComplete={handleComplete}
             onStepChange={handleStepChange}
+            onBeforeStepChange={handleBeforeStepChange}
             showStepLabels={true}
             className="w-full"
             isLoading={isLoading}

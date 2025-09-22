@@ -4,6 +4,7 @@ const Stepper = ({
   steps, 
   onComplete, 
   onStepChange,
+  onBeforeStepChange,
   className = "",
   showStepLabels = false,
   isLoading = false
@@ -14,6 +15,15 @@ const Stepper = ({
     if (isLoading) return;
     if (currentStep < steps.length - 1) {
       const newStep = currentStep + 1;
+      
+      // Validar antes de cambiar de paso
+      if (onBeforeStepChange) {
+        const canProceed = onBeforeStepChange(currentStep, newStep, steps[currentStep], steps[newStep]);
+        if (!canProceed) {
+          return; // No permitir el cambio de paso
+        }
+      }
+      
       setCurrentStep(newStep);
       if (onStepChange) {
         onStepChange(newStep, steps[newStep]);
@@ -34,6 +44,15 @@ const Stepper = ({
 
   const handleComplete = () => {
     if (isLoading) return;
+    
+    // Validar antes de completar
+    if (onBeforeStepChange) {
+      const canProceed = onBeforeStepChange(currentStep, 'complete', steps[currentStep], null);
+      if (!canProceed) {
+        return; // No permitir completar
+      }
+    }
+    
     if (onComplete) {
       onComplete();
     }
@@ -173,8 +192,7 @@ const Stepper = ({
           <button
             onClick={nextStep}
             className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-opacity-90 focus:ring-4 focus:ring-blue-200 transition-colors duration-200 cursor-pointer"
-            disabled={isLoading}
-            cursor-pointer
+            disabled={isLoading}            
           >
             Siguiente
           </button>
