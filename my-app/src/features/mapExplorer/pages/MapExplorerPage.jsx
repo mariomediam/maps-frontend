@@ -114,11 +114,17 @@ const MapExplorerPage = () => {
         
         try {
           console.log(`Procesando incidente recién creado: ${newlyCreatedIncidentId}`);
+          
+          // Agregar un pequeño delay para asegurar que los datos estén sincronizados
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
           await setIncidentSelectedFromStore(newlyCreatedIncidentId);
           hasProcessedNewIncident.current = true;
           
-          // Limpiar el ID del store después de procesarlo
-          clearNewlyCreatedIncident();
+          // Limpiar el ID del store después de procesarlo con un delay adicional
+          setTimeout(() => {
+            clearNewlyCreatedIncident();
+          }, 1000);
           
           // toast.success("Incidente reportado correctamente");
         } catch (error) {

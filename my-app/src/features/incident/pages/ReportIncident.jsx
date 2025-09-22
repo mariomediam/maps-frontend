@@ -67,8 +67,10 @@ const steps = [
       toast.success("Incidente reportado exitosamente");
 
       // console.log("newIncident", newIncident);
-      // Navegar al map-explorer sin parámetros en la URL
-      navigate("/map-explorer", { replace: true });
+      // Agregar un pequeño delay antes de navegar para asegurar que el store se actualice
+      setTimeout(() => {
+        navigate("/map-explorer", { replace: true });
+      }, 100);
       
       
 

@@ -13,6 +13,7 @@ import FilterIcon from "@/shared/assets/icons/FilterIcon";
 import { MAP_ACTION_TYPES } from "@/shared/constants/mapConstants";
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
 import useWindowStore from "@/shared/store/windowStore";
+import { useNavigate } from "react-router-dom";
 
 // Función para crear un ícono SVG de marcador de posición personalizado
 const getColoredIcon = (color) => {
@@ -121,6 +122,7 @@ const MapView = ({ className, onToggleFilters }) => {
   const [forceRender, setForceRender] = useState(0); // Para forzar re-render
   const markersRef = useRef({});
   const mapRef = useRef(null);
+  const navigate = useNavigate();
 
   const incidentsStored = useIncidentsStore((state) => state.incidentsStored);
   const isLoading = useIncidentsStore((state) => state.isLoading);
@@ -204,7 +206,7 @@ const MapView = ({ className, onToggleFilters }) => {
 
   const handleReportIncident = () => {
     resetIncidentAdded();
-    window.location.href = '/add-incident';
+    navigate('/add-incident');
   };
 
   return (
