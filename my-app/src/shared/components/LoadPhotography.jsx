@@ -1,10 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 import useIncidentsStore from "@/features/incident/store/incidentStore";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function LoadPhotography() {
   const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const fileInputRef = useRef(null);
   const setIncidentAdded = useIncidentsStore((state) => state.setIncidentAdded);
@@ -29,12 +31,12 @@ export default function LoadPhotography() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Restaurar archivos desde el store al montar el componente
+  // Restaurar archivos desde el store solo al montar el componente
   useEffect(() => {
-    if (incidentAdded.files && incidentAdded.files.length > 0 && files.length === 0) {
+    if (!isInitialized && incidentAdded.files && incidentAdded.files.length > 0) {
       // Recrear el estado local desde los archivos del store
       const restoredFiles = incidentAdded.files.map((file, index) => ({
-        id: Date.now() + index,
+        id: uuidv4(), // Generar nuevo UUID al restaurar
         name: file.name || `photo-${index}`,
         type: file.type || "image/*",
         sizeMB: (file.size / (1024 * 1024)).toFixed(2),
@@ -44,19 +46,16 @@ export default function LoadPhotography() {
       }));
       setFiles(restoredFiles);
     }
-  }, [incidentAdded.files, files.length]);
+    setIsInitialized(true);
+  }, [incidentAdded.files, isInitialized]);
 
-  // Actualizar el store cuando cambien los archivos (solo si hay diferencias)
+  // Actualizar el store cuando cambien los archivos
   useEffect(() => {
-    const fileObjects = files.map(fileData => fileData.file);
-    const currentStoreFiles = incidentAdded.files || [];
-    
-    // Solo actualizar si hay diferencias
-    if (fileObjects.length !== currentStoreFiles.length || 
-        !fileObjects.every((file, index) => file === currentStoreFiles[index])) {
+    if (isInitialized) {
+      const fileObjects = files.map(fileData => fileData.file);
       setIncidentAdded({ files: fileObjects });
     }
-  }, [files, setIncidentAdded, incidentAdded.files]);
+  }, [files, setIncidentAdded, isInitialized]);
 
   // Limpiar URLs de blob al desmontar el componente
   useEffect(() => {
@@ -73,8 +72,8 @@ export default function LoadPhotography() {
     fileInputRef.current?.click();
   }
 
-  function removeFile(indexToRemove) {
-    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  function removeFile(idToRemove) {
+    setFiles(prevFiles => prevFiles.filter(file => file.id !== idToRemove));
   }
 
   function reset() {
@@ -102,7 +101,7 @@ export default function LoadPhotography() {
       }
 
       const fileData = {
-        id: Date.now() + i, // ID único simple
+        id: uuidv4(), // ID único usando UUID
         name: file.name || `photo-${i}`,
         type: file.type || "image/*",
         sizeMB: sizeMB.toFixed(2),
@@ -189,7 +188,7 @@ export default function LoadPhotography() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        removeFile(index);
+                        removeFile(fileData.id);
                       }}
                       className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors"
                       title="Eliminar foto"
@@ -250,7 +249,7 @@ export default function LoadPhotography() {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    removeFile(index);
+                    removeFile(fileData.id);
                   }}
                   className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center text-xs font-bold hover:bg-red-700 transition-colors"
                   title="Eliminar foto"
