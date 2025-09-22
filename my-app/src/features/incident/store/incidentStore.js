@@ -19,6 +19,7 @@ const useIncidentsStore = create((set, get) => ({
   incidentSelected: null,
   isMapExpanded: false,
   incidentAdded: INCIDENT_ADDED_DEFAULT,
+  newlyCreatedIncidentId: null, // ID del incidente recién creado
   
   
   setIncidentAdded: (params = {}) => set({ incidentAdded: { ...get().incidentAdded, ...params } }),
@@ -126,6 +127,7 @@ const useIncidentsStore = create((set, get) => ({
       set({
         isLoading: false,
         incidentAdded: INCIDENT_ADDED_DEFAULT, // Reset después de crear
+        newlyCreatedIncidentId: newIncident.id_incident, // Guardar el ID del nuevo incidente
       });
       
       return newIncident;
@@ -138,6 +140,9 @@ const useIncidentsStore = create((set, get) => ({
       throw error;
     }
   },
+
+  // Función para limpiar el ID del incidente recién creado
+  clearNewlyCreatedIncident: () => set({ newlyCreatedIncidentId: null }),
 }));
 
 export default useIncidentsStore;

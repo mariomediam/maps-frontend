@@ -9,10 +9,11 @@ import { useSearchParams } from "react-router-dom";
 import FilterIcon from "@/shared/assets/icons/FilterIcon";
 import ArrowsMaximizeIcon from "@/shared/assets/icons/ArrowsMaximizeIcon";
 import ArrowsMinimizeIcon from "@/shared/assets/icons/ArrowsMinimizeIcon";
+import { toast } from "sonner";
 
 const MapExplorerPage = () => {
   const { isMobile } = useWindowStore();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const {
     showMapFilters,
     showMapDetail,
@@ -24,10 +25,15 @@ const MapExplorerPage = () => {
     initializeMapState,
     searchIncidentsStored,
     incidentsStored,
+    setIncidentSelectedFromStore,
+    newlyCreatedIncidentId,
+    clearNewlyCreatedIncident,
   } = useIncidentsStore();
   
   // Ref para rastrear si ya se cargaron los incidentes inicialmente
   const hasInitiallyLoaded = useRef(false);
+  // Ref para rastrear si ya se procesó el incidente recién creado
+  const hasProcessedNewIncident = useRef(false);
   
   // Estado para rastrear si el store de ventana se ha inicializado
   const [isWindowStoreInitialized, setIsWindowStoreInitialized] = useState(false);
@@ -97,6 +103,39 @@ const MapExplorerPage = () => {
       updateIncidentsWithFilters();
     }
   }, [searchParams]); // Solo searchParams como dependencia para evitar el bucle
+
+  // Detectar y procesar el incidente recién creado desde el store
+  useEffect(() => {
+    const processNewlyCreatedIncident = async () => {
+      if (newlyCreatedIncidentId && 
+          hasInitiallyLoaded.current && 
+          !hasProcessedNewIncident.current && 
+          incidentsStored.length > 0) {
+        
+        try {
+          console.log(`Procesando incidente recién creado: ${newlyCreatedIncidentId}`);
+          await setIncidentSelectedFromStore(newlyCreatedIncidentId);
+          hasProcessedNewIncident.current = true;
+          
+          // Limpiar el ID del store después de procesarlo
+          clearNewlyCreatedIncident();
+          
+          // toast.success("Incidente reportado correctamente");
+        } catch (error) {
+          console.error("Error al seleccionar incidente recién creado:", error);
+        }
+      }
+    };
+
+    processNewlyCreatedIncident();
+  }, [newlyCreatedIncidentId, hasInitiallyLoaded.current, incidentsStored, setIncidentSelectedFromStore, clearNewlyCreatedIncident]);
+
+  // Resetear la bandera cuando no hay incidente recién creado
+  useEffect(() => {
+    if (!newlyCreatedIncidentId) {
+      hasProcessedNewIncident.current = false;
+    }
+  }, [newlyCreatedIncidentId]);
 
   // No renderizar hasta que el store de ventana esté inicializado
   if (!isWindowStoreInitialized) {

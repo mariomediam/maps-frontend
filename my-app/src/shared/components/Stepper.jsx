@@ -5,11 +5,13 @@ const Stepper = ({
   onComplete, 
   onStepChange,
   className = "",
-  showStepLabels = false 
+  showStepLabels = false,
+  isLoading = false
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
+    if (isLoading) return;
     if (currentStep < steps.length - 1) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
@@ -20,6 +22,7 @@ const Stepper = ({
   };
 
   const prevStep = () => {
+    if (isLoading) return;
     if (currentStep > 0) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
@@ -30,6 +33,7 @@ const Stepper = ({
   };
 
   const handleComplete = () => {
+    if (isLoading) return;
     if (onComplete) {
       onComplete();
     }
@@ -132,8 +136,9 @@ const Stepper = ({
       <div className="flex justify-between items-center pt-4 border-t border-gray-200">
         <button
           onClick={prevStep}
-          disabled={currentStep === 0}
-          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+          disabled={currentStep === 0 || isLoading}
+          
+          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 cursor-pointer${
             currentStep === 0
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-4 focus:ring-gray-200"
@@ -152,14 +157,24 @@ const Stepper = ({
         {currentStep === steps.length - 1 ? (
           <button
             onClick={handleComplete}
-            className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-colors duration-200"
+            className="px-6 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition-colors duration-200 cursor-pointer"
+            disabled={isLoading}
+            
           >
-            Grabar
+            {
+              isLoading ? (
+                <div className="flex items-center gap-2"><div className="animate-spin rounded-full h-2 w-2 border-b-1 border-secondary"></div> <span>Grabando...</span></div>
+              ) : (
+                "Grabar"
+              )
+            }
           </button>
         ) : (
           <button
             onClick={nextStep}
-            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-opacity-90 focus:ring-4 focus:ring-blue-200 transition-colors duration-200"
+            className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-opacity-90 focus:ring-4 focus:ring-blue-200 transition-colors duration-200 cursor-pointer"
+            disabled={isLoading}
+            cursor-pointer
           >
             Siguiente
           </button>

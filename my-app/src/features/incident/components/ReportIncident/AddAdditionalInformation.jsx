@@ -1,10 +1,9 @@
 import useIncidentsStore from "@features/incident/store/incidentStore";
 
-
 const AddAdditionalInformation = () => {
   const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
   const setIncidentAdded = useIncidentsStore((state) => state.setIncidentAdded);
-
+  const isLoading = useIncidentsStore((state) => state.isLoading);
 
   const handleSummaryChange = (event) => {
     setIncidentAdded({ summary: event.target.value });
@@ -32,8 +31,9 @@ const AddAdditionalInformation = () => {
           id="summary"
           rows="4"
           className="block p-2.5 w-full text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
-          value={incidentAdded?.summary || ''}
+          value={incidentAdded?.summary || ""}
           onChange={handleSummaryChange}
+          disabled={isLoading}
         ></textarea>
         <ul className="text-xs text-gray-500 mt-1">
           <li>Exprésate con respeto y amabilidad</li>
@@ -49,12 +49,19 @@ const AddAdditionalInformation = () => {
           Referencia
         </label>
 
-        <input type="text" id="reference" className=" border border-gray-300 text-primary text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 " value={incidentAdded?.reference || ''} onChange={handleReferenceChange} />
-        <p className="text-xs text-gray-500 mt-1">Ejemplo: Cerca del parque principal, entre la Av. Grau y la calle Libertad, al costado de la tienda Mi Farma.</p>
+        <input
+          type="text"
+          id="reference"
+          className=" border border-gray-300 text-primary text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 "
+          value={incidentAdded?.reference || ""}
+          onChange={handleReferenceChange}
+          disabled={isLoading}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Ejemplo: Cerca del parque principal, entre la Av. Grau y la calle
+          Libertad, al costado de la tienda Mi Farma.
+        </p>
       </div>
-
-      
-
     </section>
   );
 };

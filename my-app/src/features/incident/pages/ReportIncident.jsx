@@ -11,12 +11,16 @@ import MessageExclamationIcon from "@shared/assets/icons/MessageExclamationIcon"
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import { useState, useEffect } from "react";
 import { getIncidentCategories } from "@features/incidentCategory/services/incidentCategoryApi";
+import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "sonner";
 
 
 export const ReportIncident = () => {
+  const navigate = useNavigate();
   const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const setIncidentSelectedFromStore = useIncidentsStore((state) => state.setIncidentSelectedFromStore);
 
   
 const steps = [
@@ -48,6 +52,7 @@ const steps = [
 
   const handleComplete = async () => {
     try {
+      setIsLoading(true);
       console.log("Formulario completado - Enviando datos...", incidentAdded);
       
       // Validar datos mínimos requeridos
@@ -56,14 +61,23 @@ const steps = [
         return;
       }
       
-      const newIncident = await createIncidentFromStore();
-      console.log("Incidente creado exitosamente:", newIncident);
-      alert("¡Incidencia reportada exitosamente!");
+      const newIncident = await createIncidentFromStore();            
+      setIsLoading(false);
+
+      toast.success("Incidente reportado exitosamente");
+
+      // console.log("newIncident", newIncident);
+      // Navegar al map-explorer sin parámetros en la URL
+      navigate("/map-explorer", { replace: true });
       
+      
+
+    
     } catch (error) {
       console.error("Error al crear incidente:", error);
       alert(`Error al reportar la incidencia: ${error.message || 'Error desconocido'}`);
-    }
+      setIsLoading(false);
+    } 
   };
 
   const handleStepChange = (stepIndex, stepData) => {
@@ -118,9 +132,11 @@ const steps = [
             onStepChange={handleStepChange}
             showStepLabels={true}
             className="w-full"
+            isLoading={isLoading}
           />
         </div>
       </div>
+      <Toaster richColors visibleToasts={9} position="bottom-right" />
     </div>
   );
 };
