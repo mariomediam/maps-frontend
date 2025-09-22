@@ -89,7 +89,7 @@ const createIncident = async (incidentData) => {
 			});
 		}
 		
-		const { data: { content } } = await api.post(URL, formData, {
+		const { data: { content } } = await api.post(`${URL}/`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
