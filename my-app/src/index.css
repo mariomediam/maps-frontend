@@ -63,6 +63,20 @@ body {
 	background-color: var(--color-secondary);
 }
 
+/* Soporte para safe areas en dispositivos móviles */
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Fallback para dispositivos que no soportan safe areas */
+@supports not (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: 20px;
+  }
+}
+
 /* @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

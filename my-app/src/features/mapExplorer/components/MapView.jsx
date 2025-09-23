@@ -235,7 +235,9 @@ const MapView = ({ className, onToggleFilters }) => {
 
       {/* Botón "Reportar una incidencia" - Flotante sobre el mapa */}
       {(!isMobile || !incidentSelected) && (
-        <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-1000">
+        <div className={`absolute left-1/2 transform -translate-x-1/2 z-1000 ${
+          isMobile ? 'bottom-4 pb-safe' : 'bottom-6'
+        }`}>
           <button
             type="button"
             className="bg-primary text-secondary px-6 py-3 rounded-lg shadow-lg hover:bg-black hover:font-bold transition-colors font-medium text-sm"
@@ -251,7 +253,7 @@ const MapView = ({ className, onToggleFilters }) => {
         center={[-5.1955724, -80.6301423]}
         zoom={14}
         scrollWheelZoom={true}
-        style={{ height: "100dvh", width: "100%", opacity: 1 }}
+        style={{ height: "100%", width: "100%", opacity: 1 }}
         doubleClickZoom={false}
         className={isLoading ? "pointer-events-none" : ""}
         // Configuraciones para mejorar la respuesta de los clics
