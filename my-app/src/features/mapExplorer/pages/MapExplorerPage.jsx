@@ -170,14 +170,19 @@ const MapExplorerPage = () => {
             // Obtener las funciones del store de manera segura
             const { setIncidentSelectedFromStore, clearNewlyCreatedIncident } = useIncidentsStore.getState();
             
-            await setIncidentSelectedFromStore(newlyCreatedIncidentId);
+            // En móvil, agregar un delay adicional para evitar conflictos de DOM
+            const { isMobile } = useWindowStore.getState();
+            const selectionDelay = isMobile ? 500 : 100;
+            
+            setTimeout(async () => {
+              await setIncidentSelectedFromStore(newlyCreatedIncidentId);
+              console.log("Incidente seleccionado correctamente:", newlyCreatedIncidentId);
+            }, selectionDelay);
             
             // Limpiar el ID del store después de procesarlo
             setTimeout(() => {
               clearNewlyCreatedIncident();
-            }, 1000);
-            
-            console.log("Incidente seleccionado correctamente:", newlyCreatedIncidentId);
+            }, selectionDelay + 1000);
           } else {
             console.warn("No se pudo encontrar el incidente recién creado después de múltiples intentos");
             // Resetear la bandera para permitir reintentos futuros

@@ -149,9 +149,20 @@ const MapView = ({ className, onToggleFilters }) => {
   // Función para abrir popup del marcador seleccionado y centrar mapa
   useEffect(() => {
     if (incidentSelected && markersRef.current[incidentSelected.id_incident]) {
-      markersRef.current[incidentSelected.id_incident].openPopup();
+      // Agregar un pequeño delay para asegurar que el DOM esté estable, especialmente en móvil
+      setTimeout(() => {
+        try {
+          const markerRef = markersRef.current[incidentSelected.id_incident];
+          if (markerRef && markerRef.openPopup) {
+            markerRef.openPopup();
+          }
+        } catch (error) {
+          console.warn("Error al abrir popup del marcador:", error);
+          // No hacer nada, continuar normalmente
+        }
+      }, isMobile ? 300 : 100);
     }
-  }, [incidentSelected]);
+  }, [incidentSelected, isMobile]);
 
   // Efecto para forzar re-render cuando incidentSelected cambie a null
   useEffect(() => {
@@ -298,6 +309,9 @@ const MapView = ({ className, onToggleFilters }) => {
                   ref={(ref) => {
                     if (ref) {
                       markersRef.current[incident.id_incident] = ref;
+                    } else {
+                      // Limpiar la referencia cuando el marcador se desmonta
+                      delete markersRef.current[incident.id_incident];
                     }
                   }}
                   eventHandlers={{
@@ -317,14 +331,17 @@ const MapView = ({ className, onToggleFilters }) => {
                   }}
                   draggable={false}
                 >
-                  <Popup>
-                    <div>
-                      <strong>{incident.summary}</strong>
-                      {incident.description && (
-                        <p className="mt-1 text-sm">{incident.description}</p>
-                      )}
-                    </div>
-                  </Popup>
+                  {/* Solo mostrar popup si no estamos en móvil o si es el incidente seleccionado */}
+                  {(!isMobile || incident.id_incident === incidentSelected?.id_incident) && (
+                    <Popup>
+                      <div>
+                        <strong>{incident.summary}</strong>
+                        {incident.description && (
+                          <p className="mt-1 text-sm">{incident.description}</p>
+                        )}
+                      </div>
+                    </Popup>
+                  )}
                 </Marker>
               );
             })}
