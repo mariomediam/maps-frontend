@@ -236,14 +236,14 @@ const MapView = ({ className, onToggleFilters }) => {
       {/* Botón "Reportar una incidencia" - Flotante sobre el mapa */}
       {(!isMobile || !incidentSelected) && (
         <div className={`absolute left-1/2 transform -translate-x-1/2 z-1000 ${
-          isMobile ? 'bottom-4 pb-safe' : 'bottom-6'
+          isMobile ? 'bottom-16 mobile-bottom-button' : 'bottom-6'
         }`}>
           <button
             type="button"
             className="bg-primary text-secondary px-6 py-3 rounded-lg shadow-lg hover:bg-black hover:font-bold transition-colors font-medium text-sm"
             onClick={handleReportIncident}
           >
-            Reportar una incidencia
+            Reportar una incidencia 1
           </button>
         </div>
       )}

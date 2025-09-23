@@ -66,14 +66,22 @@ body {
 /* Soporte para safe areas en dispositivos móviles */
 @supports (padding: max(0px)) {
   .pb-safe {
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-bottom: max(30px, env(safe-area-inset-bottom));
   }
 }
 
 /* Fallback para dispositivos que no soportan safe areas */
 @supports not (padding: max(0px)) {
   .pb-safe {
-    padding-bottom: 20px;
+    padding-bottom: 30px;
+  }
+}
+
+/* Estilos específicos para botones flotantes en móvil */
+@media (max-width: 768px) {
+  .mobile-bottom-button {
+    bottom: 80px !important;
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 
