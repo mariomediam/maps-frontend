@@ -76,6 +76,12 @@ const useIncidentsStore = create((set, get) => ({
           showMapFilters: false, // En móvil se oculta, en desktop se mantiene visible el detalle
           isMapExpanded: shouldResetExpanded ? false : currentState.isMapExpanded
         });
+        
+        console.log("Incidente seleccionado desde store:", idIncident);
+        return true; // Indica que la selección fue exitosa
+      } else {
+        console.warn("Incidente no encontrado en el store:", idIncident);
+        return false; // Indica que la selección falló
       }
     } else {
       set({ 
@@ -83,6 +89,7 @@ const useIncidentsStore = create((set, get) => ({
         showMapDetail: false,
         isMapExpanded: false
       });
+      return true;
     }
   },
 

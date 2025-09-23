@@ -302,11 +302,16 @@ const MapView = ({ className, onToggleFilters }) => {
                   }}
                   eventHandlers={{
                     click: () => {
+                      // Limpiar cualquier incidente recién creado pendiente antes de seleccionar otro
+                      const { clearNewlyCreatedIncident } = useIncidentsStore.getState();
+                      clearNewlyCreatedIncident();
                       // Llamar directamente a la función del store
                       setIncidentSelectedFromStore(incident.id_incident);
                     },
                     mousedown: () => {
                       // Backup: también intentar con mousedown
+                      const { clearNewlyCreatedIncident } = useIncidentsStore.getState();
+                      clearNewlyCreatedIncident();
                       setIncidentSelectedFromStore(incident.id_incident);
                     },
                   }}

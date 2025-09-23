@@ -66,11 +66,14 @@ const steps = [
 
       toast.success("Incidente reportado exitosamente");
 
-      // console.log("newIncident", newIncident);
-      // Agregar un pequeño delay antes de navegar para asegurar que el store se actualice
+      console.log("Incidente creado:", newIncident);
+      
+      // Agregar un delay más largo en producción para asegurar que el store se actualice
+      // y dar tiempo a que la API procese la creación del incidente
+      const delay = window.location.hostname === 'localhost' ? 100 : 500;
       setTimeout(() => {
         navigate("/map-explorer", { replace: true });
-      }, 100);
+      }, delay);
       
       
 

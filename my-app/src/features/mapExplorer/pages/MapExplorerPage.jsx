@@ -109,32 +109,66 @@ const MapExplorerPage = () => {
     const processNewlyCreatedIncident = async () => {
       if (newlyCreatedIncidentId && 
           hasInitiallyLoaded.current && 
-          !hasProcessedNewIncident.current && 
-          incidentsStored.length > 0) {
+          !hasProcessedNewIncident.current) {
         
         try {
           console.log(`Procesando incidente recién creado: ${newlyCreatedIncidentId}`);
           
-          // Agregar un pequeño delay para asegurar que los datos estén sincronizados
-          await new Promise(resolve => setTimeout(resolve, 500));
+          // Función para verificar si el incidente existe en el store
+          const findIncidentInStore = () => {
+            return incidentsStored.find(incident => 
+              incident.id_incident === newlyCreatedIncidentId
+            );
+          };
           
-          await setIncidentSelectedFromStore(newlyCreatedIncidentId);
-          hasProcessedNewIncident.current = true;
+          // Función para esperar hasta que el incidente esté disponible
+          const waitForIncident = async (maxAttempts = 10, delay = 1000) => {
+            for (let attempt = 0; attempt < maxAttempts; attempt++) {
+              const incident = findIncidentInStore();
+              if (incident) {
+                console.log(`Incidente encontrado en intento ${attempt + 1}`);
+                return incident;
+              }
+              
+              // Si no se encuentra, recargar los incidentes
+              if (attempt < maxAttempts - 1) {
+                console.log(`Intento ${attempt + 1}: Incidente no encontrado, recargando...`);
+                await searchIncidentsStored({});
+                await new Promise(resolve => setTimeout(resolve, delay));
+              }
+            }
+            return null;
+          };
           
-          // Limpiar el ID del store después de procesarlo con un delay adicional
-          setTimeout(() => {
+          // Esperar hasta que el incidente esté disponible
+          const incident = await waitForIncident();
+          
+          if (incident) {
+            await setIncidentSelectedFromStore(newlyCreatedIncidentId);
+            hasProcessedNewIncident.current = true;
+            
+            // Limpiar el ID del store después de procesarlo
+            setTimeout(() => {
+              clearNewlyCreatedIncident();
+            }, 1000);
+            
+            console.log("Incidente seleccionado correctamente:", newlyCreatedIncidentId);
+          } else {
+            console.warn("No se pudo encontrar el incidente recién creado después de múltiples intentos");
+            // Limpiar el ID incluso si no se encontró para evitar bucles infinitos
             clearNewlyCreatedIncident();
-          }, 1000);
+          }
           
-          // toast.success("Incidente reportado correctamente");
         } catch (error) {
           console.error("Error al seleccionar incidente recién creado:", error);
+          // Limpiar el ID en caso de error para evitar bucles infinitos
+          clearNewlyCreatedIncident();
         }
       }
     };
 
     processNewlyCreatedIncident();
-  }, [newlyCreatedIncidentId, hasInitiallyLoaded.current, incidentsStored, setIncidentSelectedFromStore, clearNewlyCreatedIncident]);
+  }, [newlyCreatedIncidentId, hasInitiallyLoaded.current, incidentsStored, setIncidentSelectedFromStore, clearNewlyCreatedIncident, searchIncidentsStored]);
 
   // Resetear la bandera cuando no hay incidente recién creado
   useEffect(() => {
