@@ -251,7 +251,7 @@ const MapView = ({ className, onToggleFilters }) => {
         center={[-5.1955724, -80.6301423]}
         zoom={14}
         scrollWheelZoom={true}
-        style={{ height: "100%", width: "100%", opacity: 1 }}
+        style={{ height: "100dvh", width: "100%", opacity: 1 }}
         doubleClickZoom={false}
         className={isLoading ? "pointer-events-none" : ""}
         // Configuraciones para mejorar la respuesta de los clics
