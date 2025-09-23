@@ -243,7 +243,7 @@ const MapView = ({ className, onToggleFilters }) => {
             className="bg-primary text-secondary px-6 py-3 rounded-lg shadow-lg hover:bg-black hover:font-bold transition-colors font-medium text-sm"
             onClick={handleReportIncident}
           >
-            Reportar una incidencia 1
+            Reportar una incidencia
           </button>
         </div>
       )}
