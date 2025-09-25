@@ -72,10 +72,17 @@ const StableMarker = memo(({
     draggable: false,
   };
 
-  // Solo añadir props de invisibilidad si es necesario
-  if (markerType === 'invisible') {
+  // Controlar visibilidad mediante opacity y zIndex
+  if (!isVisible) {
     markerProps.opacity = 0;
     markerProps.zIndexOffset = -1000;
+    // En móvil, hacer que los marcadores invisibles no sean clickeables
+    if (isMobile) {
+      markerProps.eventHandlers = {
+        click: () => console.log('🚫 [StableMarker] Click bloqueado en marcador invisible'),
+        mousedown: () => console.log('🚫 [StableMarker] Mousedown bloqueado en marcador invisible')
+      };
+    }
   }
 
   return (
@@ -94,27 +101,34 @@ const StableMarker = memo(({
     </Marker>
   );
 }, (prevProps, nextProps) => {
-  // Comparación personalizada para evitar re-renders innecesarios
+  // Comparación MUY restrictiva - solo re-renderizar si cambia el incidente en sí
+  // NO re-renderizar por cambios de visibilidad o selección
   const shouldUpdate = (
     prevProps.incident.id_incident !== nextProps.incident.id_incident ||
-    prevProps.isVisible !== nextProps.isVisible ||
-    prevProps.isSelected !== nextProps.isSelected ||
-    prevProps.isMobile !== nextProps.isMobile ||
-    prevProps.markerType !== nextProps.markerType ||
-    prevProps.incident.color_state !== nextProps.incident.color_state
+    prevProps.incident.color_state !== nextProps.incident.color_state ||
+    prevProps.incident.latitude !== nextProps.incident.latitude ||
+    prevProps.incident.longitude !== nextProps.incident.longitude ||
+    prevProps.incident.summary !== nextProps.incident.summary
   );
   
+  // Logging solo si realmente necesita actualización
   if (shouldUpdate) {
-    console.log(`🔄 [StableMarker] Re-render necesario para ${nextProps.markerType}:`, {
+    console.log(`🔄 [StableMarker] Re-render CRITICO necesario:`, {
       incidentId: nextProps.incident.id_incident,
       reason: {
         idChanged: prevProps.incident.id_incident !== nextProps.incident.id_incident,
-        visibilityChanged: prevProps.isVisible !== nextProps.isVisible,
-        selectionChanged: prevProps.isSelected !== nextProps.isSelected,
-        mobileChanged: prevProps.isMobile !== nextProps.isMobile,
-        typeChanged: prevProps.markerType !== nextProps.markerType,
-        colorChanged: prevProps.incident.color_state !== nextProps.incident.color_state
+        colorChanged: prevProps.incident.color_state !== nextProps.incident.color_state,
+        positionChanged: prevProps.incident.latitude !== nextProps.incident.latitude || prevProps.incident.longitude !== nextProps.incident.longitude,
+        summaryChanged: prevProps.incident.summary !== nextProps.incident.summary
       }
+    });
+  } else {
+    // Log cuando NO se re-renderiza (esto debería ser la mayoría de las veces)
+    console.log(`✅ [StableMarker] Re-render EVITADO para:`, {
+      incidentId: nextProps.incident.id_incident,
+      visibilityChanged: prevProps.isVisible !== nextProps.isVisible,
+      selectionChanged: prevProps.isSelected !== nextProps.isSelected,
+      mobileChanged: prevProps.isMobile !== nextProps.isMobile
     });
   }
   
