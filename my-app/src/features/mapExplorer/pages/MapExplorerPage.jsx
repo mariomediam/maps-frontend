@@ -215,33 +215,21 @@ const MapExplorerPage = () => {
             // Obtener las funciones del store de manera segura
             const { setIncidentSelectedFromStore, clearNewlyCreatedIncident } = useIncidentsStore.getState();
             
-            // En móvil, agregar un delay adicional para evitar conflictos de DOM
-            const { isMobile } = useWindowStore.getState();
-            const selectionDelay = isMobile ? 500 : 100;
+            // 🔑 SOLUCIÓN DEFINITIVA: NO seleccionar inmediatamente
+            // El problema era que se intentaba seleccionar ANTES de que los marcadores estuvieran listos
+            console.log('🔄 [MapExplorerPage] ESPERANDO marcadores listos antes de seleccionar:', {
+              incidentId: newlyCreatedIncidentId,
+              isMobile,
+              timestamp: new Date().toISOString()
+            });
             
-            setTimeout(async () => {
-              try {
-                console.log(`🎯 [MapExplorerPage] Seleccionando incidente recién creado:`, {
-                  incidentId: newlyCreatedIncidentId,
-                  delay: selectionDelay,
-                  isMobile
-                });
-                
-                const success = await setIncidentSelectedFromStore(newlyCreatedIncidentId);
-                
-                if (success) {
-                  console.log("✅ [MapExplorerPage] Incidente seleccionado correctamente:", newlyCreatedIncidentId);
-                } else {
-                  console.error("❌ [MapExplorerPage] Fallo al seleccionar el incidente:", newlyCreatedIncidentId);
-                }
-              } catch (selectionError) {
-                console.error("❌ [MapExplorerPage] Error durante la selección del incidente:", {
-                  error: selectionError.message,
-                  stack: selectionError.stack,
-                  incidentId: newlyCreatedIncidentId
-                });
-              }
-            }, selectionDelay);
+            // Guardar para selección posterior cuando los marcadores estén listos
+            window.pendingIncidentSelection = {
+              incidentId: newlyCreatedIncidentId,
+              timestamp: Date.now()
+            };
+            
+            console.log('⏳ [MapExplorerPage] Incidente guardado para selección posterior cuando marcadores estén listos');
             
             // Limpiar el ID del store después de procesarlo
             setTimeout(() => {

@@ -250,13 +250,14 @@ const MapInitializer = ({ isMobile }) => {
   return null;
 };
 
-const MapView = ({ className, onToggleFilters }) => {
+const MapView = ({ className, onToggleFilters, onMarkersReady }) => {
   const position = [51.505, -0.09];
 
   const [actionType, setActionType] = useState(MAP_ACTION_TYPES.listing);
   const [idProblemSelected, setIdProblemSelected] = useState(null);
   const [tempMarker, setTempMarker] = useState(null);
   const [forceRender, setForceRender] = useState(0); // Para forzar re-render
+  const [markersReady, setMarkersReady] = useState(false); // Estado de marcadores listos
   const markersRef = useRef({});
   const mapRef = useRef(null);
   const renderTimeoutRef = useRef(null); // Para debounce de re-renders
@@ -593,6 +594,16 @@ const MapView = ({ className, onToggleFilters }) => {
                 });
               }
             }}
+            onMarkersReady={() => {
+              console.log('✅ [MapView] TODOS los marcadores imperativos están listos!');
+              setMarkersReady(true);
+              
+              // Notificar al padre que los marcadores están listos
+              if (onMarkersReady) {
+                console.log('📡 [MapView] Notificando al padre que marcadores están listos');
+                onMarkersReady(markersRef.current);
+              }
+            }}
             onMarkerRef={(incidentId, ref) => {
               try {
                 if (ref) {
@@ -602,6 +613,7 @@ const MapView = ({ className, onToggleFilters }) => {
                   if (markersRef.current[incidentId]) {
                     delete markersRef.current[incidentId];
                     console.log('🗑️ [MapView] Ref marcador imperativo limpiada:', incidentId);
+                    setMarkersReady(false); // Reset cuando se limpia un marcador
                   }
                 }
               } catch (error) {

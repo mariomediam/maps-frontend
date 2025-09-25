@@ -8,7 +8,8 @@ const ImperativeMarkers = ({
   incidentSelected, 
   isMobile, 
   onMarkerClick,
-  onMarkerRef 
+  onMarkerRef,
+  onMarkersReady
 }) => {
   const map = useMap();
   const markersRef = useRef(new Map()); // Map de ID -> marcador Leaflet
@@ -182,6 +183,69 @@ const ImperativeMarkers = ({
     removeStaleMarkers(currentIncidentIds);
     
     console.log('✅ [ImperativeMarkers] Sincronización completada');
+    
+    // Verificar si todos los marcadores están listos
+    const expectedMarkers = incidents.length;
+    const currentMarkers = markersRef.current.size;
+    
+    console.log('🔄 [ImperativeMarkers] Estado de marcadores:', {
+      currentMarkers,
+      expectedMarkers,
+      allReady: currentMarkers === expectedMarkers && expectedMarkers > 0
+    });
+    
+    // Notificar cuando todos los marcadores estén listos
+    if (currentMarkers === expectedMarkers && expectedMarkers > 0) {
+      console.log('✅ [ImperativeMarkers] TODOS los marcadores están sincronizados!');
+      
+      // Delay adicional en móvil para asegurar que el DOM esté listo
+      const notificationDelay = isMobile ? 1500 : 500; // MÁS TIEMPO para móvil
+      
+      setTimeout(() => {
+        console.log('📡 [ImperativeMarkers] Notificando que marcadores están listos');
+        onMarkersReady?.();
+        
+        // 🔑 EJECUTAR SELECCIÓN PENDIENTE SI EXISTE
+        if (window.pendingIncidentSelection) {
+          const { incidentId, timestamp } = window.pendingIncidentSelection;
+          const age = Date.now() - timestamp;
+          
+          console.log('🎯 [ImperativeMarkers] Ejecutando selección pendiente:', {
+            incidentId,
+            age: `${age}ms`,
+            isMobile
+          });
+          
+          // Delay adicional para asegurar estabilidad completa
+          const selectionDelay = isMobile ? 800 : 200;
+          
+          setTimeout(async () => {
+            try {
+              // Importar dinámicamente el store para evitar dependencias circulares
+              const { useIncidentsStore } = await import('../../../features/incident/store/incidentStore');
+              const { setIncidentSelectedFromStore } = useIncidentsStore.getState();
+              
+              console.log('🚀 [ImperativeMarkers] Ejecutando selección con marcadores estables');
+              const success = await setIncidentSelectedFromStore(incidentId);
+              
+              if (success) {
+                console.log('✅ [ImperativeMarkers] Incidente seleccionado exitosamente:', incidentId);
+                // Limpiar la selección pendiente
+                window.pendingIncidentSelection = null;
+              } else {
+                console.error('❌ [ImperativeMarkers] Error seleccionando incidente:', incidentId);
+              }
+            } catch (error) {
+              console.error('❌ [ImperativeMarkers] Error crítico en selección:', {
+                error: error.message,
+                incidentId,
+                stack: error.stack
+              });
+            }
+          }, selectionDelay);
+        }
+      }, notificationDelay);
+    }
   }, [incidents, incidentSelected, isMobile, map]);
 
   // Efecto para manejar apertura de popups
