@@ -60,6 +60,12 @@ const MapExplorerPage = () => {
     const loadIncidents = async () => {
       if (!hasInitiallyLoaded.current) {
         try {
+          console.log('🔄 [MapExplorerPage] Cargando incidentes iniciales:', {
+            hasInitiallyLoaded: hasInitiallyLoaded.current,
+            connectionType: navigator.connection?.effectiveType || 'unknown',
+            timestamp: new Date().toISOString()
+          });
+          
           const filters = {};
           const idCategory = searchParams.get("idCategory");
           const idState = searchParams.get("idState");
@@ -67,11 +73,24 @@ const MapExplorerPage = () => {
           if (idCategory) filters.idCategory = idCategory;
           if (idState) filters.idState = idState;
 
-          await searchIncidentsStored(filters);
+          console.log('🔍 [MapExplorerPage] Filtros aplicados:', filters);
+          const incidents = await searchIncidentsStored(filters);
           hasInitiallyLoaded.current = true;
+          
+          console.log('✅ [MapExplorerPage] Incidentes cargados exitosamente:', {
+            count: incidents?.length || 0,
+            timestamp: new Date().toISOString()
+          });
         } catch (error) {
-          console.error("Error cargando incidentes:", error);
+          console.error('❌ [MapExplorerPage] Error cargando incidentes:', {
+            error: error.message,
+            stack: error.stack,
+            connectionType: navigator.connection?.effectiveType || 'unknown',
+            timestamp: new Date().toISOString()
+          });
         }
+      } else {
+        console.log('ℹ️ [MapExplorerPage] Incidentes ya cargados previamente');
       }
     };
 
@@ -107,11 +126,14 @@ const MapExplorerPage = () => {
   // Detectar y procesar el incidente recién creado desde el store
   useEffect(() => {
     const processNewlyCreatedIncident = async () => {
-      console.log('Estado del procesamiento:', {
+      console.log('🎯 [MapExplorerPage] Estado del procesamiento de incidente nuevo:', {
         newlyCreatedIncidentId,
         hasInitiallyLoaded: hasInitiallyLoaded.current,
         hasProcessedNewIncident: hasProcessedNewIncident.current,
-        incidentsCount: incidentsStored.length
+        incidentsCount: incidentsStored.length,
+        isMobile,
+        connectionType: navigator.connection?.effectiveType || 'unknown',
+        timestamp: new Date().toISOString()
       });
       
       // Verificación más estricta para evitar bucles
@@ -122,15 +144,22 @@ const MapExplorerPage = () => {
         hasProcessedNewIncident.current = true;
         
         try {
-          console.log(`Procesando incidente recién creado: ${newlyCreatedIncidentId}`);
+          console.log(`🔄 [MapExplorerPage] Procesando incidente recién creado: ${newlyCreatedIncidentId}`);
           
           // Detectar si estamos en producción
           const isProduction = window.location.hostname !== 'localhost';
           
+          console.log('🌍 [MapExplorerPage] Entorno detectado:', {
+            isProduction,
+            hostname: window.location.hostname,
+            connectionType: navigator.connection?.effectiveType || 'unknown'
+          });
+          
           // Agregar un delay inicial en producción para dar tiempo a la API
           if (isProduction) {
-            console.log('Esperando delay inicial para producción...');
+            console.log('⏳ [MapExplorerPage] Esperando delay inicial para producción (2000ms)...');
             await new Promise(resolve => setTimeout(resolve, 2000));
+            console.log('✅ [MapExplorerPage] Delay inicial completado');
           }
           
           // Función para esperar hasta que el incidente esté disponible
@@ -143,13 +172,29 @@ const MapExplorerPage = () => {
               );
               
               if (incident) {
-                console.log(`Incidente encontrado en intento ${attempt + 1}`);
+                console.log(`✅ [MapExplorerPage] Incidente encontrado en intento ${attempt + 1}:`, {
+                  incidentId: incident.id_incident,
+                  summary: incident.summary,
+                  hasCoordinates: !!(incident.latitude && incident.longitude)
+                });
                 return incident;
               }
               
               // Si no se encuentra, recargar los incidentes
-              console.log(`Intento ${attempt + 1}: Incidente no encontrado, recargando...`);
-              await currentState.searchIncidentsStored({});
+              console.log(`🔄 [MapExplorerPage] Intento ${attempt + 1}: Incidente no encontrado, recargando...`, {
+                currentIncidentsCount: currentState.incidentsStored.length,
+                searchingFor: newlyCreatedIncidentId
+              });
+              
+              try {
+                await currentState.searchIncidentsStored({});
+                console.log(`✅ [MapExplorerPage] Incidentes recargados en intento ${attempt + 1}`);
+              } catch (reloadError) {
+                console.error(`❌ [MapExplorerPage] Error recargando incidentes en intento ${attempt + 1}:`, {
+                  error: reloadError.message,
+                  connectionType: navigator.connection?.effectiveType || 'unknown'
+                });
+              }
               
               // Marcar que se ha cargado inicialmente después de la primera recarga
               if (!hasInitiallyLoaded.current) {
@@ -175,8 +220,27 @@ const MapExplorerPage = () => {
             const selectionDelay = isMobile ? 500 : 100;
             
             setTimeout(async () => {
-              await setIncidentSelectedFromStore(newlyCreatedIncidentId);
-              console.log("Incidente seleccionado correctamente:", newlyCreatedIncidentId);
+              try {
+                console.log(`🎯 [MapExplorerPage] Seleccionando incidente recién creado:`, {
+                  incidentId: newlyCreatedIncidentId,
+                  delay: selectionDelay,
+                  isMobile
+                });
+                
+                const success = await setIncidentSelectedFromStore(newlyCreatedIncidentId);
+                
+                if (success) {
+                  console.log("✅ [MapExplorerPage] Incidente seleccionado correctamente:", newlyCreatedIncidentId);
+                } else {
+                  console.error("❌ [MapExplorerPage] Fallo al seleccionar el incidente:", newlyCreatedIncidentId);
+                }
+              } catch (selectionError) {
+                console.error("❌ [MapExplorerPage] Error durante la selección del incidente:", {
+                  error: selectionError.message,
+                  stack: selectionError.stack,
+                  incidentId: newlyCreatedIncidentId
+                });
+              }
             }, selectionDelay);
             
             // Limpiar el ID del store después de procesarlo
@@ -184,7 +248,12 @@ const MapExplorerPage = () => {
               clearNewlyCreatedIncident();
             }, selectionDelay + 1000);
           } else {
-            console.warn("No se pudo encontrar el incidente recién creado después de múltiples intentos");
+            console.error("❌ [MapExplorerPage] No se pudo encontrar el incidente recién creado después de múltiples intentos:", {
+              searchedFor: newlyCreatedIncidentId,
+              totalIncidents: useIncidentsStore.getState().incidentsStored.length,
+              connectionType: navigator.connection?.effectiveType || 'unknown',
+              timestamp: new Date().toISOString()
+            });
             // Resetear la bandera para permitir reintentos futuros
             hasProcessedNewIncident.current = false;
             // Limpiar el ID incluso si no se encontró para evitar bucles infinitos
@@ -193,7 +262,13 @@ const MapExplorerPage = () => {
           }
           
         } catch (error) {
-          console.error("Error al seleccionar incidente recién creado:", error);
+          console.error("❌ [MapExplorerPage] Error crítico al seleccionar incidente recién creado:", {
+            error: error.message,
+            stack: error.stack,
+            incidentId: newlyCreatedIncidentId,
+            connectionType: navigator.connection?.effectiveType || 'unknown',
+            timestamp: new Date().toISOString()
+          });
           // Resetear la bandera para permitir reintentos futuros
           hasProcessedNewIncident.current = false;
           // Limpiar el ID en caso de error para evitar bucles infinitos

@@ -53,25 +53,44 @@ const steps = [
   const handleComplete = async () => {
     try {
       setIsLoading(true);
-      console.log("Formulario completado - Enviando datos...", incidentAdded);
+      console.log('📝 [ReportIncident] Formulario completado - Enviando datos:', {
+        incidentData: incidentAdded,
+        connectionType: navigator.connection?.effectiveType || 'unknown',
+        timestamp: new Date().toISOString()
+      });
       
       // Validar datos mínimos requeridos
       if (!incidentAdded.latitude || !incidentAdded.longitude) {
+        console.error('❌ [ReportIncident] Validación fallida: Falta ubicación');
         alert("Por favor selecciona una ubicación");
         return;
       }
       
+      console.log('🚀 [ReportIncident] Creando incidente...');
       const newIncident = await createIncidentFromStore();            
       setIsLoading(false);
 
       toast.success("Incidente reportado exitosamente");
 
-      console.log("Incidente creado:", newIncident);
+      console.log('✅ [ReportIncident] Incidente creado exitosamente:', {
+        id: newIncident.id_incident,
+        summary: newIncident.summary,
+        timestamp: new Date().toISOString()
+      });
       
       // Agregar un delay más largo en producción para asegurar que el store se actualice
       // y dar tiempo a que la API procese la creación del incidente
-      const delay = window.location.hostname === 'localhost' ? 100 : 500;
+      const isProduction = window.location.hostname !== 'localhost';
+      const delay = isProduction ? 500 : 100;
+      
+      console.log('🔄 [ReportIncident] Navegando a map-explorer:', {
+        delay,
+        isProduction,
+        newIncidentId: newIncident.id_incident
+      });
+      
       setTimeout(() => {
+        console.log('🧭 [ReportIncident] Ejecutando navegación...');
         navigate("/map-explorer", { replace: true });
       }, delay);
       
@@ -79,7 +98,14 @@ const steps = [
 
     
     } catch (error) {
-      console.error("Error al crear incidente:", error);
+      console.error('❌ [ReportIncident] Error crítico al crear incidente:', {
+        error: error.message,
+        stack: error.stack,
+        incidentData: incidentAdded,
+        connectionType: navigator.connection?.effectiveType || 'unknown',
+        timestamp: new Date().toISOString()
+      });
+      
       alert(`Error al reportar la incidencia: ${error.message || 'Error desconocido'}`);
       setIsLoading(false);
     } 

@@ -6,6 +6,12 @@ const URL = `${API_BASE_URL}/incidents`;
 const getIncidents = async (filters = {}) => {
 	const { idCategory, idState, showOnMap } = filters;
 
+	console.log('🌐 [IncidentAPI] Iniciando petición de incidentes:', {
+		filters,
+		connectionType: navigator.connection?.effectiveType || 'unknown',
+		timestamp: new Date().toISOString()
+	});
+
 	try {
 		const api = useAxios();
 
@@ -25,12 +31,32 @@ const getIncidents = async (filters = {}) => {
 		const queryString = queryParams.toString();
 		const URLIncidents = queryString ? `${URL}?${queryString}` : URL;
 
+		console.log('🔗 [IncidentAPI] URL construida:', URLIncidents);
+
+		const startTime = Date.now();
 		const {
 			data: { content },
 		} = await api.get(URLIncidents);
+		const endTime = Date.now();
+
+		console.log('✅ [IncidentAPI] Respuesta exitosa:', {
+			count: content?.length || 0,
+			duration: `${endTime - startTime}ms`,
+			url: URLIncidents,
+			timestamp: new Date().toISOString()
+		});
 
 		return content;
 	} catch (error) {
+		console.error('❌ [IncidentAPI] Error en getIncidents:', {
+			error: error.message,
+			stack: error.stack,
+			filters,
+			connectionType: navigator.connection?.effectiveType || 'unknown',
+			response: error.response?.data,
+			status: error.response?.status,
+			timestamp: new Date().toISOString()
+		});
 		throw error;
 	}
 };
@@ -63,6 +89,19 @@ const getIncidentById = async (idIncident) => {
 
 // Función para crear un nuevo incidente con archivos
 const createIncident = async (incidentData) => {
+	console.log('🎆 [IncidentAPI] Creando nuevo incidente:', {
+		incidentData: {
+			category_id: incidentData.category_id,
+			latitude: incidentData.latitude,
+			longitude: incidentData.longitude,
+			summary: incidentData.summary,
+			reference: incidentData.reference,
+			filesCount: incidentData.files?.length || 0
+		},
+		connectionType: navigator.connection?.effectiveType || 'unknown',
+		timestamp: new Date().toISOString()
+	});
+
 	try {
 		const api = useAxios();
 		
@@ -84,20 +123,53 @@ const createIncident = async (incidentData) => {
 		
 		// Agregar archivos (si existen)
 		if (incidentData.files && incidentData.files.length > 0) {
-			incidentData.files.forEach((file) => {
+			incidentData.files.forEach((file, index) => {
+				console.log(`📄 [IncidentAPI] Añadiendo archivo ${index + 1}:`, {
+					name: file.name,
+					size: file.size,
+					type: file.type
+				});
 				formData.append('files', file);
 			});
 		}
+		
+		console.log('📤 [IncidentAPI] Enviando petición POST...');
+		const startTime = Date.now();
 		
 		const { data: { content } } = await api.post(`${URL}/`, formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
 			},
+			timeout: 30000 // 30 segundos de timeout para conexiones lentas
+		});
+		
+		const endTime = Date.now();
+		
+		console.log('✅ [IncidentAPI] Incidente creado exitosamente:', {
+			id: content.id_incident,
+			summary: content.summary,
+			duration: `${endTime - startTime}ms`,
+			timestamp: new Date().toISOString()
 		});
 		
 		return content;
 	} catch (error) {
-		console.error('Error creating incident:', error);
+		console.error('❌ [IncidentAPI] Error creando incidente:', {
+			error: error.message,
+			stack: error.stack,
+			incidentData: {
+				category_id: incidentData.category_id,
+				latitude: incidentData.latitude,
+				longitude: incidentData.longitude,
+				summary: incidentData.summary,
+				reference: incidentData.reference,
+				filesCount: incidentData.files?.length || 0
+			},
+			connectionType: navigator.connection?.effectiveType || 'unknown',
+			response: error.response?.data,
+			status: error.response?.status,
+			timestamp: new Date().toISOString()
+		});
 		throw error;
 	}
 };
