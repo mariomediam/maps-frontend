@@ -66,6 +66,18 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
       // Usar setTimeout para asegurar que el layout se haya actualizado
       setTimeout(() => {
         try {
+          // Verificar que el mapa y el incidente aún estén disponibles
+          if (!map || !map.getContainer || !incidentSelected) {
+            console.warn('⚠️ [MapCenterController] Mapa o incidente no disponible');
+            return;
+          }
+          
+          const container = map.getContainer();
+          if (!container || !container.isConnected) {
+            console.warn('⚠️ [MapCenterController] Contenedor del mapa no está conectado');
+            return;
+          }
+          
           const markerPosition = [
             incidentSelected.latitude,
             incidentSelected.longitude,
@@ -73,16 +85,30 @@ const MapCenterController = ({ incidentSelected, isMobile, isMapExpanded }) => {
 
           logConnectionInfo('MapCenterController - antes de invalidateSize');
           
+          // Verificar que las coordenadas sean válidas
+          if (isNaN(markerPosition[0]) || isNaN(markerPosition[1])) {
+            console.error('❌ [MapCenterController] Coordenadas inválidas:', markerPosition);
+            return;
+          }
+          
           // Invalidar el tamaño del mapa y luego centrar
           map.invalidateSize();
-          map.setView(markerPosition, 16, { animate: true, duration: 1 });
           
-          console.log('✅ [MapCenterController] Mapa centrado exitosamente');
+          // Verificar que el mapa aún existe después de invalidateSize
+          if (map.setView) {
+            map.setView(markerPosition, 16, { animate: true, duration: 1 });
+            console.log('✅ [MapCenterController] Mapa centrado exitosamente');
+          } else {
+            console.error('❌ [MapCenterController] Método setView no disponible');
+          }
         } catch (error) {
           console.error('❌ [MapCenterController] Error centrando mapa:', {
             error: error.message,
             stack: error.stack,
-            incidentId: incidentSelected.id_incident
+            incidentId: incidentSelected?.id_incident,
+            hasMap: !!map,
+            hasContainer: !!(map?.getContainer),
+            containerConnected: map?.getContainer?.()?.isConnected
           });
         }
       }, adaptiveDelay);
@@ -232,6 +258,7 @@ const MapView = ({ className, onToggleFilters }) => {
   const [forceRender, setForceRender] = useState(0); // Para forzar re-render
   const markersRef = useRef({});
   const mapRef = useRef(null);
+  const renderTimeoutRef = useRef(null); // Para debounce de re-renders
   const navigate = useNavigate();
 
   const incidentsStored = useIncidentsStore((state) => state.incidentsStored);
@@ -269,46 +296,66 @@ const MapView = ({ className, onToggleFilters }) => {
       // Agregar un pequeño delay para asegurar que el DOM esté estable, especialmente en móvil
       const popupDelay = isMobile ? getAdaptiveDelay(300) : 100;
       
-      setTimeout(() => {
-        try {
-          console.log('🎯 [MapView] Intentando abrir popup para incidente:', {
-            incidentId: incidentSelected.id_incident,
-            delay: popupDelay,
-            isSlowConnection: isSlowMobileConnection()
-          });
-          
-          const markerRef = markersRef.current[incidentSelected.id_incident];
-          if (markerRef && markerRef.openPopup) {
-            // Verificar que el marcador esté en el DOM antes de abrir popup
-            const markerElement = markerRef.getElement?.();
-            if (markerElement && markerElement.isConnected) {
-              logDOMOperation('openPopup', markerElement, 'MapView popup');
-              markerRef.openPopup();
-              console.log('✅ [MapView] Popup abierto exitosamente');
+      // Usar requestAnimationFrame para asegurar que el DOM esté estable
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          try {
+            // Verificar que el incidente aún esté seleccionado
+            const currentSelected = useIncidentsStore.getState().incidentSelected;
+            if (!currentSelected || currentSelected.id_incident !== incidentSelected.id_incident) {
+              console.log('ℹ️ [MapView] Incidente ya no está seleccionado, cancelando popup');
+              return;
+            }
+            
+            console.log('🎯 [MapView] Intentando abrir popup para incidente:', {
+              incidentId: incidentSelected.id_incident,
+              delay: popupDelay,
+              isSlowConnection: isSlowMobileConnection()
+            });
+            
+            const markerRef = markersRef.current[incidentSelected.id_incident];
+            if (markerRef && markerRef.openPopup) {
+              // Verificar que el marcador esté en el DOM antes de abrir popup
+              const markerElement = markerRef.getElement?.();
+              if (markerElement && markerElement.isConnected && markerElement.parentNode) {
+                // Verificación adicional: el elemento padre debe existir y estar conectado
+                const parentConnected = markerElement.parentNode.isConnected;
+                if (parentConnected) {
+                  logDOMOperation('openPopup', markerElement, 'MapView popup');
+                  markerRef.openPopup();
+                  console.log('✅ [MapView] Popup abierto exitosamente');
+                } else {
+                  console.warn('⚠️ [MapView] Elemento padre del marcador no está conectado:', {
+                    hasParent: !!markerElement.parentNode,
+                    parentConnected
+                  });
+                }
+              } else {
+                console.warn('⚠️ [MapView] Marcador no está conectado al DOM:', {
+                  hasElement: !!markerElement,
+                  isConnected: markerElement?.isConnected,
+                  hasParent: markerElement?.parentNode != null
+                });
+              }
             } else {
-              console.warn('⚠️ [MapView] Marcador no está conectado al DOM:', {
-                hasElement: !!markerElement,
-                isConnected: markerElement?.isConnected
+              console.warn('⚠️ [MapView] MarkerRef no tiene método openPopup:', {
+                markerRef: !!markerRef,
+                hasOpenPopup: !!(markerRef?.openPopup),
+                markerRefType: typeof markerRef
               });
             }
-          } else {
-            console.warn('⚠️ [MapView] MarkerRef no tiene método openPopup:', {
-              markerRef: !!markerRef,
-              hasOpenPopup: !!(markerRef?.openPopup),
-              markerRefType: typeof markerRef
+          } catch (error) {
+            console.error('❌ [MapView] Error al abrir popup del marcador:', {
+              error: error.message,
+              stack: error.stack,
+              incidentId: incidentSelected.id_incident,
+              markerExists: !!markersRef.current[incidentSelected.id_incident],
+              connectionInfo: logConnectionInfo('Error popup')
             });
+            // No hacer nada, continuar normalmente
           }
-        } catch (error) {
-          console.error('❌ [MapView] Error al abrir popup del marcador:', {
-            error: error.message,
-            stack: error.stack,
-            incidentId: incidentSelected.id_incident,
-            markerExists: !!markersRef.current[incidentSelected.id_incident],
-            connectionInfo: logConnectionInfo('Error popup')
-          });
-          // No hacer nada, continuar normalmente
-        }
-      }, popupDelay);
+        }, popupDelay);
+      });
     } else {
       console.log('ℹ️ [MapView] No se puede abrir popup:', {
         hasIncidentSelected: !!incidentSelected,
@@ -318,16 +365,48 @@ const MapView = ({ className, onToggleFilters }) => {
     }
   }, [incidentSelected, isMobile]);
 
-  // Efecto para forzar re-render cuando incidentSelected cambie a null
+  // Efecto para forzar re-render cuando incidentSelected cambie a null (con debounce)
   useEffect(() => {
     if (incidentSelected === null) {
-      setForceRender((prev) => prev + 1);
+      // Limpiar timeout anterior si existe
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+      
+      // Debounce el re-render para evitar múltiples actualizaciones rápidas
+      renderTimeoutRef.current = setTimeout(() => {
+        console.log('🔄 [MapView] Forzando re-render por incidentSelected = null');
+        setForceRender((prev) => prev + 1);
+      }, 100);
     }
+    
+    // Cleanup
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
   }, [incidentSelected]);
 
-  // Efecto para forzar re-render cuando isMobile cambie
+  // Efecto para forzar re-render cuando isMobile cambie (con debounce)
   useEffect(() => {
-    setForceRender((prev) => prev + 1);
+    // Limpiar timeout anterior si existe
+    if (renderTimeoutRef.current) {
+      clearTimeout(renderTimeoutRef.current);
+    }
+    
+    // Debounce el re-render
+    renderTimeoutRef.current = setTimeout(() => {
+      console.log('🔄 [MapView] Forzando re-render por cambio de isMobile');
+      setForceRender((prev) => prev + 1);
+    }, 150);
+    
+    // Cleanup
+    return () => {
+      if (renderTimeoutRef.current) {
+        clearTimeout(renderTimeoutRef.current);
+      }
+    };
   }, [isMobile]);
 
   // El centrado del mapa ahora se maneja en MapCenterController
@@ -481,50 +560,49 @@ const MapView = ({ className, onToggleFilters }) => {
         {actionType !== MAP_ACTION_TYPES.adding && (
           <>
             {incidentsStored.map((incident) => {
-              // En móvil: mostrar solo el marcador seleccionado si hay uno seleccionado
-              // Si no hay incidente seleccionado (incidentSelected === null), mostrar todos
-              const shouldShowMarker =
-                !isMobile ||
-                incidentSelected === null ||
-                incident.id_incident === incidentSelected?.id_incident;
-
+              // NUEVA ESTRATEGIA: En móvil, siempre renderizar todos los marcadores pero controlar su visibilidad
+              // Esto evita el desmontaje/montaje que causa el error insertBefore
+              const isVisible = !isMobile || incidentSelected === null || incident.id_incident === incidentSelected?.id_incident;
+              
               console.log('🗺️ [MapView] Evaluando marcador:', {
                 incidentId: incident.id_incident,
-                shouldShow: shouldShowMarker,
+                isVisible,
                 isMobile,
                 hasSelectedIncident: !!incidentSelected,
                 selectedIncidentId: incidentSelected?.id_incident,
                 forceRenderValue: forceRender
               });
 
-              if (!shouldShowMarker) {
-                return null;
-              }
-
               return (
                 <Marker
-                  key={`${incident.id_incident}-${forceRender}`}
+                  key={`${incident.id_incident}-stable`} // Clave estable para evitar re-montaje
                   position={[incident.latitude, incident.longitude]}
                   icon={getColoredIcon(incident.color_state)}
+                  opacity={isVisible ? 1 : 0} // Controlar visibilidad con opacity en lugar de desmontaje
+                  zIndexOffset={isVisible ? 0 : -1000} // Mover marcadores invisibles al fondo
                   ref={(ref) => {
-                    console.log('📍 [MapView] Ref del marcador:', {
+                    console.log('📍 [MapView] Ref del marcador (estable):', {
                       incidentId: incident.id_incident,
                       hasRef: !!ref,
                       action: ref ? 'mounting' : 'unmounting',
+                      isVisible,
                       timestamp: new Date().toISOString()
                     });
                     
                     try {
                       if (ref) {
                         markersRef.current[incident.id_incident] = ref;
-                        console.log('✅ [MapView] Marcador montado correctamente:', incident.id_incident);
+                        console.log('✅ [MapView] Marcador montado correctamente (estable):', incident.id_incident);
                       } else {
-                        // Limpiar la referencia cuando el marcador se desmonta
-                        delete markersRef.current[incident.id_incident];
-                        console.log('🗑️ [MapView] Referencia del marcador limpiada:', incident.id_incident);
+                        // Solo limpiar si realmente se está desmontando el componente
+                        // No durante cambios de visibilidad
+                        if (markersRef.current[incident.id_incident]) {
+                          delete markersRef.current[incident.id_incident];
+                          console.log('🗑️ [MapView] Referencia del marcador limpiada (estable):', incident.id_incident);
+                        }
                       }
                     } catch (error) {
-                      console.error('❌ [MapView] Error en ref del marcador:', {
+                      console.error('❌ [MapView] Error en ref del marcador (estable):', {
                         error: error.message,
                         incidentId: incident.id_incident,
                         hasRef: !!ref
@@ -533,6 +611,9 @@ const MapView = ({ className, onToggleFilters }) => {
                   }}
                   eventHandlers={{
                     click: () => {
+                      // Solo permitir clicks en marcadores visibles
+                      if (!isVisible) return;
+                      
                       console.log('🖱️ [MapView] Click en marcador:', {
                         incidentId: incident.id_incident,
                         currentSelected: incidentSelected?.id_incident,
@@ -559,6 +640,9 @@ const MapView = ({ className, onToggleFilters }) => {
                       }
                     },
                     mousedown: () => {
+                      // Solo permitir mousedown en marcadores visibles
+                      if (!isVisible) return;
+                      
                       console.log('🖱️ [MapView] Mousedown en marcador (backup):', incident.id_incident);
                       
                       try {
@@ -580,8 +664,8 @@ const MapView = ({ className, onToggleFilters }) => {
                   }}
                   draggable={false}
                 >
-                  {/* Solo mostrar popup si no estamos en móvil o si es el incidente seleccionado */}
-                  {(!isMobile || incident.id_incident === incidentSelected?.id_incident) && (
+                  {/* Solo mostrar popup si es visible y (no móvil o es el seleccionado) */}
+                  {isVisible && (!isMobile || incident.id_incident === incidentSelected?.id_incident) && (
                     <Popup>
                       <div>
                         <strong>{incident.summary}</strong>
