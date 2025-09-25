@@ -20,7 +20,7 @@ import {
   getAdaptiveDelay,
   isSlowMobileConnection 
 } from "@/shared/utils/debugUtils";
-import StableMarker from "./StableMarker";
+import ImperativeMarkers from "./ImperativeMarkers";
 
 // Función para crear un ícono SVG de marcador de posición personalizado
 const getColoredIcon = (color) => {
@@ -570,77 +570,48 @@ const MapView = ({ className, onToggleFilters }) => {
           />
         )}
 
-        {/* Marcadores normales - ESTRATEGIA DEFINITIVA: Renderizar condicionalmente sin cambiar props */}
+        {/* Marcadores manejados de forma IMPERATIVA - FUERA del ciclo de React */}
         {actionType !== MAP_ACTION_TYPES.adding && (
-          <>
-            {/* ESTRATEGIA DEFINITIVA: Renderizar TODOS los marcadores siempre, nunca desmontar */}
-            {stableIncidents.map((incident) => {
-              // Calcular visibilidad dinámicamente pero SIN afectar el renderizado
-              const shouldBeVisible = !isMobile || incidentSelected === null || incident.id_incident === incidentSelected?.id_incident;
-              const isSelected = incident.id_incident === incidentSelected?.id_incident;
-              
-              console.log('🔒 [MapView] Renderizando marcador ULTRA-ESTABLE:', {
-                incidentId: incident.id_incident,
-                shouldBeVisible,
-                isSelected,
-                isMobile,
-                timestamp: new Date().toISOString()
-              });
-              
-              return (
-                <StableMarker
-                  key={`ultra-stable-${incident.id_incident}`} // Clave que NUNCA cambia
-                  incident={incident}
-                  isVisible={shouldBeVisible}
-                  isMobile={isMobile}
-                  isSelected={isSelected}
-                  markerType="ultra-stable" // Tipo que nunca cambia
-                  onMarkerClick={(incidentId) => {
-                    // Solo permitir clicks si es visible
-                    if (!shouldBeVisible) {
-                      console.log('🚫 [MapView] Click ignorado - marcador no visible:', incidentId);
-                      return;
-                    }
-                    
-                    console.log('🎯 [MapView] Click en marcador ultra-estable:', incidentId);
-                    try {
-                      const { clearNewlyCreatedIncident } = useIncidentsStore.getState();
-                      clearNewlyCreatedIncident();
-                      const result = setIncidentSelectedFromStore(incidentId);
-                      console.log('✅ [MapView] Incidente seleccionado exitosamente:', {
-                        incidentId,
-                        success: result
-                      });
-                    } catch (error) {
-                      console.error('❌ [MapView] Error en click ultra-estable:', {
-                        error: error.message,
-                        incidentId
-                      });
-                    }
-                  }}
-                  onMarkerRef={(incidentId, ref) => {
-                    try {
-                      if (ref) {
-                        markersRef.current[incidentId] = ref;
-                        console.log('✅ [MapView] Ref ultra-estable guardada:', incidentId);
-                      } else {
-                        // Solo limpiar si realmente se desmonta (lo cual no debería pasar)
-                        if (markersRef.current[incidentId]) {
-                          delete markersRef.current[incidentId];
-                          console.log('🗑️ [MapView] Ref ultra-estable limpiada:', incidentId);
-                        }
-                      }
-                    } catch (error) {
-                      console.error('❌ [MapView] Error en ref ultra-estable:', {
-                        error: error.message,
-                        incidentId
-                      });
-                    }
-                  }}
-                />
-              );
-            })}
-          </>
+          <ImperativeMarkers
+            incidents={stableIncidents}
+            incidentSelected={incidentSelected}
+            isMobile={isMobile}
+            onMarkerClick={(incidentId) => {
+              console.log('🎯 [MapView] Click desde ImperativeMarkers:', incidentId);
+              try {
+                const { clearNewlyCreatedIncident } = useIncidentsStore.getState();
+                clearNewlyCreatedIncident();
+                const result = setIncidentSelectedFromStore(incidentId);
+                console.log('✅ [MapView] Incidente seleccionado desde marcador imperativo:', {
+                  incidentId,
+                  success: result
+                });
+              } catch (error) {
+                console.error('❌ [MapView] Error en click marcador imperativo:', {
+                  error: error.message,
+                  incidentId
+                });
+              }
+            }}
+            onMarkerRef={(incidentId, ref) => {
+              try {
+                if (ref) {
+                  markersRef.current[incidentId] = ref;
+                  console.log('✅ [MapView] Ref marcador imperativo guardada:', incidentId);
+                } else {
+                  if (markersRef.current[incidentId]) {
+                    delete markersRef.current[incidentId];
+                    console.log('🗑️ [MapView] Ref marcador imperativo limpiada:', incidentId);
+                  }
+                }
+              } catch (error) {
+                console.error('❌ [MapView] Error en ref marcador imperativo:', {
+                  error: error.message,
+                  incidentId
+                });
+              }
+            }}
+          />
         )}
       </MapContainer>
     </div>
