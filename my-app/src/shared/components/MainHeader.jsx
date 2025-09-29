@@ -3,11 +3,26 @@ import { useAuth } from "@features/auth/hooks/useAuth";
 import { useEffect } from "react";
 import { initFlowbite, Popover } from "flowbite";
 import { useNavigate } from "react-router-dom";
+import useIncidentsStore  from "@features/incident/store/incidentStore";
 
 
 const MainHeader = () => {
   const { userName, tokenEsValido, logoutUser } = useAuth();
   const navigate = useNavigate();
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
+  const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
+
+
+  const onClicToggleIncidentSelected = () => {
+    if (selectedIncident) {
+      console.log("aaaa")
+      setSelectedIncident(null)
+    } else {
+      console.log("bbbb")
+      setSelectedIncident({id: 1234})
+    }
+  }
+
 
   // Inicializar Flowbite después de que el componente se monte
   useEffect(() => {
@@ -79,6 +94,13 @@ const MainHeader = () => {
               <p>userName: {userName}</p> */}
             </div>
           </div>
+
+          <button 
+            onClick={onClicToggleIncidentSelected}
+            
+          >
+            Toggle incidente
+          </button>          
 
           {!tokenEsValido() && (
             <button
