@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
 const useMapExplorerStore = create((set, get) => ({
-    showFilters: false,
+    showSideBar: false,
     expandMap: false,
 
-    setShowFilters: (showFilters) => set({ showFilters: showFilters }),
+    setShowSideBar: (showSideBar) => set({ showSideBar: showSideBar }),
     setExpandMap: (expandMap) => set({expandMap : expandMap})
 
 }));

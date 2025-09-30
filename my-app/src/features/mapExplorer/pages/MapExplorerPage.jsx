@@ -12,14 +12,15 @@ import { useEffect, useState } from "react";
 
 const MapExplorerPage = () => {
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident)
   const isMobile = useWindowStore((state) => state.isMobile);
   const [classMapExplor, setClassMapExplor] = useState("");
   const [classMapSidebar, setClassMapSidebar] = useState("");
   const [classMapView, setClassMapView] = useState("");
   const [classIncidentDetail, setClassIncidentDetail] = useState("");
   const [classPage, setClassPage] = useState("");
-  const showFilters = useMapExplorerStore((state) => state.showFilters);
-  const setShowFilters = useMapExplorerStore((state) => state.setShowFilters);
+  const showSideBar = useMapExplorerStore((state) => state.showSideBar);
+  const setShowSideBar = useMapExplorerStore((state) => state.setShowSideBar);
   const expandMap = useMapExplorerStore((state) => state.expandMap);
   const setExpandMap = useMapExplorerStore((state) => state.setExpandMap);
 
@@ -47,12 +48,12 @@ const MapExplorerPage = () => {
   useEffect(() => {
     // component MapSidebar
     let show = false;
-    if (!selectedIncident && (!isMobile || showFilters)) {
+    if (!selectedIncident && (!isMobile || showSideBar)) {
       show = true;
     }
 
     setShowComponentSidebar(show);
-  }, [isMobile, showFilters, selectedIncident]);
+  }, [isMobile, showSideBar, selectedIncident]);
 
   useEffect(() => {
     // component MapView
@@ -60,12 +61,12 @@ const MapExplorerPage = () => {
     if (!isMobile) {
       show = true;
     } else {
-      if (!showFilters) {
+      if (!showSideBar) {
         show = true;
       }
     }
     setShowComponentMap(show);
-  }, [isMobile, showFilters]);
+  }, [isMobile, showSideBar]);
 
   useEffect(() => {
     //component Detail
@@ -79,11 +80,11 @@ const MapExplorerPage = () => {
   useEffect(() => {
     //component showSideBar
     let show = false;
-    if (isMobile && !selectedIncident && !showFilters) {
+    if (isMobile && !selectedIncident && !showSideBar) {
       show = true;
     }
     setShowComponentShowSidebar(show);
-  }, [isMobile, selectedIncident, showFilters]);
+  }, [isMobile, selectedIncident, showSideBar]);
 
   useEffect(() => {
     //component Expander
@@ -103,7 +104,11 @@ const MapExplorerPage = () => {
         classNamePage = `${classNamePage} flex-row-reverse`;
       }
     } else {
-      classNamePage = `${classNamePage} flex flex-col`;
+      if (showSideBar) {
+        classNamePage = `${classNamePage} flex flex-auto`;
+      } else {
+        classNamePage = `${classNamePage} flex flex-col`;
+      }
     }
 
     setClassPage(classNamePage);
@@ -111,9 +116,11 @@ const MapExplorerPage = () => {
 
   useEffect(() => {
     // class MapSideBar
+    let classNameSideBar = "bg-red-500 text-secondary flex flex-col ";
     if (!isMobile) {
-      setClassMapSidebar("flex flex-col w-1/4");
+      classNameSideBar = `${classNameSideBar} w-1/4`;
     }
+    setClassMapSidebar(classNameSideBar);
   }, [isMobile]);
 
   useEffect(() => {
@@ -145,7 +152,7 @@ const MapExplorerPage = () => {
       <ul>
         <li>{isMobile ? "isMobile=true" : "isMobile=false"}</li>
         <li>selectedIncident = {selectedIncident ? "Con valor" : "Nulo"}</li>
-        <li>showFilters= {showFilters ? "true" : "false"}</li>
+        <li>showSideBar= {showSideBar ? "true" : "false"}</li>
         <li>
           {showComponentMap
             ? "showComponentMap=true"
@@ -159,22 +166,24 @@ const MapExplorerPage = () => {
       </ul>
 
       <main className={`${classPage} flex-auto`}>
-        
         {showComponentSidebar && (
-          <div className={`bg-red-500 text-secondary ${classMapSidebar}`}>
-            <MapSidebar />
+          <div className={`flex-auto ${classMapSidebar}`}>
+            <MapSidebar setShowSideBar={setShowSideBar} isMobile={isMobile} />
           </div>
         )}
 
         {showComponentShowSidebar && (
           <div className="bg-zinc-700 text-secondary">
-            <MapShowSideBar />
+            <MapShowSideBar
+              showSideBar={showSideBar}
+              setShowSideBar={setShowSideBar}
+            />
           </div>
         )}
 
         {showComponentExpander && (
           <div className="bg-purple-500">
-            <MapExpander />
+            <MapExpander expandMap={expandMap} setExpandMap={setExpandMap}/>
           </div>
         )}
 
@@ -186,7 +195,7 @@ const MapExplorerPage = () => {
 
         {showComponentDetail && (
           <div className={`flex-auto ${classIncidentDetail} `}>
-            <IncidentDetail />
+            <IncidentDetail isMobile={isMobile} setSelectedIncident={setSelectedIncident} />
           </div>
         )}
       </main>
