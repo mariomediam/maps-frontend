@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import MainHeader from "@shared/components/MainHeader";
 import MapSidebar from "@features/mapExplorer/components/MapSidebar";
 import MapView from "@features/mapExplorer/components/MapView";
@@ -8,11 +9,12 @@ import useIncidentsStore from "@features/incident/store/incidentStore";
 import useWindowStore from "@shared/store/windowStore";
 import useMapExplorerStore from "@features/mapExplorer/store/mapExplorerStore";
 import { initBreakpointListeners } from "@/shared/store/windowStore";
-import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const MapExplorerPage = () => {
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
   const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident)
+  const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
   const isMobile = useWindowStore((state) => state.isMobile);
   const [classMapExplor, setClassMapExplor] = useState("");
   const [classMapSidebar, setClassMapSidebar] = useState("");
@@ -30,6 +32,8 @@ const MapExplorerPage = () => {
     useState(false);
   const [showComponentDetail, setShowComponentDetail] = useState(false);
   const [showComponentExpander, setShowComponentExpander] = useState(false);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // Estado para rastrear si el store de ventana se ha inicializado
   const [isWindowStoreInitialized, setIsWindowStoreInitialized] =
@@ -143,31 +147,44 @@ const MapExplorerPage = () => {
     if (!isMobile) {
       classNameDetail = `${classNameDetail} w-1/4`;
     } else {
-      classNameDetail = `${classNameDetail}`;
+      if (expandMap) {
+        classNameDetail = `${classNameDetail} hidden`;
+      }
     }
     setClassIncidentDetail(classNameDetail);
-  }, [isMobile]);
+  }, [isMobile, expandMap]);
+
+  useEffect(() => {
+    const loadIncidents = async () => {
+      
+        try {
+          
+          const filters = {};
+          const idCategory = searchParams.get("idCategory");
+          const idState = searchParams.get("idState");
+
+          if (idCategory) filters.idCategory = idCategory;
+          if (idState) filters.idState = idState;
+
+          const incidents = await searchIncidentsStored(filters);
+          
+        } catch (error) {
+          console.error('❌ [MapExplorerPage] Error cargando incidentes:', {
+            error: error.message,
+            stack: error.stack,
+            connectionType: navigator.connection?.effectiveType || 'unknown',
+            timestamp: new Date().toISOString()
+          });
+        }     
+    };
+
+    loadIncidents();
+  }, []); // Solo se ejecuta una vez al montar
+
 
   return (
     <div className="h-dvh bg-yellow-400 flex flex-col">
       <MainHeader />
-
-      <ul>
-        <li>{isMobile ? "isMobile=true" : "isMobile=false"}</li>
-        <li>selectedIncident = {selectedIncident ? "Con valor" : "Nulo"}</li>
-        <li>showSideBar= {showSideBar ? "true" : "false"}</li>
-        <li>
-          {showComponentMap
-            ? "showComponentMap=true"
-            : "showComponentMap=false"}
-        </li>
-        <li>showComponentSidebar= {showComponentSidebar ? "true" : "false"}</li>
-        <li>classPage={classPage}</li>
-        <li>classMapSidebar={classMapSidebar}</li>
-        <li>classIncidentDetail={classIncidentDetail}</li>
-        <li>classMapView={classMapView}</li>
-      </ul>
-
       <main className={`${classPage} flex-auto`}>
         {showComponentSidebar && (
           <div className={`flex-auto ${classMapSidebar}`}>

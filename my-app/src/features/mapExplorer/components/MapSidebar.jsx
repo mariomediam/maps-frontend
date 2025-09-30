@@ -10,20 +10,27 @@ const MapSidebar = ({ isMobile, setShowSideBar }) => {
   };
 
   return (
-    <div className="flex justify-between">
-      <p>Filtros y ultimos incidentes</p>
+    <>
+  
+    <div className="flex justify-between p-2 bg-secondary text-primary">
+      <h2 className="text-lg font-semibold">Filtros</h2>
 
       {isMobile && (
-        <button
-        type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none "
-        onClick={onClickCloseButton}
-      >
-       X
-      </button>
+         <button
+         type="button"
+         className="text-gray-500 hover:text-gray-700 text-xl me-4"
+         onClick={onClickCloseButton}
+       >
+         ✕
+       </button>
       )}
       
     </div>
+    <div className="flex flex-col flex-auto">
+      <IncidentFilter />
+
+    </div>
+    </>
   );
 };
 export default MapSidebar;
