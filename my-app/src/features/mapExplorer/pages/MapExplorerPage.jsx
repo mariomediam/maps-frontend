@@ -125,14 +125,17 @@ const MapExplorerPage = () => {
 
   useEffect(() => {
     // class MapView
-    let classNameMap = "bg-green-500";
+    let classNameMap = "bg-green-500 border-red-500 border-4";
     if (!isMobile) {
       classNameMap = `${classNameMap} w-3/4`;
     } else {
-      classNameMap = `${classNameMap} flex-auto border-red-500 border-4`;
+      classNameMap = `${classNameMap} flex-auto`;
+      if (!expandMap && selectedIncident){
+        classNameMap = `${classNameMap} max-h-[120px]`;
+      } 
     }
     setClassMapView(classNameMap);
-  }, [isMobile]);
+  }, [isMobile, selectedIncident, expandMap]);
 
   useEffect(() => {
     // class Detail
@@ -195,7 +198,7 @@ const MapExplorerPage = () => {
 
         {showComponentDetail && (
           <div className={`flex-auto ${classIncidentDetail} `}>
-            <IncidentDetail isMobile={isMobile} setSelectedIncident={setSelectedIncident} />
+            <IncidentDetail isMobile={isMobile} setSelectedIncident={setSelectedIncident} setExpandMap={setExpandMap}/>
           </div>
         )}
       </main>
