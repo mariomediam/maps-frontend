@@ -8,7 +8,7 @@ const IncidentFilter = ({ className, onClose }) => {
   const isLoadingIncidents = useIncidentsStore((state) => state.isLoading);
 
   return (
-    <div className={`bg-secondary md:border-r flex-auto`}>
+    <div className={`bg-secondary md:border-r flex-auto overflow-y-auto`}>
       
 
       <div className="px-4 text-primary">

@@ -1,8 +1,23 @@
-// Función para crear un ícono SVG de marcador de posición personalizado
+import { MapIncidentList } from "@features/mapExplorer/components/MapIncidentList";
+import { MapIncidentSelected } from "@features/mapExplorer/components/MapIncidentSelected";
 
+const MapView = ({ isMobile, selectedIncident, setSelectedIncident }) => {
+  if (isMobile && selectedIncident) {
+    return (
+      <MapIncidentSelected
+        isMobile={isMobile}
+        selectedIncident={selectedIncident}
+      />
+    );
+  }
 
-const MapView = ({ className, onToggleFilters, onMarkersReady }) => {
-return <div>Aquí va el mapa</div>
+  return (
+    <MapIncidentList
+      isMobile={isMobile}
+      selectedIncident={selectedIncident}
+      setSelectedIncident={setSelectedIncident}
+    />
+  );
 };
 
 export default MapView;

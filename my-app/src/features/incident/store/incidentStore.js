@@ -17,7 +17,11 @@ const useIncidentsStore = create((set, get) => ({
         incidentsStored: incidents,
         isLoading: false,
       });
-      return incidents;
+      const incidentsWithFlag = incidents.map((incident) => ({
+        ...incident,
+        showOnMap: true
+      }));
+      return incidentsWithFlag;
     } catch (error) {
       console.error('❌ [IncidentStore] Error buscando incidentes:', {
         error: error.message,

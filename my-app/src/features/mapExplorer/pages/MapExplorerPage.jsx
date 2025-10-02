@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import MainHeader from "@shared/components/MainHeader";
 import MapSidebar from "@features/mapExplorer/components/MapSidebar";
 import MapView from "@features/mapExplorer/components/MapView";
@@ -8,191 +7,65 @@ import { IncidentDetail } from "@features/incident/components/IncidentDetail";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import useWindowStore from "@shared/store/windowStore";
 import useMapExplorerStore from "@features/mapExplorer/store/mapExplorerStore";
-import { initBreakpointListeners } from "@/shared/store/windowStore";
-import { useSearchParams } from "react-router-dom";
+import { useMapLayout } from "../hooks/useMapLayout";
+import { useIncidentLoader } from "../hooks/useIncidentLoader";
+import { useBreakpointInit } from "../hooks/useBreakpointInit";
 
 const MapExplorerPage = () => {
+  // Store selectors
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
-  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident)
-  const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored)
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
   const isMobile = useWindowStore((state) => state.isMobile);
-  const [classMapExplor, setClassMapExplor] = useState("");
-  const [classMapSidebar, setClassMapSidebar] = useState("");
-  const [classMapView, setClassMapView] = useState("");
-  const [classIncidentDetail, setClassIncidentDetail] = useState("");
-  const [classPage, setClassPage] = useState("");
   const showSideBar = useMapExplorerStore((state) => state.showSideBar);
   const setShowSideBar = useMapExplorerStore((state) => state.setShowSideBar);
   const expandMap = useMapExplorerStore((state) => state.expandMap);
   const setExpandMap = useMapExplorerStore((state) => state.setExpandMap);
+  const addingIncident = useMapExplorerStore((state) => state.addingIncident);
+  const setAddingIncident = useMapExplorerStore((state) => state.setAddingIncident);
 
-  const [showComponentSidebar, setShowComponentSidebar] = useState(true);
-  const [showComponentMap, setShowComponentMap] = useState(true);
-  const [showComponentShowSidebar, setShowComponentShowSidebar] =
-    useState(false);
-  const [showComponentDetail, setShowComponentDetail] = useState(false);
-  const [showComponentExpander, setShowComponentExpander] = useState(false);
+  // Custom hooks
+  useBreakpointInit();
+  const { isLoading, error } = useIncidentLoader();
+  const { componentVisibility, cssClasses, isInitialized } = useMapLayout({
+    isMobile,
+    selectedIncident,
+    showSideBar,
+    expandMap
+  });
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  // Loading state
+  if (!isInitialized) {
+    return (
+      <div className="h-dvh bg-yellow-400 flex items-center justify-center">
+        <div className="text-lg">Cargando...</div>
+      </div>
+    );
+  }
 
-  // Estado para rastrear si el store de ventana se ha inicializado
-  const [isWindowStoreInitialized, setIsWindowStoreInitialized] =
-    useState(false);
-  useEffect(() => {
-    const cleanup = initBreakpointListeners();
-
-    // Marcar que el store se ha inicializado después de un pequeño delay
-    setTimeout(() => {
-      setIsWindowStoreInitialized(true);
-    }, 100);
-
-    return cleanup;
-  }, []);
-
-  useEffect(() => {
-    // component MapSidebar
-    let show = false;
-    if (!selectedIncident && (!isMobile || showSideBar)) {
-      show = true;
-    }
-
-    setShowComponentSidebar(show);
-  }, [isMobile, showSideBar, selectedIncident]);
-
-  useEffect(() => {
-    // component MapView
-    let show = false;
-    if (!isMobile) {
-      show = true;
-    } else {
-      if (!showSideBar) {
-        show = true;
-      }
-    }
-    setShowComponentMap(show);
-  }, [isMobile, showSideBar]);
-
-  useEffect(() => {
-    //component Detail
-    let show = false;
-    if (selectedIncident) {
-      show = true;
-    }
-    setShowComponentDetail(show);
-  }, [selectedIncident]);
-
-  useEffect(() => {
-    //component showSideBar
-    let show = false;
-    if (isMobile && !selectedIncident && !showSideBar) {
-      show = true;
-    }
-    setShowComponentShowSidebar(show);
-  }, [isMobile, selectedIncident, showSideBar]);
-
-  useEffect(() => {
-    //component Expander
-    let show = false;
-    if (isMobile && selectedIncident) {
-      show = true;
-    }
-    setShowComponentExpander(show);
-  }, [isMobile, selectedIncident]);
-
-  useEffect(() => {
-    // class Page
-    let classNamePage = "bg-secondary";
-    if (!isMobile) {
-      classNamePage = `${classNamePage} flex`;
-      if (selectedIncident) {
-        classNamePage = `${classNamePage} flex-row-reverse`;
-      }
-    } else {
-      if (showSideBar) {
-        classNamePage = `${classNamePage} flex flex-auto`;
-      } else {
-        classNamePage = `${classNamePage} flex flex-col`;
-      }
-    }
-
-    setClassPage(classNamePage);
-  }, [isMobile, selectedIncident]);
-
-  useEffect(() => {
-    // class MapSideBar
-    let classNameSideBar = "bg-red-500 text-secondary flex flex-col ";
-    if (!isMobile) {
-      classNameSideBar = `${classNameSideBar} w-1/4`;
-    }
-    setClassMapSidebar(classNameSideBar);
-  }, [isMobile]);
-
-  useEffect(() => {
-    // class MapView
-    let classNameMap = "bg-green-500 border-red-500 border-4";
-    if (!isMobile) {
-      classNameMap = `${classNameMap} w-3/4`;
-    } else {
-      classNameMap = `${classNameMap} flex-auto`;
-      if (!expandMap && selectedIncident){
-        classNameMap = `${classNameMap} max-h-[120px]`;
-      } 
-    }
-    setClassMapView(classNameMap);
-  }, [isMobile, selectedIncident, expandMap]);
-
-  useEffect(() => {
-    // class Detail
-    let classNameDetail = "bg-blue-500";
-    if (!isMobile) {
-      classNameDetail = `${classNameDetail} w-1/4`;
-    } else {
-      if (expandMap) {
-        classNameDetail = `${classNameDetail} hidden`;
-      }
-    }
-    setClassIncidentDetail(classNameDetail);
-  }, [isMobile, expandMap]);
-
-  useEffect(() => {
-    const loadIncidents = async () => {
-      
-        try {
-          
-          const filters = {};
-          const idCategory = searchParams.get("idCategory");
-          const idState = searchParams.get("idState");
-
-          if (idCategory) filters.idCategory = idCategory;
-          if (idState) filters.idState = idState;
-
-          const incidents = await searchIncidentsStored(filters);
-          
-        } catch (error) {
-          console.error('❌ [MapExplorerPage] Error cargando incidentes:', {
-            error: error.message,
-            stack: error.stack,
-            connectionType: navigator.connection?.effectiveType || 'unknown',
-            timestamp: new Date().toISOString()
-          });
-        }     
-    };
-
-    loadIncidents();
-  }, []); // Solo se ejecuta una vez al montar
+  // Error state
+  if (error) {
+    return (
+      <div className="h-dvh bg-yellow-400 flex items-center justify-center">
+        <div className="text-red-600 text-lg">Error: {error}</div>
+      </div>
+    );
+  }
 
 
   return (
     <div className="h-dvh bg-yellow-400 flex flex-col">
       <MainHeader />
-      <main className={`${classPage} flex-auto`}>
-        {showComponentSidebar && (
-          <div className={`flex-auto ${classMapSidebar}`}>
+      {/* <ul>
+        <li>cssClasses.mapView: {cssClasses.mapView}</li>
+      </ul> */}
+      <main className={cssClasses.page}>
+        {componentVisibility.sidebar && (
+          <div className={cssClasses.sidebar}>
             <MapSidebar setShowSideBar={setShowSideBar} isMobile={isMobile} />
           </div>
         )}
 
-        {showComponentShowSidebar && (
+        {componentVisibility.showSidebarButton && (
           <div className="bg-zinc-700 text-secondary">
             <MapShowSideBar
               showSideBar={showSideBar}
@@ -201,24 +74,37 @@ const MapExplorerPage = () => {
           </div>
         )}
 
-        {showComponentExpander && (
+        {componentVisibility.expander && (
           <div className="bg-purple-500">
-            <MapExpander expandMap={expandMap} setExpandMap={setExpandMap}/>
+            <MapExpander expandMap={expandMap} setExpandMap={setExpandMap} />
           </div>
         )}
 
-        {showComponentMap && (
-          <div className={classMapView}>
-            <MapView />
+        {componentVisibility.map && (
+          <div className={cssClasses.mapView}>
+            <MapView isMobile={isMobile} selectedIncident={selectedIncident} setSelectedIncident={setSelectedIncident} />
           </div>
         )}
 
-        {showComponentDetail && (
-          <div className={`flex-auto ${classIncidentDetail} `}>
-            <IncidentDetail isMobile={isMobile} setSelectedIncident={setSelectedIncident} setExpandMap={setExpandMap}/>
+        {componentVisibility.detail && (
+          <div className={cssClasses.incidentDetail}>
+            <IncidentDetail 
+              isMobile={isMobile} 
+              setSelectedIncident={setSelectedIncident} 
+              setExpandMap={setExpandMap}
+              incident={selectedIncident}
+            />
           </div>
         )}
       </main>
+      
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg">
+            <div className="text-lg">Cargando incidentes...</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
