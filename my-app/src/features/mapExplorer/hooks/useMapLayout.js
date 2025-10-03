@@ -59,33 +59,33 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
       return classes;
     };
 
+    // const getIncidentDetailClasses = () => {
+    //   let classes = "flex-auto";
+      
+    //   if (!isMobile) {
+    //     classes += " w-1/4";
+    //   } else if (expandMap) {
+    //     classes += " hidden";
+    //   }
+      
+    //   return classes;
+    // };
+
     const getIncidentDetailClasses = () => {
-      let classes = "flex-auto";
+      let classes = "";
       
       if (!isMobile) {
         classes += " w-1/4";
       } else if (expandMap) {
         classes += " hidden";
+      } else {
+        // En móvil con incidente seleccionado, usar flex-1 para ocupar el resto del espacio
+        // y permitir scroll interno
+        classes += " flex-1 overflow-y-auto";
       }
       
       return classes;
     };
-
-    // const getIncidentDetailClasses = () => {
-    //   let classes = "";
-      
-    //   if (!isMobile) {
-    //     classes += " w-1/4 flex-auto overflow-y-auto";
-    //   } else if (expandMap) {
-    //     classes += " hidden";
-    //   } else {
-    //     // En móvil con incidente seleccionado, usar flex-1 para ocupar el resto del espacio
-    //     // y permitir scroll interno
-    //     classes += " flex-1 overflow-y-auto";
-    //   }
-      
-    //   return classes;
-    // };
 
     return {
       page: getPageClasses(),
