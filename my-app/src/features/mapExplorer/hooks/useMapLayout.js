@@ -52,7 +52,7 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
       } else {
         classes += " flex-auto";
         if (!expandMap && selectedIncident) {
-          classes += " max-h-[120px]";
+          classes += " h-[120px]";
         }
       }
       
