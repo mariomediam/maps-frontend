@@ -44,20 +44,20 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
       return classes;
     };
 
-    const getMapViewClasses = () => {
-      let classes = "flex flex-col bg-green-500 border-red-500 border-4 ";
+    // const getMapViewClasses = () => {
+    //   let classes = "flex flex-col bg-green-500 border-red-500 border-4 ";
       
-      if (!isMobile) {
-        classes += " w-3/4";
-      } else {
-        classes += " flex-auto";
-        if (!expandMap && selectedIncident) {
-          classes += " h-[120px]";
-        }
-      }
+    //   if (!isMobile) {
+    //     classes += " w-3/4";
+    //   } else {
+    //     classes += " flex-auto";
+    //     if (!expandMap && selectedIncident) {
+    //       classes += " h-[120px]";
+    //     }
+    //   }
       
-      return classes;
-    };
+    //   return classes;
+    // };
 
     // const getIncidentDetailClasses = () => {
     //   let classes = "flex-auto";
@@ -70,6 +70,24 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
       
     //   return classes;
     // };
+
+    const getMapViewClasses = () => {
+      let classes = "flex flex-col bg-green-500 border-red-500 border-4 ";
+      
+      if (!isMobile) {
+        classes += " w-3/4";
+      } else {
+        if (!expandMap && selectedIncident) {
+          // Cuando hay un incidente seleccionado, el mapa tiene altura fija de 120px
+          classes += " flex-shrink-0 h-[120px]";
+        } else {
+          // Cuando no hay incidente o está expandido, el mapa ocupa todo el espacio
+          classes += " flex-auto";
+        }
+      }
+      
+      return classes;
+    };
 
     const getIncidentDetailClasses = () => {
       let classes = "";
