@@ -3,12 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import useIncidentsStore from "@features/incident/store/incidentStore";
+import { useNavigate } from "react-router-dom";
 
 export const MapIncidentList = ({
   isMobile,
   selectedIncident,
   setSelectedIncident,
 }) => {
+  const navigate = useNavigate();
   const incidentsStored = useIncidentsStore((state) => state.incidentsStored);
 
   const [incidentsToShow, setIncidentsToShow] = useState([]);
@@ -36,8 +38,13 @@ export const MapIncidentList = ({
     setSelectedIncident(incident);
   };
 
+  const handleReportIncident = () => {    
+    navigate('/add-incident');
+  };
+
+
   return (
-    <>
+    <div className="relative w-full h-full">
       <MapContainer
         center={[-5.1955724, -80.6301423]}
         zoom={13}
@@ -67,6 +74,17 @@ export const MapIncidentList = ({
           ))}
         </>
       </MapContainer>
-    </>
+
+      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-[1000]">
+          <button
+            type="button"
+            className="bg-primary text-secondary px-6 py-3 rounded-lg shadow-lg hover:bg-black hover:font-bold transition-colors font-medium text-sm"
+            onClick={handleReportIncident}
+          >
+            Reportar una incidencia
+          </button>
+        </div>
+
+    </div>
   );
 };

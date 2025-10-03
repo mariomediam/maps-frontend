@@ -1,15 +1,19 @@
+import FilterIcon from "@/shared/assets/icons/FilterIcon.jsx";
+
 const MapShowSideBar = ({ showSideBar, setShowSideBar }) => {
   const onClickButtonToggle = () => {
     setShowSideBar(!showSideBar);
   };
   return (
-    <div>
+    <div className="flex">
       <button
         type="button"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:outline-none "
+        className="flex-auto text-white bg-primary hover:bg-dark focus:ring-4 focus:ring-blue-300 font-medium text-sm px-5 py-2.5 focus:outline-none "
         onClick={onClickButtonToggle}
       >
-        {showSideBar ? "Ocultar filtros" : "Mostrar filtros"}
+         <div className="flex justify-center items-center gap-1">
+                      <FilterIcon /> Mostrar filtros
+                    </div>
       </button>
     </div>
   );

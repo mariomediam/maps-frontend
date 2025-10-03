@@ -52,6 +52,7 @@ const MapExplorerPage = () => {
   }
 
 
+
   return (
     <div className="h-dvh bg-yellow-400 flex flex-col">
       <MainHeader />
@@ -97,6 +98,8 @@ const MapExplorerPage = () => {
           </div>
         )}
       </main>
+
+
       
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
