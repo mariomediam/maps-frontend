@@ -112,7 +112,7 @@ export const IncidentDetail = ({
   }
 
   return (
-    <>
+    <div className="h-full overflow-y-auto">
       <div className="flex justify-between m-3 ">
         <div>
           <h4 className="text-base/5 font-semibold text-primary">
@@ -130,7 +130,7 @@ export const IncidentDetail = ({
           </p>
         </div>
 
-        {isMobile && (
+        {/* {isMobile && ( */}
           <button
             type="button"
             className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
@@ -139,13 +139,13 @@ export const IncidentDetail = ({
           >
             ✕
           </button>
-        )}
+        {/* )} */}
       </div>
       {/* Title */}
 
       <div className="mx-3 mt-0 mb-3">
         {/* Registrado por */}
-        <p className="text-sm text-gray-500 mt-3">Regsitrado por</p>
+        <p className="text-sm text-gray-500 mt-3">Registrado por</p>
         <p className="">
           {inspector_username.toUpperCase()} el{" "}
           {format(registration_date, "DD/MM/YYYY HH:mm")}
@@ -184,7 +184,10 @@ export const IncidentDetail = ({
             <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
           </div>
         )}
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, nemo inventore? Dolorum odio magni consequatur, deleniti magnam vel quas voluptate eius aspernatur provident eligendi optio, similique cumque architecto dolore possimus?</p>
       </div>
-    </>
+
+      
+    </div>
   );
 };
