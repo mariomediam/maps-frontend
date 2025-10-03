@@ -71,6 +71,22 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
       return classes;
     };
 
+    // const getIncidentDetailClasses = () => {
+    //   let classes = "";
+      
+    //   if (!isMobile) {
+    //     classes += " w-1/4 flex-auto overflow-y-auto";
+    //   } else if (expandMap) {
+    //     classes += " hidden";
+    //   } else {
+    //     // En móvil con incidente seleccionado, usar flex-1 para ocupar el resto del espacio
+    //     // y permitir scroll interno
+    //     classes += " flex-1 overflow-y-auto";
+    //   }
+      
+    //   return classes;
+    // };
+
     return {
       page: getPageClasses(),
       sidebar: getSidebarClasses(),
