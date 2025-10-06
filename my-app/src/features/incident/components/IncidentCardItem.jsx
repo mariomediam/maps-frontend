@@ -2,6 +2,7 @@ import IncidentPhotography from "@/features/incident/components/IncidentPhotogra
 import { format } from "@formkit/tempo";
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
 import useMapExplorerStore from "@features/mapExplorer/store/mapExplorerStore.js";
+import IncidentMiniature from "@/features/incident/components/IncidentMiniature";
 
 const IncidentCardItem = ({ incident, className }) => {
   const {
@@ -48,7 +49,7 @@ const IncidentCardItem = ({ incident, className }) => {
           </div>
 
           <div className="flex justify-end ">
-            <IncidentPhotography idPhotography={idPhotography} />
+            <IncidentMiniature idIncident={id_incident} idPhotography={idPhotography} />
           </div>
         </div>
       </a>

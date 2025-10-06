@@ -161,9 +161,21 @@ const createIncident = async (incidentData) => {
   }
 };
 
+
+const getIncidentMiniatureById = async (idIncident) => {
+  try {
+    const api = useAxios();
+    const { data: { content } } = await api.get(`${URL}/miniature/${idIncident}`);
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getIncidents,
   getIncidentPhotographyById,
   getIncidentById,
   createIncident,
+  getIncidentMiniatureById,
 };
