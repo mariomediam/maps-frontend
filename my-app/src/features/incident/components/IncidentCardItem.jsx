@@ -11,7 +11,11 @@ const IncidentCardItem = ({ incident, className }) => {
     photographs,
   } = incident;
 
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
+
   const firstPhotography = photographs[0];
+
+
 
   const idPhotography = firstPhotography?.id_photography;
 
@@ -19,10 +23,14 @@ const IncidentCardItem = ({ incident, className }) => {
     (state) => state.setIncidentSelectedFromStore
   );
 
+  const handleIncidentSelected = () => {
+    setSelectedIncident(incident);
+  };
+
   return (
     <article
       className={`bg-gray-500  ${className}`}
-      onClick={() => setIncidentSelectedFromStore(id_incident)}
+      onClick={handleIncidentSelected}
     >
       <a
         href="#"
