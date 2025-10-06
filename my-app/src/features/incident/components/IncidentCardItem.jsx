@@ -1,6 +1,7 @@
 import IncidentPhotography from "@/features/incident/components/IncidentPhotography";
 import { format } from "@formkit/tempo";
 import useIncidentsStore from "@/features/incident/store/incidentStore.js";
+import useMapExplorerStore from "@features/mapExplorer/store/mapExplorerStore.js";
 
 const IncidentCardItem = ({ incident, className }) => {
   const {
@@ -12,6 +13,7 @@ const IncidentCardItem = ({ incident, className }) => {
   } = incident;
 
   const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
+  const setShowSideBar = useMapExplorerStore((state) => state.setShowSideBar);
 
   const firstPhotography = photographs[0];
 
@@ -24,6 +26,7 @@ const IncidentCardItem = ({ incident, className }) => {
   );
 
   const handleIncidentSelected = () => {
+  setShowSideBar(false);
     setSelectedIncident(incident);
   };
 
