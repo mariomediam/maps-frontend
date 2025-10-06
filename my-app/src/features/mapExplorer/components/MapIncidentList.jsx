@@ -5,6 +5,37 @@ import L from "leaflet";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import { useNavigate } from "react-router-dom";
 
+// Componente para controlar el centrado del mapa
+const MapController = ({ selectedIncident, isMobile }) => {
+  const map = useMap();
+  const prevSelectedRef = useRef(null);
+
+  useEffect(() => {
+    if (!selectedIncident || isMobile) return;
+
+    // Solo centrar si el incidente cambió (fue seleccionado desde el sidebar)
+    const isNewSelection = prevSelectedRef.current?.id_incident !== selectedIncident.id_incident;
+    
+    if (isNewSelection && selectedIncident.latitude && selectedIncident.longitude) {
+      const incidentLatLng = L.latLng(selectedIncident.latitude, selectedIncident.longitude);
+      const mapBounds = map.getBounds();
+
+      // Verificar si el marcador está fuera de la vista actual
+      if (!mapBounds.contains(incidentLatLng)) {
+        // Centrar el mapa en el marcador con una animación suave
+        map.flyTo(incidentLatLng, map.getZoom(), {
+          duration: 1.5, // duración de la animación en segundos
+          easeLinearity: 0.5
+        });
+      }
+    }
+
+    prevSelectedRef.current = selectedIncident;
+  }, [selectedIncident, map, isMobile]);
+
+  return null;
+};
+
 export const MapIncidentList = ({
   isMobile,
   selectedIncident,
@@ -71,6 +102,9 @@ export const MapIncidentList = ({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Componente para controlar el centrado automático */}
+        <MapController selectedIncident={selectedIncident} isMobile={isMobile} />
 
         <>
         {incidentsStored.map((incident) => {
