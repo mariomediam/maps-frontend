@@ -56,13 +56,13 @@ const MapExplorerPage = () => {
   return (
     <div className="h-dvh bg-yellow-400 flex flex-col">
       <MainHeader />
-      <ul>
+      {/* <ul>
         <li>cssClasses.page: {cssClasses.page}</li>
         <li>cssClasses.sidebar: {cssClasses.sidebar}</li>
         <li>cssClasses.incidentDetail: {cssClasses.incidentDetail}</li>
         <li>cssClasses.mapView: {cssClasses.mapView}</li>
-        
-      </ul>
+
+      </ul> */}
       <main className={cssClasses.page}>
         {componentVisibility.sidebar && (
           <div className={cssClasses.sidebar}>
