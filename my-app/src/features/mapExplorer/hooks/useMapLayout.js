@@ -37,7 +37,7 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
     };
 
     const getSidebarClasses = () => {
-      let classes = "bg-red-500 text-secondary flex flex-col flex-auto overflow-y-auto";
+      let classes = "bg-secondary text-secondary flex flex-col flex-auto overflow-y-auto";
       if (!isMobile) {
         classes += " w-1/4";
       }
@@ -72,7 +72,7 @@ export const useMapLayout = ({ isMobile, selectedIncident, showSideBar, expandMa
     // };
 
     const getMapViewClasses = () => {
-      let classes = "flex flex-col bg-green-500 border-red-500 border-4 ";
+      let classes = "flex flex-col bg-secondary ";
       
       if (!isMobile) {
         classes += " w-3/4";

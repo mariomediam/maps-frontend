@@ -94,14 +94,6 @@ const MainHeader = () => {
               <p>userName: {userName}</p> */}
             </div>
           </div>
-
-          <button 
-            onClick={onClicToggleIncidentSelected}
-            
-          >
-            Toggle incidente
-          </button>          
-
           {!tokenEsValido() && (
             <button
               data-collapse-toggle="navbar-default"

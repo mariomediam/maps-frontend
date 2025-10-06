@@ -184,7 +184,7 @@ export const IncidentDetail = ({
             <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
           </div>
         )}
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corrupti, nemo inventore? Dolorum odio magni consequatur, deleniti magnam vel quas voluptate eius aspernatur provident eligendi optio, similique cumque architecto dolore possimus?</p>
+        
       </div>
 
       
