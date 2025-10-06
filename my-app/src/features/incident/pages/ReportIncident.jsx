@@ -86,7 +86,7 @@ const steps = [
       
       setTimeout(() => {
         // console.log('🧭 [ReportIncident] Ejecutando navegación...');
-        navigate("/map-explorer", { replace: true });
+        navigate(`/map-explorer?idIncident=${newIncident.id_incident}`, { replace: true });
       }, delay);
       
       
