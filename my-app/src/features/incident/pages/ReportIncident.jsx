@@ -53,12 +53,7 @@ const steps = [
   const handleComplete = async () => {
     try {
       setIsLoading(true);
-      console.log('📝 [ReportIncident] Formulario completado - Enviando datos:', {
-        incidentData: incidentAdded,
-        connectionType: navigator.connection?.effectiveType || 'unknown',
-        timestamp: new Date().toISOString()
-      });
-      
+     
       // Validar datos mínimos requeridos
       if (!incidentAdded.latitude || !incidentAdded.longitude) {
         console.error('❌ [ReportIncident] Validación fallida: Falta ubicación');
@@ -66,7 +61,7 @@ const steps = [
         return;
       }
       
-      console.log('🚀 [ReportIncident] Creando incidente...');
+      // console.log('🚀 [ReportIncident] Creando incidente...');
       const newIncident = await createIncidentFromStore();            
       setIsLoading(false);
 
@@ -83,14 +78,14 @@ const steps = [
       const isProduction = window.location.hostname !== 'localhost';
       const delay = isProduction ? 500 : 100;
       
-      console.log('🔄 [ReportIncident] Navegando a map-explorer:', {
-        delay,
-        isProduction,
-        newIncidentId: newIncident.id_incident
-      });
+      // console.log('🔄 [ReportIncident] Navegando a map-explorer:', {
+      //   delay,
+      //   isProduction,
+      //   newIncidentId: newIncident.id_incident
+      // });
       
       setTimeout(() => {
-        console.log('🧭 [ReportIncident] Ejecutando navegación...');
+        // console.log('🧭 [ReportIncident] Ejecutando navegación...');
         navigate("/map-explorer", { replace: true });
       }, delay);
       
@@ -106,7 +101,7 @@ const steps = [
         timestamp: new Date().toISOString()
       });
       
-      alert(`Error al reportar la incidencia: ${error.message || 'Error desconocido'}`);
+      // alert(`Error al reportar la incidencia: ${error.message || 'Error desconocido'}`);
       setIsLoading(false);
     } 
   };

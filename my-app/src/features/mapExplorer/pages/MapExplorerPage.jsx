@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import MainHeader from "@shared/components/MainHeader";
 import MapSidebar from "@features/mapExplorer/components/MapSidebar";
 import MapView from "@features/mapExplorer/components/MapView";
@@ -10,8 +11,13 @@ import useMapExplorerStore from "@features/mapExplorer/store/mapExplorerStore";
 import { useMapLayout } from "../hooks/useMapLayout";
 import { useIncidentLoader } from "../hooks/useIncidentLoader";
 import { useBreakpointInit } from "../hooks/useBreakpointInit";
+import { useSearchParams } from "react-router-dom";
 
 const MapExplorerPage = () => {
+  // URL search params
+  const [searchParams] = useSearchParams();
+  const incidentIdFromUrl = searchParams.get('idIncident');
+
   // Store selectors
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
   const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
@@ -25,13 +31,19 @@ const MapExplorerPage = () => {
 
   // Custom hooks
   useBreakpointInit();
-  const { isLoading, error } = useIncidentLoader();
+  const { isLoading, error } = useIncidentLoader({incidentIdFromUrl});
   const { componentVisibility, cssClasses, isInitialized } = useMapLayout({
     isMobile,
     selectedIncident,
     showSideBar,
     expandMap
   });
+
+  // useEffect(() => {
+  //   if (incidentIdFromUrl) {
+  //     setSelectedIncident(incidentIdFromUrl);
+  //   }
+  // }, [incidentIdFromUrl, setSelectedIncident]);
 
   // Loading state
   if (!isInitialized) {
