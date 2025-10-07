@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet';
 import useIncidentsStore from "@features/incident/store/incidentStore";
 
 import LocationPinIcon from "@/shared/assets/icons/LocationPinIcon";
@@ -29,6 +29,23 @@ function AddMarkerOnDblClick({ setTempMarker }) {
   });
   return null;
 }
+
+// Componente para centrar el mapa cuando cambia tempMarker
+const MapController = ({ tempMarker }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (tempMarker?.lat && tempMarker?.lng) {
+      // Centrar el mapa en el marcador con animación suave
+      map.flyTo([tempMarker.lat, tempMarker.lng], 16, {
+        duration: 1.5,
+        easeLinearity: 0.5
+      });
+    }
+  }, [tempMarker, map]);
+
+  return null;
+};
 
 
 
@@ -138,6 +155,12 @@ const SelectUbication = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <AddMarkerOnDblClick setTempMarker={setTempMarker} />
+
+
+        {/* Controlador para centrar el mapa */}
+        <MapController tempMarker={tempMarker} />
+
+        
         {/* Marcador temporal al agregar */}
         {tempMarker && (
           <Marker
