@@ -5,7 +5,7 @@ import {
 } from "@/features/incident/services/incidentApi";
 
 const INCIDENT_ADDED_DEFAULT = {
-  category_id: 4,
+  category_id: null,
   latitude: null,
   longitude: null,
   summary: null,

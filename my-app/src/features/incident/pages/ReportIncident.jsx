@@ -18,6 +18,7 @@ import { toast, Toaster } from "sonner";
 export const ReportIncident = () => {
   const navigate = useNavigate();
   const incidentAdded = useIncidentsStore((state) => state.incidentAdded);
+  const resetIncidentAdded = useIncidentsStore((state) => state.resetIncidentAdded);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const setIncidentSelectedFromStore = useIncidentsStore((state) => state.setIncidentSelectedFromStore);
@@ -112,6 +113,26 @@ const steps = [
   };
 
   const handleBeforeStepChange = (currentStepIndex, nextStepIndex, currentStepData, nextStepData) => {
+    
+    // Validar cuando intenta pasar del paso 0 (categoría) al paso 1 (ubicación)
+    if (currentStepIndex === 0 && nextStepIndex === 1) {
+      if (!incidentAdded.category_id) {
+        toast.error("Por favor selecciona una categoría antes de continuar");
+        return false; // No permitir el cambio
+      }
+    }
+    
+    // Validar cuando intenta pasar del paso 1 (ubicación) al paso 2 (fotografías)
+    if (currentStepIndex === 1 && nextStepIndex === 2) {
+      if (!incidentAdded.latitude || !incidentAdded.longitude) {
+        toast.error("Por favor selecciona una ubicación antes de continuar");
+        return false; // No permitir el cambio
+      }
+    }
+    
+    
+    
+    
     // Validar cuando intenta pasar del paso 1 (ubicación) al paso 2 (fotografías)
     if (currentStepIndex === 1 && nextStepIndex === 2) {
       if (!incidentAdded.latitude || !incidentAdded.longitude) {
@@ -160,6 +181,7 @@ const steps = [
   }, []);
 
   const handleClose = () => {
+    resetIncidentAdded();
     navigate("/map-explorer", { replace: true });
   };
 
