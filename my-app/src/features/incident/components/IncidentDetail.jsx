@@ -181,7 +181,14 @@ export const IncidentDetail = ({
         ) : (
           <div className="flex justify-start items-center mt-3">
             <p className="text-gray-500 me-2 text-sm">Fotografías</p>
-            <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
+            {
+              photographs.length > 0 ? (
+                <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
+              ) : (
+                <small className="text-primary me-2 text-xs">Ninguna</small>
+              )
+            }
+            
           </div>
         )}
         
