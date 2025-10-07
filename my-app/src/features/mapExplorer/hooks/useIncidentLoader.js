@@ -21,13 +21,7 @@ export const useIncidentLoader = ({incidentIdFromUrl}) => {
         if (idCategory) filters.idCategory = idCategory;
         if (idState) filters.idState = idState;
 
-        console.log("**** 1 ******")
-
         await searchIncidentsStored(filters);
-        // if (incidentIdFromUrl) {
-        //   console.log("**** 2 ******")
-        //   setSelectedIncidentById(incidentIdFromUrl);
-        // }
         console.log("**** 3 ******")
       } catch (error) {
         console.error('❌ [MapExplorerPage] Error cargando incidentes:', {
