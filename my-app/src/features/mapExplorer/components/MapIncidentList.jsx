@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import useIncidentsStore from "@features/incident/store/incidentStore";
@@ -51,6 +51,23 @@ export const MapIncidentList = ({
     setIncidentsToShow(incidentsStored);
   }, [incidentsStored]);
 
+
+   // Efecto para manejar la tecla Escape
+   useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && selectedIncident) {
+        setSelectedIncident(null);
+      }
+    };
+
+    // Agregar el event listener
+    document.addEventListener("keydown", handleEscapeKey);
+
+    // Limpiar el event listener cuando el componente se desmonte
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [selectedIncident, setSelectedIncident]);
   // function getColoredIcon(color, size = 32) {
   //   return L.divIcon({
   //     className: "",
@@ -87,6 +104,18 @@ export const MapIncidentList = ({
     navigate('/add-incident');
   };
 
+  // Componente para manejar clics en el mapa (deseleccionar incidente)
+const MapClickHandler = ({ setSelectedIncident }) => {
+  useMapEvents({
+    click: () => {
+      setSelectedIncident(null);
+    },
+  });
+  
+  return null;
+};
+
+
 
   return (
     <div className="relative w-full h-full">
@@ -105,6 +134,9 @@ export const MapIncidentList = ({
 
         {/* Componente para controlar el centrado automático */}
         <MapController selectedIncident={selectedIncident} isMobile={isMobile} />
+
+        {/* Componente para manejar clics en el mapa */}
+        <MapClickHandler setSelectedIncident={setSelectedIncident} />
 
         <>
         {incidentsStored.map((incident) => {
