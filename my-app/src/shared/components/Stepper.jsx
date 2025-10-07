@@ -184,7 +184,7 @@ const Stepper = ({
               isLoading ? (
                 <div className="flex items-center gap-2"><div className="animate-spin rounded-full h-2 w-2 border-b-1 border-secondary"></div> <span>Grabando...</span></div>
               ) : (
-                "Grabar"
+                "Finalizar"
               )
             }
           </button>

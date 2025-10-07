@@ -22,7 +22,7 @@ const IncidentFilter = ({ className, onClose }) => {
           htmlFor="incident_state_select"
           className="text-[12px] text-gray-500 mt-3 text-start"
         >
-          Últimos incidentes registrados
+          Últimas incidencias registradas
           {isLoadingIncidents && (
             <div className="mt-2 flex justify-center items-center h-full">
               <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>

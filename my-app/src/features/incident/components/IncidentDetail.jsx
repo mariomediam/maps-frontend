@@ -159,7 +159,7 @@ export const IncidentDetail = ({
         {incident.reference && (
           <>
             <p className="text-sm text-gray-500 mt-3">
-              Referencia del incidente
+              Referencia de la incidencia
             </p>
             <p className="">{incident.reference}</p>
           </>

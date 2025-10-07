@@ -57,7 +57,7 @@ const MapExplorerPage = () => {
     </svg>
     <span className="sr-only">Loading...</span>
 </div>
-        <div className="text-lg">Cargando incidentes...</div>
+        <div className="text-lg">Cargando incidencias...</div>
       </div>
     );
   }
@@ -128,7 +128,7 @@ const MapExplorerPage = () => {
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg">
-            <div className="text-lg">Cargando incidentes...</div>
+            <div className="text-lg">Cargando incidencias...</div>
           </div>
         </div>
       )}
