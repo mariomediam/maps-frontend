@@ -17,7 +17,7 @@ const SelectCategory = ({categories, isLoading}) => {
 
   return (
     <section className="flex flex-col items-center justify-center">
-      <p className="font-bold text-lg text-primary">Categoría</p>
+      <p className="font-bold text-lg text-primary">Categoría <span className="text-sm text-red-500">*</span></p>
       <p className="text-sm text-primary">
         ¿Qué desea denunciar? Elija de la lista a continuación:
       </p>

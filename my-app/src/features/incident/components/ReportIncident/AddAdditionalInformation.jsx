@@ -25,7 +25,7 @@ const AddAdditionalInformation = () => {
           htmlFor="summary"
           className="block mb-1 text-sm font-medium text-primary"
         >
-          Resumen de la Incidencia
+          Resumen de la Incidencia <span className="text-sm text-red-500">*</span>
         </label>
         <textarea
           id="summary"
@@ -46,7 +46,7 @@ const AddAdditionalInformation = () => {
           htmlFor="reference"
           className="block mb-1 text-sm font-medium text-primary mt-4"
         >
-          Referencia
+          Referencia <span className="text-sm text-red-500">*</span>
         </label>
 
         <input
