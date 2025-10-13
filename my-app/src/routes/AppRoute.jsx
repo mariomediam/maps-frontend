@@ -5,6 +5,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "@/App";
 import Login from "@auth/pages/Login";
 import ReportIncident from "@features/incident/pages/ReportIncident";
+import AdminIncident from "@features/admin/pages/AdminIncident";
 
 const router = createBrowserRouter([
   // Rutas públicas (solo accesibles si NO estás autenticado)
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         path: "add-incident",
         element: <ReportIncident />,
+      },
+      {
+        path: "admin-incident",
+        element: <AdminIncident />,
       },
       // {
       //   path: "admin",

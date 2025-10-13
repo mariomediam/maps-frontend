@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import useIncidentStateStore from '../store/incidentStateStore';
+import useIncidentStateStore from '@features/incidentState/store/incidentStateStore';
 
 const IncidentStateSelect = () => {
 	const [searchParams, setSearchParams] = useSearchParams();

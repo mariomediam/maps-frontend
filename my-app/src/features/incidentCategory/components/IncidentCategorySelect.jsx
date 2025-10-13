@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import useIncidentCategoryStore from '../store/incidentCategoryStore';
+import useIncidentCategoryStore from '@features/incidentCategory/store/incidentCategoryStore';
 
 const IncidentCategorySelect = ({ className = '' }) => {
 	const [searchParams, setSearchParams] = useSearchParams();

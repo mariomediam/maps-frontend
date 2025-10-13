@@ -4,13 +4,15 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const URL = `${API_BASE_URL}/incidents`;
 
 const getIncidents = async (filters = {}) => {
-  const { idCategory, idState, showOnMap } = filters;
+  const { idCategory, idState, showOnMap, textSearch, idIncident } = filters;
 
   try {
     const api = useAxios();
 
     // Construir parámetros de consulta correctamente
     const queryParams = new URLSearchParams();
+
+
 
     if (idCategory) {
       queryParams.append("id_category", idCategory);
@@ -20,6 +22,12 @@ const getIncidents = async (filters = {}) => {
     }
     if (showOnMap) {
       queryParams.append("show_on_map", showOnMap);
+    }
+    if (textSearch) {
+      queryParams.append("text_search", textSearch);
+    }
+    if (idIncident) {
+      queryParams.append("id_incident", idIncident);
     }
 
     const queryString = queryParams.toString();
