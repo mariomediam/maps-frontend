@@ -10,9 +10,13 @@ export const AdminIncident = () => {
   const { incidentStates, loadIncidentStates } = useIncidentStateStore();
   const { incidentCategories, loadIncidentCategories } =
     useIncidentCategoryStore();
-  const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored);
+  const searchIncidentsStored = useIncidentsStore(
+    (state) => state.searchIncidentsStored
+  );
   const incidentsStored = useIncidentsStore((state) => state.incidentsStored);
-  const isLoadingSearchIncidents = useIncidentsStore((state) => state.isLoading);
+  const isLoadingSearchIncidents = useIncidentsStore(
+    (state) => state.isLoading
+  );
 
   const [filters, setfilters] = useState({
     idState: "0",
@@ -33,18 +37,17 @@ export const AdminIncident = () => {
     e.preventDefault();
     let filtersToSend = { ...filters };
 
-    if (Number.isInteger(Number(filtersToSend.textSearch))){
+    if (Number.isInteger(Number(filtersToSend.textSearch))) {
       filtersToSend["idIncident"] = filtersToSend.textSearch;
       delete filtersToSend.textSearch;
     }
 
     if (filtersToSend.idState === "0") {
       delete filtersToSend.idState;
-
     }
     if (filtersToSend.idCategory === "0") {
       delete filtersToSend.idCategory;
-    }    
+    }
     searchIncidentsStored(filtersToSend);
   };
 
@@ -84,17 +87,20 @@ export const AdminIncident = () => {
         <h1 className="text-2xl text-primary mt-3 font-semibold">
           Incidencias registradas
         </h1>
-        <AdminIncidentFilters filters={filters} handleChange={handleChange} handleSubmit={handleSubmit} incidentStates={incidentStates} incidentCategories={incidentCategories} />
+        <AdminIncidentFilters
+          filters={filters}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          incidentStates={incidentStates}
+          incidentCategories={incidentCategories}
+        />
 
-
-        <p className="text-xs text-gray-500 mt-3">{incidentsStored.length} incidencias encontradas</p>
-        {
-          incidentsStored.map((incident) => (
-            <AdminIncidentCard key={incident.id_incident} incident={incident} />
-          ))
-        }
-        
-
+        <p className="text-xs text-gray-500 mt-3">
+          {incidentsStored.length} incidencias encontradas
+        </p>
+        {incidentsStored.map((incident) => (
+          <AdminIncidentCard key={incident.id_incident} incident={incident} />
+        ))}
       </div>
     </>
   );

@@ -1,9 +1,11 @@
+import { useEffect } from "react";
+import { initFlowbite } from "flowbite";
 import CalendarIcon from "@/shared/assets/icons/CalendarIcon";
-import DotsVerticalIcon from "@/shared/assets/icons/DotsVerticalIcon";
 import MapPinIcon from "@/shared/assets/icons/MapPinIcon";
 import UserIcon from "@/shared/assets/icons/UserIcon";
 import WorldIcon from "@/shared/assets/icons/WorldIcon";
 import { format } from "@formkit/tempo";
+import AdminIncidentMenu from "@features/admin/components/AdminIncidentMenu";
 
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
@@ -26,6 +28,10 @@ const AdminIncidentCard = ({ incident }) => {
   } = incident || {};
 
   const classPillState = `${FONT_STATE_COLOR[color_state]} text-xs font-medium px-2.5 py-1.5 rounded-full ms-2`;
+
+  useEffect(() => {
+    initFlowbite();
+  }, []);
 
   const onClickCloseButton = () => {
     console.log("Boton");
@@ -69,14 +75,8 @@ const AdminIncidentCard = ({ incident }) => {
             <span className="text-gray-500">id:</span> {id_incident}
           </p>
         </div>
-        <button
-          type="button"
-          className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
-          onClick={onClickCloseButton}
-          aria-label="Cerrar detalle"
-        >
-          <DotsVerticalIcon />
-        </button>
+        <AdminIncidentMenu incident={incident} />
+      
       </div>
 
       <p className="">{summary}</p>

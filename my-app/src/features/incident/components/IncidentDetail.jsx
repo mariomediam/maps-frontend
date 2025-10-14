@@ -131,14 +131,14 @@ export const IncidentDetail = ({
         </div>
 
         {/* {isMobile && ( */}
-          <button
-            type="button"
-            className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
-            onClick={onClickCloseButton}
-            aria-label="Cerrar detalle"
-          >
-            ✕
-          </button>
+        <button
+          type="button"
+          className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
+          onClick={onClickCloseButton}
+          aria-label="Cerrar detalle"
+        >
+          ✕
+        </button>
         {/* )} */}
       </div>
       {/* Title */}
@@ -181,20 +181,14 @@ export const IncidentDetail = ({
         ) : (
           <div className="flex justify-start items-center mt-3">
             <p className="text-gray-500 me-2 text-sm">Fotografías</p>
-            {
-              photographs.length > 0 ? (
-                <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
-              ) : (
-                <small className="text-primary me-2 text-xs">Ninguna</small>
-              )
-            }
-            
+            {photographs.length > 0 ? (
+              <div className="animate-spin rounded-full h-2 w-2 border-b-1 border-primary"></div>
+            ) : (
+              <small className="text-primary me-2 text-xs">Ninguna</small>
+            )}
           </div>
         )}
-        
       </div>
-
-      
     </div>
   );
 };
