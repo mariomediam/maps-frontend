@@ -15,6 +15,7 @@ export const IncidentDetail = ({
   setSelectedIncident,
   setExpandMap,
   incident,
+  showCloseButton = true,
 }) => {
   const [photographsWithUrl, setPhotographsWithUrl] = useState([]);
   const [isLoadingPhotographs, setIsLoadingPhotographs] = useState(false);
@@ -131,6 +132,8 @@ export const IncidentDetail = ({
         </div>
 
         {/* {isMobile && ( */}
+
+        {showCloseButton && (
         <button
           type="button"
           className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
@@ -139,7 +142,9 @@ export const IncidentDetail = ({
         >
           ✕
         </button>
-        {/* )} */}
+        )}
+        
+
       </div>
       {/* Title */}
 

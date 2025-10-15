@@ -13,7 +13,7 @@ const FONT_STATE_COLOR = {
   "#218838": "text-primary",
 };
 
-const AdminIncidentCard = ({ incident }) => {
+const AdminIncidentCard = ({ incident, setOpenModal }) => {
   const {
     category_name = "",
     summary = "",
@@ -75,7 +75,7 @@ const AdminIncidentCard = ({ incident }) => {
             <span className="text-gray-500">id:</span> {id_incident}
           </p>
         </div>
-        <AdminIncidentMenu incident={incident} />
+        <AdminIncidentMenu incident={incident} setOpenModal={setOpenModal} />
       
       </div>
 

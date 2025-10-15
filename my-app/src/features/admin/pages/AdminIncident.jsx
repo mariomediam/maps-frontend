@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+
 import MainHeader from "@/shared/components/MainHeader";
 import AdminIncidentFilters from "@/features/admin/components/AdminIncidentFilters";
 import AdminIncidentCard from "@/features/admin/components/AdminIncidentCard";
 import useIncidentStateStore from "@features/incidentState/store/incidentStateStore";
 import useIncidentCategoryStore from "@features/incidentCategory/store/incidentCategoryStore";
 import useIncidentsStore from "@features/incident/store/incidentStore";
+import ViewIncident from "@features/admin/components/ViewIncident";
 
 export const AdminIncident = () => {
   const { incidentStates, loadIncidentStates } = useIncidentStateStore();
@@ -23,6 +25,8 @@ export const AdminIncident = () => {
     textSearch: "",
     idCategory: "0",
   });
+
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     loadIncidentStates();
@@ -99,9 +103,14 @@ export const AdminIncident = () => {
           {incidentsStored.length} incidencias encontradas
         </p>
         {incidentsStored.map((incident) => (
-          <AdminIncidentCard key={incident.id_incident} incident={incident} />
+          <AdminIncidentCard
+            key={incident.id_incident}
+            incident={incident}
+            setOpenModal={setOpenModal}
+          />
         ))}
       </div>
+      <ViewIncident openModal={openModal} setOpenModal={setOpenModal} />
     </>
   );
 };

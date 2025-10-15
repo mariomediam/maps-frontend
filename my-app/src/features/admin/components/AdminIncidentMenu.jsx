@@ -6,9 +6,19 @@ import PlusIcon from "@/shared/assets/icons/PlusIcon";
 import TrashIcon from "@/shared/assets/icons/TrashIcon";
 import WorldIcon from "@/shared/assets/icons/WorldIcon";
 import WorldXIcon from "@/shared/assets/icons/WorldXIcon";
+import useIncidentsStore from "@features/incident/store/incidentStore";
 
-const AdminIncidentMenu = ({ incident }) => {
+const AdminIncidentMenu = ({ incident, setOpenModal }) => {
   const { id_incident, show_on_map } = incident;
+
+
+  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
+
+  const onClickVerDetalle = () => {
+    setSelectedIncident(incident);
+    setOpenModal(true);
+  };
+
   return (
     <div className="relative">
       <button
@@ -29,10 +39,7 @@ const AdminIncidentMenu = ({ incident }) => {
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Editar incidente", id_incident);
-              }}
+              onClick={onClickVerDetalle}
             >
               <EyeIcon />
               <span className="ms-1">Ver detalle</span>

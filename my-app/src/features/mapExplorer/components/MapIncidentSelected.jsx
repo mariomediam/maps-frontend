@@ -50,7 +50,7 @@ export const MapIncidentSelected = ({ isMobile, selectedIncident }) => {
     return <></>;
   }
 
-  return (
+   return (
     <>
       <MapContainer
         center={[selectedIncident.latitude, selectedIncident.longitude]}
