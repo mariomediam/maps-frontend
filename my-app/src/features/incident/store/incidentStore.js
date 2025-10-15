@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   getIncidents,
   createIncident,
+  updateIncident,
 } from "@/features/incident/services/incidentApi";
 
 const INCIDENT_ADDED_DEFAULT = {
@@ -77,34 +78,12 @@ const useIncidentsStore = create((set, get) => ({
 
   // Función para crear un nuevo incidente
   createIncidentFromStore: async () => {
-    const { incidentAdded } = get();
-    
-    // console.log('🎆 [IncidentStore] Creando nuevo incidente:', {
-    //   incidentData: {
-    //     category_id: incidentAdded.category_id,
-    //     latitude: incidentAdded.latitude,
-    //     longitude: incidentAdded.longitude,
-    //     summary: incidentAdded.summary,
-    //     reference: incidentAdded.reference,
-    //     filesCount: incidentAdded.files?.length || 0
-    //   },
-    //   connectionType: navigator.connection?.effectiveType || 'unknown',
-    //   timestamp: new Date().toISOString()
-    // });
+    const { incidentAdded } = get();   
     
     set({ isLoading: true, error: null });
 
-    try {
-      // const startTime = Date.now();
-      const newIncident = await createIncident(incidentAdded);
-      // const endTime = Date.now();
-      
-      // console.log('✅ [IncidentStore] Incidente creado exitosamente:', {
-      //   id: newIncident.id_incident,
-      //   summary: newIncident.summary,
-      //   duration: `${endTime - startTime}ms`,
-      //   timestamp: new Date().toISOString()
-      // });
+    try {      
+      const newIncident = await createIncident(incidentAdded);      
       
       set({
         isLoading: false,
@@ -124,6 +103,35 @@ const useIncidentsStore = create((set, get) => ({
       
       set({
         error: error.message || "Error al crear el incidente",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  // Función para actualizar un incidente
+  updateIncidentFromStore: async (idIncident, incidentData) => {
+    // const { incidentAdded } = get();
+    set({ isLoading: true, error: null });
+    try {
+      const updatedIncident = await updateIncident(idIncident, incidentData);
+      // Actualizar el incidente en el store
+      set((state) => ({
+        incidentsStored: state.incidentsStored.map((incident) =>
+          incident.id_incident === idIncident ? { ...incident, ...updatedIncident } : incident
+        ),
+        isLoading: false,
+      }));
+      
+      return updatedIncident;
+    } catch (error) {
+      console.error('❌ [IncidentStore] Error actualizando incidente:', {
+        error: error.message,
+        stack: error.stack,
+        incidentData: incidentData,
+      });
+      set({
+        error: error.message || "Error al actualizar el incidente",
         isLoading: false,
       });
       throw error;

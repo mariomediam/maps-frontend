@@ -80,6 +80,29 @@ const getIncidentById = async (idIncident) => {
   }
 };
 
+
+// --header 'Content-Type: application/json' \
+// --header 'Authorization: ••••••' \
+// --data '{
+//   "show_on_map": true
+// }'
+
+const updateIncident = async (idIncident, incidentData) => {
+  try {
+    const api = useAxios();
+    const { data: { content } } = await api.patch(`${URL}/${idIncident}/`, incidentData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 // Función para crear un nuevo incidente con archivos
 const createIncident = async (incidentData) => {
   console.log("🎆 [IncidentAPI] Creando nuevo incidente:", {
@@ -186,4 +209,5 @@ export {
   getIncidentById,
   createIncident,
   getIncidentMiniatureById,
+  updateIncident,
 };

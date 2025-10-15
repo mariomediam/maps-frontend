@@ -10,6 +10,7 @@ import useIncidentsStore from "@features/incident/store/incidentStore";
 
 const AdminIncidentMenu = ({ incident, setOpenModal }) => {
   const { id_incident, show_on_map } = incident;
+  const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
 
 
   const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
@@ -17,6 +18,24 @@ const AdminIncidentMenu = ({ incident, setOpenModal }) => {
   const onClickVerDetalle = () => {
     setSelectedIncident(incident);
     setOpenModal(true);
+  };
+
+  const onClickChangeShowOnMap = async () => {
+    const updatedIncidentData = { show_on_map: !show_on_map };
+    
+    try {
+      await updateIncidentFromStore(id_incident, updatedIncidentData);
+      
+      // 👇 Hacer scroll al incidente actualizado
+      setTimeout(() => {
+        const element = document.getElementById(`incident-card-${id_incident}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Error al actualizar incidente:", error);
+    }
   };
 
   return (
@@ -62,10 +81,7 @@ const AdminIncidentMenu = ({ incident, setOpenModal }) => {
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Cambiar estado", id_incident);
-              }}
+              onClick={onClickChangeShowOnMap}
             >
               {show_on_map ? (
                 <>

@@ -38,7 +38,7 @@ const AdminIncidentCard = ({ incident, setOpenModal }) => {
   };
 
   return (
-    <div className="border border-gray-300 rounded-lg p-3 mt-3 bg-white">
+    <div className="border border-gray-300 rounded-lg p-3 mt-3 bg-white" id={`incident-card-${id_incident}`}>
       <div className="flex justify-between  ">
         <div>
           <div className="flex items-center gap-1 flex-wrap">
