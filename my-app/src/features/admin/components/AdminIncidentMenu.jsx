@@ -8,7 +8,7 @@ import WorldIcon from "@/shared/assets/icons/WorldIcon";
 import WorldXIcon from "@/shared/assets/icons/WorldXIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 
-const AdminIncidentMenu = ({ incident, setOpenModal }) => {
+const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation }) => {
   const { id_incident, show_on_map } = incident;
   const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
 
@@ -17,7 +17,12 @@ const AdminIncidentMenu = ({ incident, setOpenModal }) => {
 
   const onClickVerDetalle = () => {
     setSelectedIncident(incident);
-    setOpenModal(true);
+    setOpenModalViewIncident(true);
+  };
+
+  const onClickAdditionalInformation = () => {
+    setSelectedIncident(incident);
+    setOpenModalAdditionalInformation(true);
   };
 
   const onClickChangeShowOnMap = async () => {
@@ -100,10 +105,7 @@ const AdminIncidentMenu = ({ incident, setOpenModal }) => {
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Ver detalle", id_incident);
-              }}
+              onClick={onClickAdditionalInformation}
             >
               <PlusIcon />
               <span className="ms-1">Añadir datos</span>

@@ -7,6 +7,7 @@ import useIncidentStateStore from "@features/incidentState/store/incidentStateSt
 import useIncidentCategoryStore from "@features/incidentCategory/store/incidentCategoryStore";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import ViewIncident from "@features/admin/components/ViewIncident";
+import AdditionalInformation from "@features/admin/components/AdditionalInformation";
 
 export const AdminIncident = () => {
   const { incidentStates, loadIncidentStates } = useIncidentStateStore();
@@ -19,6 +20,7 @@ export const AdminIncident = () => {
   const isLoadingSearchIncidents = useIncidentsStore(
     (state) => state.isLoading
   );
+  const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
 
   const [filters, setfilters] = useState({
     idState: "0",
@@ -26,7 +28,8 @@ export const AdminIncident = () => {
     idCategory: "0",
   });
 
-  const [openModal, setOpenModal] = useState(false);
+  const [openModalViewIncident, setOpenModalViewIncident] = useState(false);
+  const [openModalAdditionalInformation, setOpenModalAdditionalInformation] = useState(false);
 
   useEffect(() => {
     loadIncidentStates();
@@ -106,11 +109,18 @@ export const AdminIncident = () => {
           <AdminIncidentCard
             key={incident.id_incident}
             incident={incident}
-            setOpenModal={setOpenModal}
+            setOpenModalViewIncident={setOpenModalViewIncident}
+            setOpenModalAdditionalInformation={setOpenModalAdditionalInformation}
           />
         ))}
       </div>
-      <ViewIncident openModal={openModal} setOpenModal={setOpenModal} />
+      <ViewIncident openModal={openModalViewIncident} setOpenModal={setOpenModalViewIncident} />
+      {
+        selectedIncident && (
+          <AdditionalInformation openModal={openModalAdditionalInformation} setOpenModal={setOpenModalAdditionalInformation} />
+        )
+      }
+      
     </>
   );
 };
