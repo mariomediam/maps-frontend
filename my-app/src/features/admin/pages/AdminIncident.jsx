@@ -8,6 +8,7 @@ import useIncidentCategoryStore from "@features/incidentCategory/store/incidentC
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import ViewIncident from "@features/admin/components/ViewIncident";
 import AdditionalInformation from "@features/admin/components/AdditionalInformation";
+import FinishIncident from "../components/FinishIncident";
 
 export const AdminIncident = () => {
   const { incidentStates, loadIncidentStates } = useIncidentStateStore();
@@ -30,6 +31,7 @@ export const AdminIncident = () => {
 
   const [openModalViewIncident, setOpenModalViewIncident] = useState(false);
   const [openModalAdditionalInformation, setOpenModalAdditionalInformation] = useState(false);
+  const [openModalFinishIncident, setOpenModalFinishIncident] = useState(false);
 
   useEffect(() => {
     loadIncidentStates();
@@ -111,6 +113,7 @@ export const AdminIncident = () => {
             incident={incident}
             setOpenModalViewIncident={setOpenModalViewIncident}
             setOpenModalAdditionalInformation={setOpenModalAdditionalInformation}
+            setOpenModalFinishIncident={setOpenModalFinishIncident}
           />
         ))}
       </div>
@@ -118,6 +121,12 @@ export const AdminIncident = () => {
       {
         selectedIncident && (
           <AdditionalInformation openModal={openModalAdditionalInformation} setOpenModal={setOpenModalAdditionalInformation} />
+        )
+      }
+
+      {
+        selectedIncident && (
+          <FinishIncident openModal={openModalFinishIncident} setOpenModal={setOpenModalFinishIncident} />
         )
       }
       

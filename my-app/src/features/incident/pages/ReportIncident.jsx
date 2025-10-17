@@ -55,35 +55,17 @@ const steps = [
     try {
       setIsLoading(true);
      
-      // Validar datos mínimos requeridos
-      if (!incidentAdded.latitude || !incidentAdded.longitude) {
-        console.error('❌ [ReportIncident] Validación fallida: Falta ubicación');
-        alert("Por favor selecciona una ubicación");
-        return;
-      }
-      
-      // console.log('🚀 [ReportIncident] Creando incidente...');
       const newIncident = await createIncidentFromStore();            
       setIsLoading(false);
 
       toast.success("Incidente reportado exitosamente");
 
-      console.log('✅ [ReportIncident] Incidente creado exitosamente:', {
-        id: newIncident.id_incident,
-        summary: newIncident.summary,
-        timestamp: new Date().toISOString()
-      });
+    
       
       // Agregar un delay más largo en producción para asegurar que el store se actualice
       // y dar tiempo a que la API procese la creación del incidente
       const isProduction = window.location.hostname !== 'localhost';
       const delay = isProduction ? 500 : 100;
-      
-      // console.log('🔄 [ReportIncident] Navegando a map-explorer:', {
-      //   delay,
-      //   isProduction,
-      //   newIncidentId: newIncident.id_incident
-      // });
       
       setTimeout(() => {
         // console.log('🧭 [ReportIncident] Ejecutando navegación...');
