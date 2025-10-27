@@ -3,6 +3,7 @@ import { useState, useEffect, memo } from "react";
 import { getIncidentPhotographyById } from "@/features/incident/services/incidentApi.js";
 import IncidentPthotographyCarousel from "@/features/incident/components/IncidentPthotographyCarousel.jsx";
 import { format } from "@formkit/tempo";
+import IncidentAdditionalInformation from "@/features/incident/components/IncidentAdditionalInformation";
 
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
@@ -193,6 +194,11 @@ export const IncidentDetail = ({
             )}
           </div>
         )}
+      </div>
+
+
+      <div>
+        <IncidentAdditionalInformation incident={incident} />
       </div>
     </div>
   );
