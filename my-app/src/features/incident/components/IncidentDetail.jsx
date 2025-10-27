@@ -4,6 +4,7 @@ import { getIncidentPhotographyById } from "@/features/incident/services/inciden
 import IncidentPthotographyCarousel from "@/features/incident/components/IncidentPthotographyCarousel.jsx";
 import { format } from "@formkit/tempo";
 import IncidentAdditionalInformation from "@/features/incident/components/IncidentAdditionalInformation";
+import IncidentFinish from "@/features/incident/components/IncidentFinish";
 
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
@@ -135,17 +136,15 @@ export const IncidentDetail = ({
         {/* {isMobile && ( */}
 
         {showCloseButton && (
-        <button
-          type="button"
-          className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
-          onClick={onClickCloseButton}
-          aria-label="Cerrar detalle"
-        >
-          ✕
-        </button>
+          <button
+            type="button"
+            className="text-gray-500 hover:text-gray-700 text-xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 my-0 "
+            onClick={onClickCloseButton}
+            aria-label="Cerrar detalle"
+          >
+            ✕
+          </button>
         )}
-        
-
       </div>
       {/* Title */}
 
@@ -196,10 +195,19 @@ export const IncidentDetail = ({
         )}
       </div>
 
+      {incident.id_state !== 1 && (
+        <div className="border border-primary mx-3 rounded-lg p-2 mb-3">
+          <IncidentAdditionalInformation incident={incident} />
+        </div>
+      )}
 
-      <div>
-        <IncidentAdditionalInformation incident={incident} />
-      </div>
+      {incident.is_closed && (
+        <div className="border border-primary mx-3 rounded-lg p-2 mb-3">
+          <IncidentFinish incident={incident} />
+        </div>
+      )}
+
+      
     </div>
   );
 };
