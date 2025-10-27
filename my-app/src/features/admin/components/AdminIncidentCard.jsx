@@ -10,7 +10,7 @@ import AdminIncidentMenu from "@features/admin/components/AdminIncidentMenu";
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
   "#C82333": "text-secondary",
-  "#218838": "text-primary",
+  "#218838": "text-secondary",
 };
 
 const AdminIncidentCard = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident }) => {

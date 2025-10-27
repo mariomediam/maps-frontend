@@ -7,7 +7,7 @@ import { format } from "@formkit/tempo";
 const FONT_STATE_COLOR = {
   "#FFC107": "text-primary",
   "#C82333": "text-secondary",
-  "#218838": "text-primary",
+  "#218838": "text-secondary",
 };
 
 export const IncidentDetail = ({
