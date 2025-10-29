@@ -203,6 +203,21 @@ const getIncidentMiniatureById = async (idIncident) => {
   }
 };
 
+// getIncidentPhotographyBlobById no me retorna un json sino un blob
+const getIncidentPhotographyBlobById = async (idPhotography) => {
+  try {
+    const api = useAxios();
+    const { data } = await api.get(`${URL}/photography/blob/${idPhotography}`, {
+      responseType: 'blob', // Importante: indicar que esperamos un blob
+    });
+    return data; // Retornar directamente el blob
+  } catch (error) {
+    console.error(`❌ [IncidentAPI] Error obteniendo blob de fotografía ${idPhotography}:`, error);
+    throw error;
+  }
+};
+
+
 export {
   getIncidents,
   getIncidentPhotographyById,
@@ -210,4 +225,5 @@ export {
   createIncident,
   getIncidentMiniatureById,
   updateIncident,
+  getIncidentPhotographyBlobById,
 };
