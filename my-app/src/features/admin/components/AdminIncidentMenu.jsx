@@ -8,8 +8,10 @@ import WorldIcon from "@/shared/assets/icons/WorldIcon";
 import WorldXIcon from "@/shared/assets/icons/WorldXIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import LockOpenIcon from "@/shared/assets/icons/LockOpenIcon";
+import { useNavigate } from "react-router-dom";
 
 const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident }) => {
+  const navigate = useNavigate();
   const { id_incident, show_on_map, id_state } = incident;
   const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
 
@@ -27,8 +29,14 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
   };
 
   const onClickFinishIncident = () => {
-    setSelectedIncident(incident);
+    setSelectedIncident(incident);    
     setOpenModalFinishIncident(true);
+  };
+
+  const onClickEditIncident = () => {
+    setSelectedIncident(incident);
+    console.log("incident edit", incident);
+    navigate("/edit-incident");
   };
 
   const onClickChangeShowOnMap = async () => {
@@ -80,10 +88,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Ver detalle", id_incident);
-              }}
+              onClick={onClickEditIncident}
             >
               <EditIcon />
               <span className="ms-1">Editar</span>
