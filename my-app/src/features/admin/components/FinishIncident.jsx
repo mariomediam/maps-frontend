@@ -78,7 +78,7 @@ const FinishIncident = ({ openModal, setOpenModal }) => {
         className="bg-secondary text-primary relative z-[99999]"
       >
         <ModalHeader className="bg-secondary">
-          <span className="text-primary">Finalizar incidencia</span>
+          <span className="text-primary">Cerrar incidencia</span>
         </ModalHeader>
         <ModalBody className="bg-secondary text-primary">
           <div className="space-y-4">

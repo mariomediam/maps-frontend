@@ -1,15 +1,16 @@
 import DotsVerticalIcon from "@/shared/assets/icons/DotsVerticalIcon";
 import EditIcon from "@/shared/assets/icons/EditIcon";
 import EyeIcon from "@/shared/assets/icons/EyeIcon";
-import FlagIcon from "@/shared/assets/icons/FlagIcon";
+import LockIcon from "@/shared/assets/icons/LockIcon";
 import PlusIcon from "@/shared/assets/icons/PlusIcon";
 import TrashIcon from "@/shared/assets/icons/TrashIcon";
 import WorldIcon from "@/shared/assets/icons/WorldIcon";
 import WorldXIcon from "@/shared/assets/icons/WorldXIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
+import LockOpenIcon from "@/shared/assets/icons/LockOpenIcon";
 
 const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident }) => {
-  const { id_incident, show_on_map } = incident;
+  const { id_incident, show_on_map, id_state } = incident;
   const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
 
 
@@ -74,6 +75,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
               <span className="ms-1">Ver detalle</span>
             </a>
           </li>
+          { id_state !== 3 && (
           <li>
             <a
               href="#"
@@ -87,6 +89,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
               <span className="ms-1">Editar</span>
             </a>
           </li>
+          )}          
           <li>
             <a
               href="#"
@@ -106,6 +109,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
               )}
             </a>
           </li>
+          { id_state !== 3 && (
           <li>
             <a
               href="#"
@@ -116,16 +120,31 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
               <span className="ms-1">Añadir datos</span>
             </a>
           </li>
+          )}
+          { id_state === 2 && (
           <li>
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100"
               onClick={onClickFinishIncident}
             >
-              <FlagIcon width={18} height={18}  />
-              <span className="ms-1">Finalizar</span>
+              <LockIcon  />
+              <span className="ms-1">Cerrar</span>
             </a>
           </li>
+          )}
+          { id_state === 3 && (
+          <li>
+            <a
+              href="#"
+              className="flex items-center px-4 py-1 hover:bg-gray-100"
+              onClick={onClickFinishIncident}
+            >
+              <LockOpenIcon  />
+              <span className="ms-1">Reactivar</span>
+            </a>
+          </li>
+          )}
           <li className="border-t border-gray-200 mt-2 pt-2">
             <a
               href="#"
