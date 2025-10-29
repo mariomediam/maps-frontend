@@ -6,6 +6,7 @@ import App from "@/App";
 import Login from "@auth/pages/Login";
 import ReportIncident from "@features/incident/pages/ReportIncident";
 import AdminIncident from "@features/admin/pages/AdminIncident";
+import EditIncident from "@features/incident/pages/EditIncident";
 
 const router = createBrowserRouter([
   // Rutas públicas (solo accesibles si NO estás autenticado)
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
         path: "admin-incident",
         element: <AdminIncident />,
       },
+      {
+        path: "edit-incident",
+        element: <EditIncident />,
+      }
       // {
       //   path: "admin",
       //   children: [
