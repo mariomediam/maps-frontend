@@ -20,6 +20,7 @@ export const useIncidentLoader = ({incidentIdFromUrl}) => {
 
         if (idCategory) filters.idCategory = idCategory;
         if (idState) filters.idState = idState;
+        filters.showOnMap = "True";
 
         await searchIncidentsStored(filters);
         console.log("**** 3 ******")
