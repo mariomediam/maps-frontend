@@ -4,6 +4,7 @@ import {
   createIncident,
   updatePartialIncident,
   updateIncident,
+  deleteIncident,
 } from "@/features/incident/services/incidentApi";
 
 const INCIDENT_ADDED_DEFAULT = {
@@ -140,7 +141,7 @@ const useIncidentsStore = create((set, get) => ({
   },
 
 
-  // Función para crear un nuevo incidente
+  // Función para actualizar un  incidente
   updateIncidentFromStore: async () => {
     const { incidentAdded } = get();   
     
@@ -173,6 +174,38 @@ const useIncidentsStore = create((set, get) => ({
     }
   },
 
+
+  deleteIncidentFromStore: async (idIncident) => {
+    
+    set({ isLoading: true, error: null });
+
+    try {      
+      await deleteIncident(idIncident);    
+      
+      // eliminar el incidente en el store
+      set((state) => ({
+        incidentsStored: state.incidentsStored.filter((incident) => incident.id_incident !== idIncident),
+        isLoading: false,
+      }));
+   
+      
+      
+    } catch (error) {
+      console.error('❌ [IncidentStore] Erro eliminando el incidente:', {
+        error: error.message,
+        stack: error.stack,
+        incidentData: { id_incident: idIncident },
+        connectionType: navigator.connection?.effectiveType || 'unknown',
+        timestamp: new Date().toISOString()
+      });
+      
+      set({
+        error: error.message || "Error al eliminar el incidente",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
 
 
 }));

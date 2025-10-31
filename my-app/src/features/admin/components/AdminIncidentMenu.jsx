@@ -10,7 +10,7 @@ import useIncidentsStore from "@features/incident/store/incidentStore";
 import LockOpenIcon from "@/shared/assets/icons/LockOpenIcon";
 import { useNavigate } from "react-router-dom";
 
-const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident, setOpenModalReactiveIncident }) => {
+const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident, setOpenModalReactiveIncident, setOpenModalDeleteIncident }) => {
   const navigate = useNavigate();
   const { id_incident, show_on_map, id_state } = incident;
   const updatePartialIncidentFromStore = useIncidentsStore((state) => state.updatePartialIncidentFromStore);
@@ -42,6 +42,11 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
   const onClickReactiveIncident = () => {
     setSelectedIncident(incident);
     setOpenModalReactiveIncident(true);
+  };
+
+  const onClickDeleteIncident = () => {
+    setSelectedIncident(incident);
+    setOpenModalDeleteIncident(true);
   };
 
   const onClickChangeShowOnMap = async () => {
@@ -159,10 +164,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
             <a
               href="#"
               className="flex items-center px-4 py-1 hover:bg-gray-100 text-red-600 hover:text-red-700"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log("Eliminar", id_incident);
-              }}
+              onClick={onClickDeleteIncident}
             >
               <TrashIcon />
               <span>Eliminar</span>

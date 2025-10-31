@@ -272,7 +272,15 @@ const updateIncident = async (incidentData) => {
   }
 };
 
-
+const deleteIncident = async (idIncident) => {
+  try {
+    const api = useAxios();
+    const { data: { content } } = await api.delete(`${URL}/${idIncident}/`);
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export {
   getIncidents,
@@ -283,4 +291,5 @@ export {
   updateIncident,
   getIncidentPhotographyBlobById,
   updatePartialIncident,
+  deleteIncident,
 };

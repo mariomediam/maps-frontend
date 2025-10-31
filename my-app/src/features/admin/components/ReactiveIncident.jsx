@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Modal, ModalBody, ModalHeader, ModalFooter } from "flowbite-react";
-import clousureTypeData from "@features/clousureType/data/clousureTypeData";
 import CancelIcon from "@/shared/assets/icons/CancelIcon";
 import DeviceFloppyIcon from "@/shared/assets/icons/DeviceFloppyIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";

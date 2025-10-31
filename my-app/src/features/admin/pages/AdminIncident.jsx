@@ -10,6 +10,7 @@ import ViewIncident from "@features/admin/components/ViewIncident";
 import AdditionalInformation from "@features/admin/components/AdditionalInformation";
 import FinishIncident from "../components/FinishIncident";
 import ReactiveIncident from "../components/ReactiveIncident";
+import DeleteIncident from "../components/DeleteIncident";
 
 export const AdminIncident = () => {
   const { incidentStates, loadIncidentStates } = useIncidentStateStore();
@@ -34,6 +35,7 @@ export const AdminIncident = () => {
   const [openModalAdditionalInformation, setOpenModalAdditionalInformation] = useState(false);
   const [openModalFinishIncident, setOpenModalFinishIncident] = useState(false);
   const [openModalReactiveIncident, setOpenModalReactiveIncident] = useState(false);
+  const [openModalDeleteIncident, setOpenModalDeleteIncident] = useState(false);
 
   useEffect(() => {
     loadIncidentStates();
@@ -117,6 +119,7 @@ export const AdminIncident = () => {
             setOpenModalAdditionalInformation={setOpenModalAdditionalInformation}
             setOpenModalFinishIncident={setOpenModalFinishIncident}
             setOpenModalReactiveIncident={setOpenModalReactiveIncident}
+            setOpenModalDeleteIncident={setOpenModalDeleteIncident}
           />
         ))}
       </div>
@@ -137,6 +140,11 @@ export const AdminIncident = () => {
           <ReactiveIncident openModal={openModalReactiveIncident} setOpenModal={setOpenModalReactiveIncident} />
         )
       }      
+      {
+        selectedIncident && (
+          <DeleteIncident openModal={openModalDeleteIncident} setOpenModal={setOpenModalDeleteIncident} />
+        )
+      }
     </>
   );
 };
