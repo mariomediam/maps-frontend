@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   getIncidents,
   createIncident,
+  updatePartialIncident,
   updateIncident,
 } from "@/features/incident/services/incidentApi";
 
@@ -110,11 +111,11 @@ const useIncidentsStore = create((set, get) => ({
   },
 
   // Función para actualizar un incidente
-  updateIncidentFromStore: async (idIncident, incidentData) => {
+  updatePartialIncidentFromStore: async (idIncident, incidentData) => {
     // const { incidentAdded } = get();
     set({ isLoading: true, error: null });
     try {
-      const updatedIncident = await updateIncident(idIncident, incidentData);
+      const updatedIncident = await updatePartialIncident(idIncident, incidentData);
       // Actualizar el incidente en el store
       set((state) => ({
         incidentsStored: state.incidentsStored.map((incident) =>
@@ -132,6 +133,40 @@ const useIncidentsStore = create((set, get) => ({
       });
       set({
         error: error.message || "Error al actualizar el incidente",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+
+  // Función para crear un nuevo incidente
+  updateIncidentFromStore: async () => {
+    const { incidentAdded } = get();   
+    
+    set({ isLoading: true, error: null });
+
+    try {      
+      const newIncident = await updateIncident(incidentAdded);      
+      
+      set({
+        isLoading: false,
+        incidentAdded: INCIDENT_ADDED_DEFAULT, // Reset después de crear
+        newlyCreatedIncidentId: newIncident.id_incident, // Guardar el ID del nuevo incidente
+      });
+      
+      return newIncident;
+    } catch (error) {
+      console.error('❌ [IncidentStore] Erro actualizando incidente:', {
+        error: error.message,
+        stack: error.stack,
+        incidentData: incidentAdded,
+        connectionType: navigator.connection?.effectiveType || 'unknown',
+        timestamp: new Date().toISOString()
+      });
+      
+      set({
+        error: error.message || "Error al crear el incidente",
         isLoading: false,
       });
       throw error;

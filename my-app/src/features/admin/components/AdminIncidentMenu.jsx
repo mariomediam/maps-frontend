@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident }) => {
   const navigate = useNavigate();
   const { id_incident, show_on_map, id_state } = incident;
-  const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
+  const updatePartialIncidentFromStore = useIncidentsStore((state) => state.updatePartialIncidentFromStore);
 
 
   const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
@@ -43,7 +43,7 @@ const AdminIncidentMenu = ({ incident, setOpenModalViewIncident, setOpenModalAdd
     const updatedIncidentData = { show_on_map: !show_on_map };
     
     try {
-      await updateIncidentFromStore(id_incident, updatedIncidentData);
+      await updatePartialIncidentFromStore(id_incident, updatedIncidentData);
       
       // 👇 Hacer scroll al incidente actualizado
       setTimeout(() => {

@@ -16,6 +16,7 @@ import { toast, Toaster } from "sonner";
 import { getIncidentPhotographyBlobById } from '@/features/incident/services/incidentApi';
 
 
+
 export const EditIncident = () => {
   const navigate = useNavigate();
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
@@ -24,6 +25,7 @@ export const EditIncident = () => {
   const resetIncidentAdded = useIncidentsStore(
     (state) => state.resetIncidentAdded
   );
+  const updateIncidentFromStore = useIncidentsStore((state) => state.updateIncidentFromStore);
 
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,24 +61,28 @@ export const EditIncident = () => {
   );
   const isCreatingIncident = useIncidentsStore((state) => state.isLoading);
   const createIncidentError = useIncidentsStore((state) => state.error);
+  const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored);
 
   const handleComplete = async () => {
     try {
       setIsLoading(true);
 
-      const newIncident = await createIncidentFromStore();
+      const newIncident = await updateIncidentFromStore();      
+      let filtersToSend = { idIncident: newIncident.id_incident };      
+      await searchIncidentsStored(filtersToSend);      
+
       setIsLoading(false);
 
-      toast.success("Incidente reportado exitosamente");
+      toast.success("Incidente actualizado exitosamente");
 
       // Agregar un delay más largo en producción para asegurar que el store se actualice
       // y dar tiempo a que la API procese la creación del incidente
       const isProduction = window.location.hostname !== "localhost";
-      const delay = isProduction ? 500 : 100;
+      const delay = isProduction ? 1000 : 100;
 
       setTimeout(() => {
         // console.log('🧭 [ReportIncident] Ejecutando navegación...');
-        navigate(`/map-explorer?idIncident=${newIncident.id_incident}`, {
+        navigate(`/admin-incident`, {
           replace: true,
         });
       }, delay);
@@ -155,8 +161,6 @@ export const EditIncident = () => {
       // Obtener las fotografías existentes como blobs
       const photographsWithBlobs = await Promise.all(selectedIncident.photographs.map(photo => getIncidentPhotographyBlobById(photo.id_photography)));
 
-      console.log("photographsWithBlobs", photographsWithBlobs);
-            
       // Establecer datos incluyendo URLs de fotografías existentes
       setIncidentAdded({
         category_id: selectedIncident.category,
@@ -206,7 +210,7 @@ export const EditIncident = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <MainHeader />
-      <p>{JSON.stringify(incidentAdded)}</p>
+      {/* <p>{JSON.stringify(incidentAdded)}</p> */}
 
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-6xl w-full flex items-center justify-end me-1 my-0">

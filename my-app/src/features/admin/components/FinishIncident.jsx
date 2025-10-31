@@ -8,8 +8,8 @@ import { toast } from "sonner";
 
 
 const FinishIncident = ({ openModal, setOpenModal }) => {
-  const updateIncidentFromStore = useIncidentsStore(
-    (state) => state.updateIncidentFromStore
+  const updatePartialIncidentFromStore = useIncidentsStore(
+    (state) => state.updatePartialIncidentFromStore
   );
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
   const setSelectedIncident = useIncidentsStore(
@@ -50,7 +50,7 @@ const FinishIncident = ({ openModal, setOpenModal }) => {
     };
 
        try {
-      await updateIncidentFromStore(id_incident, updatedIncidentData);
+      await updatePartialIncidentFromStore(id_incident, updatedIncidentData);
 
       toast.success("Información actualizada exitosamente");
 

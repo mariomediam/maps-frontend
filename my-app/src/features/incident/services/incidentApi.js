@@ -87,7 +87,7 @@ const getIncidentById = async (idIncident) => {
 //   "show_on_map": true
 // }'
 
-const updateIncident = async (idIncident, incidentData) => {
+const updatePartialIncident = async (idIncident, incidentData) => {
   try {
     const api = useAxios();
     const { data: { content } } = await api.patch(`${URL}/${idIncident}/`, incidentData, {
@@ -149,9 +149,6 @@ const createIncident = async (incidentData) => {
       });
     }
 
-    console.log("📤 [IncidentAPI] Enviando petición POST...");
-    const startTime = Date.now();
-
     const {
       data: { content },
     } = await api.post(`${URL}/`, formData, {
@@ -161,16 +158,8 @@ const createIncident = async (incidentData) => {
       timeout: 30000, // 30 segundos de timeout para conexiones lentas
     });
 
-    const endTime = Date.now();
-
-    console.log("✅ [IncidentAPI] Incidente creado exitosamente:", {
-      id: content.id_incident,
-      summary: content.summary,
-      duration: `${endTime - startTime}ms`,
-      timestamp: new Date().toISOString(),
-    });
-
     return content;
+
   } catch (error) {
     console.error("❌ [IncidentAPI] Error creando incidente:", {
       error: error.message,
@@ -217,6 +206,73 @@ const getIncidentPhotographyBlobById = async (idPhotography) => {
   }
 };
 
+// // Función para actualizar incidente con archivos
+const updateIncident = async (incidentData) => {
+  try {
+    const api = useAxios();
+
+    // Crear FormData para enviar archivos
+    const formData = new FormData();
+
+    // Agregar campos de texto
+    formData.append("id_incident", incidentData.id_incident);
+    formData.append("category_id", incidentData.category_id);
+    formData.append("latitude", incidentData.latitude);
+    formData.append("longitude", incidentData.longitude);
+
+    if (incidentData.summary) {
+      formData.append("summary", incidentData.summary);
+    }
+
+    if (incidentData.reference) {
+      formData.append("reference", incidentData.reference);
+    }
+
+    // Agregar archivos (si existen)
+    if (incidentData.files && incidentData.files.length > 0) {
+      incidentData.files.forEach((file, index) => {
+        // console.log(`📄 [IncidentAPI] Añadiendo archivo ${index + 1}:`, {
+        //   name: file.name,
+        //   size: file.size,
+        //   type: file.type,
+        // });
+        formData.append("files", file);
+      });
+    }
+
+    const {
+      data: { content },
+    } = await api.patch(`${URL}/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      timeout: 30000, // 30 segundos de timeout para conexiones lentas
+    });
+
+    return content;
+    
+  } catch (error) {
+    console.error("❌ [IncidentAPI] Error actualizando incidente:", {
+      error: error.message,
+      stack: error.stack,
+      incidentData: {
+        category_id: incidentData.category_id,
+        latitude: incidentData.latitude,
+        longitude: incidentData.longitude,
+        summary: incidentData.summary,
+        reference: incidentData.reference,
+        filesCount: incidentData.files?.length || 0,
+      },
+      connectionType: navigator.connection?.effectiveType || "unknown",
+      response: error.response?.data,
+      status: error.response?.status,
+      timestamp: new Date().toISOString(),
+    });
+    throw error;
+  }
+};
+
+
 
 export {
   getIncidents,
@@ -226,4 +282,5 @@ export {
   getIncidentMiniatureById,
   updateIncident,
   getIncidentPhotographyBlobById,
+  updatePartialIncident,
 };
