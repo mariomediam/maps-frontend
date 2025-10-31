@@ -13,7 +13,7 @@ const FONT_STATE_COLOR = {
   "#218838": "text-secondary",
 };
 
-const AdminIncidentCard = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident }) => {
+const AdminIncidentCard = ({ incident, setOpenModalViewIncident, setOpenModalAdditionalInformation, setOpenModalFinishIncident, setOpenModalReactiveIncident }) => {
   const {
     category_name = "",
     summary = "",
@@ -36,6 +36,9 @@ const AdminIncidentCard = ({ incident, setOpenModalViewIncident, setOpenModalAdd
   const onClickCloseButton = () => {
     console.log("Boton");
   };
+
+
+
 
   return (
     <div className="border border-gray-300 rounded-lg p-3 mt-3 bg-white" id={`incident-card-${id_incident}`}>
@@ -75,7 +78,7 @@ const AdminIncidentCard = ({ incident, setOpenModalViewIncident, setOpenModalAdd
             <span className="text-gray-500">id:</span> {id_incident}
           </p>
         </div>
-        <AdminIncidentMenu incident={incident} setOpenModalViewIncident={setOpenModalViewIncident} setOpenModalAdditionalInformation={setOpenModalAdditionalInformation} setOpenModalFinishIncident={setOpenModalFinishIncident} />
+        <AdminIncidentMenu incident={incident} setOpenModalViewIncident={setOpenModalViewIncident} setOpenModalAdditionalInformation={setOpenModalAdditionalInformation} setOpenModalFinishIncident={setOpenModalFinishIncident} setOpenModalReactiveIncident={setOpenModalReactiveIncident} />
       
       </div>
 
