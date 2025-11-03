@@ -282,6 +282,16 @@ const deleteIncident = async (idIncident) => {
   }
 };
 
+const getIncidentsTotal = async () => {
+  try {
+    const api = useAxios();
+    const { data: { content } } = await api.get(`${URL}/total/`);
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getIncidents,
   getIncidentPhotographyById,
@@ -292,4 +302,5 @@ export {
   getIncidentPhotographyBlobById,
   updatePartialIncident,
   deleteIncident,
+  getIncidentsTotal,
 };
