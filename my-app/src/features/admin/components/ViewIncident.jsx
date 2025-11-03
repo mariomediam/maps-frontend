@@ -22,11 +22,17 @@ const ViewIncident = ({ openModal, setOpenModal }) => {
   const setExpandMap = useMapExplorerStore((state) => state.setExpandMap);
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
 
+  const onClickCloseButton = () => {
+    setOpenModal(false);
+    setSelectedIncident(null);
+    
+  };
+
   return (
     <>
       <Modal
         show={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={onClickCloseButton}
         className="bg-secondary text-primary relative z-[99999]"
       >
         <ModalHeader className="bg-secondary"><span className="text-primary">Incidencia</span></ModalHeader>
