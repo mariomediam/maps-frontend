@@ -27,7 +27,7 @@ const Statistics = () => {
 
   return (
     <>      
-      <div className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
+      <div className="block p-6 bg-white border border-gray-200 rounded-lg shadow-sm ">
         <h5 className="mb-2 text-2xl font-bold tracking-tight text-primary flex items-center">
           <ChartLineIcon className="me-1" /> Estadísticas del Sistema
         </h5>
