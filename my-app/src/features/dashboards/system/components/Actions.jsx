@@ -19,7 +19,7 @@ const Actions = () => {
         <ListDetailsIcon className="me-1" /> Acciones disponibles
       </h5>
       <div className="flex flex-col md:flex-row gap-4">
-        <article className="w-full md:w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
+        <article className="w-full md:w-1/2 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
           <a href="#">
             <img
               className="rounded-t-lg aspect-16/9 object-cover object-center"
@@ -27,8 +27,8 @@ const Actions = () => {
               alt=""
             />
           </a>
-          <div className="p-5">
-            <p className="mb-3 text-primary text-sm">
+          <div className="p-5 flex flex-col flex-grow">
+            <p className="mb-3 text-primary text-sm flex-grow">
               Informa sobre problemas viales que hayas observado en tu zona de
               manera rápida y sencilla.
             </p>
@@ -43,7 +43,7 @@ const Actions = () => {
           </div>
         </article>
 
-        <article className="w-full md:w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
+        <article className="w-full md:w-1/2 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col">
           <a href="#">
             <img
               className="rounded-t-lg aspect-16/9 object-cover object-center"
@@ -51,8 +51,8 @@ const Actions = () => {
               alt=""
             />
           </a>
-          <div className="p-5">
-            <p className="mb-3 text-primary text-sm">
+          <div className="p-5 flex flex-col flex-grow">
+            <p className="mb-3 text-primary text-sm flex-grow">
             Visualiza todas las incidencias reportadas en tiempo real con nuestro mapa interactivo.
             </p>
             <button
