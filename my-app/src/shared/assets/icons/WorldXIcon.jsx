@@ -14,7 +14,7 @@ const WorldXIcon = ({
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
-      stroke-linecap="round"
+      strokeLinecap="round"
       strokeLinejoin="round"
       className={`icon icon-tabler icons-tabler-outline icon-tabler-world-x ${className}`}
       {...props}
