@@ -18,8 +18,8 @@ const Actions = () => {
       <h5 className="mb-2 text-2xl font-bold tracking-tight text-primary flex items-center">
         <ListDetailsIcon className="me-1" /> Acciones disponibles
       </h5>
-      <div className="flex gap-4">
-        <article className="w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
+      <div className="flex flex-col md:flex-row gap-4">
+        <article className="w-full md:w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
           <a href="#">
             <img
               className="rounded-t-lg aspect-16/9 object-cover object-center"
@@ -43,7 +43,7 @@ const Actions = () => {
           </div>
         </article>
 
-        <article className="w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
+        <article className="w-full md:w-1/2  bg-white border border-gray-200 rounded-lg shadow-sm ">
           <a href="#">
             <img
               className="rounded-t-lg aspect-16/9 object-cover object-center"

@@ -1,7 +1,21 @@
+import { useEffect, useState } from 'react';
 import CameraIcon from '@shared/assets/icons/CameraIcon';
+import IncidentCard from '@features/incident/components/IncidentCard';
+import useIncidentsStore from '@features/incident/store/incidentStore';
+import ViewIncident from '@features/admin/components/ViewIncident';
 
 
 const RecentActivity = () => {
+  const searchIncidentsStored = useIncidentsStore((state) => state.searchIncidentsStored);
+  const isLoadingIncidents = useIncidentsStore((state) => state.isLoading);
+  const [openModalViewIncident, setOpenModalViewIncident] = useState(false);
+
+  useEffect(() => {
+    searchIncidentsStored({
+      showOnMap: "True"
+    });
+  }, []);
+
     return (
       <>
         <article        
@@ -10,10 +24,9 @@ const RecentActivity = () => {
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-primary flex items-center">
           <CameraIcon className="me-1" /> Actividad reciente
           </h5>
-          <p className="font-normal text-primary">
-          Este sistema permite a los ciudadanos reportar incidencias viales como obstáculos en las vías, roturas de tapas de buzones, asfalto en mal estado, señalización deficiente y otros problemas que afecten la seguridad y transitabilidad de nuestras calles. Su participación es fundamental para mantener una ciudad más segura y ordenada.
-          </p>
+          <IncidentCard showModalIncident={setOpenModalViewIncident}/>
         </article>
+        <ViewIncident openModal={openModalViewIncident} setOpenModal={setOpenModalViewIncident} />
       </>
     );
   }; 
