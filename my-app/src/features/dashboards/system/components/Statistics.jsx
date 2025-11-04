@@ -3,6 +3,7 @@ import ChartLineIcon from "@shared/assets/icons/ChartLine";
 import FileTextIcon from "@shared/assets/icons/FileTextIcon";
 import ClockIcon from "@shared/assets/icons/ClockIcon";
 import ListCheckIcon from "@shared/assets/icons/ListCheckIcon";
+import MessagePinIcon from "@shared/assets/icons/MessagePinIcon";
 import StatisticsItem from "@/features/dashboards/system/components/StatisticsItem";
 import { getIncidentsTotal } from "@/features/incident/services/incidentApi";
 
@@ -38,15 +39,21 @@ const Statistics = () => {
             value={statistics.total}
             isLoading={isLoading}
           />
+           <StatisticsItem
+            icon={<MessagePinIcon />}
+            title="Sin atender"
+            value={statistics.presented}
+            isLoading={isLoading}
+          />
           <StatisticsItem
             icon={<ClockIcon />}
             title="En proceso"
-            value={statistics.pending}
+            value={statistics.in_progress}
             isLoading={isLoading}
           />
           <StatisticsItem
             icon={<ListCheckIcon />}
-            title="Finalizadas"
+            title="Cerradas"
             value={statistics.closed}
             isLoading={isLoading}
           />
