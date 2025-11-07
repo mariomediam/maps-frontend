@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Modal,
   ModalBody,
@@ -10,14 +10,19 @@ import incidentPriorityData from "@features/incidentPriority/data/incidentPriori
 import CancelIcon from "@/shared/assets/icons/CancelIcon";
 import DeviceFloppyIcon from "@/shared/assets/icons/DeviceFloppyIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
+import AsyncSelect from "react-select/async";
+
 import { toast } from "sonner";
+import { getTradocByNumero } from "../services/adminApi";
 
 const AdditionalInformation = ({ openModal, setOpenModal }) => {
   const updatePartialIncidentFromStore = useIncidentsStore(
     (state) => state.updatePartialIncidentFromStore
   );
   const selectedIncident = useIncidentsStore((state) => state.selectedIncident);
-  const setSelectedIncident = useIncidentsStore((state) => state.setSelectedIncident);
+  const setSelectedIncident = useIncidentsStore(
+    (state) => state.setSelectedIncident
+  );
 
   const { id_incident } = selectedIncident;
   const [priority, setPriority] = useState(selectedIncident.priority);
@@ -25,13 +30,16 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
     selectedIncident.derivation_document
   );
 
+  const debounceRef = useRef(null);
+  const [cDocum, setCDocum] = useState(null);
+
   useEffect(() => {
     setPriority(selectedIncident.priority);
     setDerivationDocument(selectedIncident.derivation_document);
   }, [selectedIncident]);
 
-   // 👇 Función para manejar el cierre del modal
-   const handleCloseModal = () => {
+  // 👇 Función para manejar el cierre del modal
+  const handleCloseModal = () => {
     setOpenModal(false);
     // 👇 Hacer scroll al incidente actualizado
     setTimeout(() => {
@@ -42,7 +50,6 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
     }, 100);
     setSelectedIncident(null); // 👈 Limpiar selectedIncident
   };
-
 
   const onClickSave = async () => {
     const updatedIncidentData = {
@@ -65,10 +72,42 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
 
       // Cerrar modal y limpiar selectedIncident
       handleCloseModal(); // 👈 Usar la función
-
     } catch (error) {
       console.error("Error al actualizar incidente:", error);
     }
+  };
+
+
+  const getDocumsByNumero = async (inputValue) => {
+    if (!inputValue) {
+      return [];
+    }
+
+    const params = {
+      depend: 110683,
+      numero: inputValue.trim().padStart(5, '0'),
+    }
+
+    const data = await getTradocByNumero(params);
+    const docums = data.map(({ C_Docum, t_title }) => ({
+      value: C_Docum,
+      label: t_title,
+    }));
+    console.log("docums", docums);
+    return docums;
+  };
+
+  const onChageDerivationDocument = (inputValue) => {
+    return new Promise((resolve) => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      debounceRef.current = setTimeout(async () => {
+        
+        const data = await getDocumsByNumero(inputValue);
+        resolve(data);
+      }, 1500);
+    });
   };
 
   return (
@@ -76,7 +115,7 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
       <Modal
         show={openModal}
         onClose={handleCloseModal}
-        className="bg-secondary text-primary relative z-[99999]"        
+        className="bg-secondary text-primary relative z-[99999]"
       >
         <ModalHeader className="bg-secondary">
           <span className="text-primary">
@@ -122,7 +161,7 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
               <label className="block text-sm font-medium mb-2">
                 Documento
               </label>
-              <select
+              {/* <select
                 onChange={(e) => setDerivationDocument(e.target.value)}
                 className="w-full p-2.5 text-sm text-gray-900  rounded-lg border border-gray-300 focus:ring-primary focus:border-primary"
                 value={derivationDocument}
@@ -133,7 +172,20 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
                 <option value="3">Informe 00128-2025-SGTyMU-GTT/MPP</option>
                 <option value="4">Informe 00129-2025-SGTyMU-GTT/MPP</option>
                 <option value="5">Informe 00130-2025-SGTyMU-GTT/MPP</option>
-              </select>
+              </select> */}
+              <div >
+
+              <AsyncSelect
+                placeholder=""
+                isClearable
+                noOptionsMessage={() => "Registro no encontrado"}
+                className="z-99999"
+                loadOptions={onChageDerivationDocument}
+                // onChange={setCDocum}
+                // value={cDocum}
+                // menuPortalTarget={document.body}
+                />
+                </div>
             </div>
           </div>
         </ModalBody>
