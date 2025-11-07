@@ -11,9 +11,10 @@ import CancelIcon from "@/shared/assets/icons/CancelIcon";
 import DeviceFloppyIcon from "@/shared/assets/icons/DeviceFloppyIcon";
 import useIncidentsStore from "@features/incident/store/incidentStore";
 import AsyncSelect from "react-select/async";
+import { format } from '@formkit/tempo';
 
 import { toast } from "sonner";
-import { getTradocByNumero } from "../services/adminApi";
+import { getTradocByNumero, getTradocByC_Docum } from "../services/adminApi";
 
 const AdditionalInformation = ({ openModal, setOpenModal }) => {
   const updatePartialIncidentFromStore = useIncidentsStore(
@@ -32,11 +33,33 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
 
   const debounceRef = useRef(null);
   const [cDocum, setCDocum] = useState(null);
+  const [documentsSearched, setDocumentsSearched] = useState([]);
 
   useEffect(() => {
     setPriority(selectedIncident.priority);
-    setDerivationDocument(selectedIncident.derivation_document);
+    setDocumInSelect();
   }, [selectedIncident]);
+
+
+  const setDocumInSelect = async () => {
+    setDerivationDocument(selectedIncident.derivation_document);
+
+    if (!selectedIncident.derivation_document) return;
+
+    const defasultDocumInSelect = {
+      value: null,
+      label: "Cargando documento...",
+    };
+
+    setCDocum(defasultDocumInSelect);
+
+    const {C_Docum, N_TipDoc_Nombre, M_Docum_NumDoc, M_Docum_AnioDoc, N_Docum_Siglas, D_Docum_FecEnv} = await getTradocByC_Docum({ c_docum: selectedIncident.derivation_document });
+    const documInSelect = {
+      value: C_Docum,
+      label: `${N_TipDoc_Nombre} ${M_Docum_NumDoc}-${M_Docum_AnioDoc}-${N_Docum_Siglas} del ${format(D_Docum_FecEnv, "DD/MM/YYYY")}`
+    };    
+    setCDocum(documInSelect);
+  }
 
   // 👇 Función para manejar el cierre del modal
   const handleCloseModal = () => {
@@ -52,11 +75,14 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
   };
 
   const onClickSave = async () => {
+
+    let c_docum = cDocum?.value || null;
+    
     const updatedIncidentData = {
       priority: priority,
-      derivation_document: derivationDocument,
+      derivation_document: c_docum,
     };
-
+    
     try {
       await updatePartialIncidentFromStore(id_incident, updatedIncidentData);
 
@@ -77,7 +103,6 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
     }
   };
 
-
   const getDocumsByNumero = async (inputValue) => {
     if (!inputValue) {
       return [];
@@ -85,15 +110,15 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
 
     const params = {
       depend: 110683,
-      numero: inputValue.trim().padStart(5, '0'),
-    }
+      numero: inputValue.trim().padStart(5, "0"),
+    };
 
     const data = await getTradocByNumero(params);
     const docums = data.map(({ C_Docum, t_title }) => ({
       value: C_Docum,
       label: t_title,
     }));
-    console.log("docums", docums);
+    setDocumentsSearched(data);
     return docums;
   };
 
@@ -103,7 +128,6 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
         clearTimeout(debounceRef.current);
       }
       debounceRef.current = setTimeout(async () => {
-        
         const data = await getDocumsByNumero(inputValue);
         resolve(data);
       }, 1500);
@@ -133,7 +157,7 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                Prioridad
+                Prioridad 
               </label>
               <ul onChange={(e) => setPriority(e.target.value)}>
                 {incidentPriorityData.map(({ id_priority, description }) => (
@@ -159,7 +183,7 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
 
             <div>
               <label className="block text-sm font-medium mb-2">
-                Documento
+                Documento 
               </label>
               {/* <select
                 onChange={(e) => setDerivationDocument(e.target.value)}
@@ -173,19 +197,21 @@ const AdditionalInformation = ({ openModal, setOpenModal }) => {
                 <option value="4">Informe 00129-2025-SGTyMU-GTT/MPP</option>
                 <option value="5">Informe 00130-2025-SGTyMU-GTT/MPP</option>
               </select> */}
-              <div >
-
-              <AsyncSelect
-                placeholder=""
-                isClearable
-                noOptionsMessage={() => "Registro no encontrado"}
-                className="z-99999"
-                loadOptions={onChageDerivationDocument}
-                // onChange={setCDocum}
-                // value={cDocum}
-                // menuPortalTarget={document.body}
+              <div>
+                <AsyncSelect
+                  placeholder=""
+                  isClearable
+                  noOptionsMessage={() => "Registro no encontrado"}
+                  className="z-99999"
+                  loadOptions={onChageDerivationDocument}
+                  onChange={setCDocum}
+                  value={cDocum}
+                  menuPortalTarget={document.body}
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 99999 }),
+                  }}
                 />
-                </div>
+              </div>
             </div>
           </div>
         </ModalBody>
