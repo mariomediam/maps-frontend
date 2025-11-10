@@ -196,13 +196,13 @@ export const IncidentDetail = ({
       </div>
 
       {incident.id_state !== 1 && (
-        <div className="border border-primary mx-3 rounded-lg p-2 mb-3">
+        <div className="border border-gray-300 mx-3 rounded-lg p-2 mb-3">
           <IncidentAdditionalInformation incident={incident} />
         </div>
       )}
 
       {incident.is_closed && (
-        <div className="border border-primary mx-3 rounded-lg p-2 mb-3">
+        <div className="border border-gray-300 mx-3 rounded-lg p-2 mb-3">
           <IncidentFinish incident={incident} />
         </div>
       )}

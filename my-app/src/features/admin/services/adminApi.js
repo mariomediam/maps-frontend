@@ -30,7 +30,20 @@ const getTradocByC_Docum = async (params = {}) => {
     throw error;
   }
 };
+
+const getPathByC_Docum = async (params = {}) => {
+  const { c_docum } = params;
+  try {
+    const api = useAxios();
+    const { data: { content } } = await api.get(`${URL}/path?c_docum=${c_docum}`);
+    return content;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getTradocByNumero,  
   getTradocByC_Docum,
+  getPathByC_Docum,
 };

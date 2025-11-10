@@ -9,15 +9,7 @@ import router from './routes/AppRoute';
 import { Toaster } from 'sonner';
 
 // Logs globales para debugging en dispositivos móviles
-console.log('🚀 [App] Iniciando aplicación:', {
-  userAgent: navigator.userAgent,
-  connectionType: navigator.connection?.effectiveType || 'unknown',
-  viewport: {
-    width: window.innerWidth,
-    height: window.innerHeight
-  },
-  timestamp: new Date().toISOString()
-});
+
 
 // Capturar errores no manejados
 window.addEventListener('error', (event) => {
@@ -87,7 +79,7 @@ if (!rootElement) {
   throw new Error('Root element not found');
 }
 
-console.log('🎯 [Global] Montando aplicación React...');
+
 
 try {
   createRoot(rootElement).render(
@@ -98,7 +90,7 @@ try {
       </AuthProvider>
     </StrictMode>,
   );
-  console.log('✅ [Global] Aplicación React montada exitosamente');
+  
 } catch (error) {
   console.error('❌ [Global] Error montando aplicación React:', {
     error: error.message,

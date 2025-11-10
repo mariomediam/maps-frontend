@@ -33,8 +33,7 @@ const MainHeader = () => {
     // Inicializar Flowbite después de que el DOM esté listo
     const timer = setTimeout(() => {
       try {
-        initFlowbite();
-        console.log("Flowbite inicializado correctamente");
+        initFlowbite();        
 
         // Inicializar manualmente el popover
         const popoverElement = document.getElementById("popover-user");
@@ -46,8 +45,7 @@ const MainHeader = () => {
           const popover = new Popover(popoverElement, popoverTrigger, {
             placement: "bottom",
             triggerType: "click",
-          });
-          console.log("Popover de usuario inicializado manualmente");
+          });          
         }
       } catch (error) {
         console.error("Error al inicializar Flowbite:", error);
@@ -61,8 +59,7 @@ const MainHeader = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       try {
-        initFlowbite();
-        console.log("Flowbite re-inicializado");
+        initFlowbite();        
       } catch (error) {
         console.error("Error al re-inicializar Flowbite:", error);
       }
